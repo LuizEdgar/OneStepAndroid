@@ -27,9 +27,17 @@ public class Organization {
 
     @Expose private Integer size;
 
-    @Expose private List<Cause> causes;
+    @Expose(serialize = false, deserialize = true)
+    private List<Cause> causes;
 
-    @Expose private List<Skill> skills;
+    @Expose(serialize = true, deserialize = false)
+    private List<Integer> cause_ids;
+
+    @Expose(serialize = false, deserialize = true)
+    private List<Skill> skills;
+
+    @Expose(serialize = true, deserialize = false)
+    private List<Integer> skill_ids;
 
     @Expose
     @SerializedName("established_at")

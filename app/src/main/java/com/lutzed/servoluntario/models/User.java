@@ -21,13 +21,35 @@ public class User {
 
     @Expose private String auth;
 
-    @Expose private List<Address> addresses;
+    @Expose private String password;
 
-    @Expose private List<Phone> phones;
+    @Expose(serialize = false, deserialize = true)
+    private List<Address> addresses;
 
-    @Expose private Volunteer volunteer;
+    @Expose(serialize = true, deserialize = false)
+    @SerializedName("addresses_attributes")
+    private List<Address> addressesAttributes;
 
-    @Expose private Organization organization;
+    @Expose(serialize = false, deserialize = true)
+    private List<Phone> phones;
+
+    @Expose(serialize = true, deserialize = false)
+    @SerializedName("phones_attributes")
+    private List<Phone> phonesAttributes;
+
+    @Expose(serialize = false, deserialize = true)
+    private Volunteer volunteer;
+
+    @Expose(serialize = true, deserialize = false)
+    @SerializedName("volunteer_attributes")
+    private Volunteer volunteerAttributes;
+
+    @Expose(serialize = false, deserialize = true)
+    private Organization organization;
+
+    @Expose(serialize = true, deserialize = false)
+    @SerializedName("organization_attributes")
+    private Organization organizationAttributes;
 
     @Expose
     @SerializedName("created_at")
@@ -123,5 +145,29 @@ public class User {
 
     public void setOrganization(Organization organization) {
         this.organization = organization;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Volunteer getVolunteerAttributes() {
+        return volunteerAttributes;
+    }
+
+    public void setVolunteerAttributes(Volunteer volunteerAttributes) {
+        this.volunteerAttributes = volunteerAttributes;
+    }
+
+    public Organization getOrganizationAttributes() {
+        return organizationAttributes;
+    }
+
+    public void setOrganizationAttributes(Organization organizationAttributes) {
+        this.organizationAttributes = organizationAttributes;
     }
 }

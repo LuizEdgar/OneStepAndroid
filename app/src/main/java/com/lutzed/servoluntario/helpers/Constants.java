@@ -5,7 +5,7 @@ package com.lutzed.servoluntario.helpers;
  */
 public class Constants {
 
-    public static final String API_URL = "http://localhost:3000";
-    public static final String AUTH_TOKEN = "BaQAemPsu4mpk4sqoDLyQt4Y";
+    public static final String API_URL = "http://192.168.25.2:3000/";
+    public static final String AUTH_TOKEN = "USKjWHdGhVSpGpfDMtq43UJ9";
 
 }

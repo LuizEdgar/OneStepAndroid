@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import okhttp3.OkHttpClient;
+
 /**
  * Created by luizfreitas on 25/07/2016.
  */
@@ -31,9 +33,18 @@ public class Volunteer {
 
     @Expose private Boolean verified;
 
-    @Expose private List<Education> educations;
+    @Expose(serialize = false, deserialize = true)
+    private List<Education> educations;
 
-    @Expose private List<Skill> skills;
+    @Expose(serialize = true, deserialize = false)
+    @SerializedName("educations_attributes")
+    private List<Education> educationsAttributes;
+
+    @Expose(serialize = false, deserialize = true)
+    private List<Skill> skills;
+
+    @Expose(serialize = true, deserialize = false)
+    private List<Integer> skill_ids;
 
     @Expose
     @SerializedName("birth_at")
