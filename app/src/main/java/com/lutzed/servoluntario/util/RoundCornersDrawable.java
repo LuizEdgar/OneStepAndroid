@@ -1,4 +1,4 @@
-package com.lutzed.servoluntario.helpers;
+package com.lutzed.servoluntario.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;

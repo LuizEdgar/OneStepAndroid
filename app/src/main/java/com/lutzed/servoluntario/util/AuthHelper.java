@@ -1,8 +1,8 @@
-package com.lutzed.servoluntario.helpers;
+package com.lutzed.servoluntario.util;
 
 import android.content.Context;
 
-import com.lutzed.servoluntario.api.SVApi;
+import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.User;
 
 import retrofit2.Call;
@@ -49,7 +49,7 @@ public class AuthHelper {
     }
 
     public static void updateUserData(final Context context, final Callback<User> callback) {
-        Call<User> meCall = SVApi.getClient().getMe();
+        Call<User> meCall = Api.getClient(context).getMe();
         meCall.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {

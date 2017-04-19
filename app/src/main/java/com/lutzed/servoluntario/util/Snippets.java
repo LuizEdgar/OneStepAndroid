@@ -1,8 +1,9 @@
-package com.lutzed.servoluntario.helpers;
+package com.lutzed.servoluntario.util;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.text.TextUtils;
 import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
@@ -62,4 +63,11 @@ public class Snippets {
         return resizedBitmap;
     }
 
+    public static boolean isPasswordValid(String password) {
+        return !TextUtils.isEmpty(password) && password.length() > 5;
+    }
+
+    public static boolean isEmailValid(String email) {
+        return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
 }

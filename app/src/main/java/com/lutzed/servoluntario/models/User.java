@@ -3,6 +3,8 @@ package com.lutzed.servoluntario.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 /**
  * Created by luizfreitas on 25/07/2016.
  */
@@ -18,6 +20,36 @@ public class User {
     @Expose private String kind;
 
     @Expose private String auth;
+
+    @Expose private String password;
+
+    @Expose(serialize = false, deserialize = true)
+    private List<Address> addresses;
+
+    @Expose(serialize = true, deserialize = false)
+    @SerializedName("addresses_attributes")
+    private List<Address> addressesAttributes;
+
+    @Expose(serialize = false, deserialize = true)
+    private List<Phone> phones;
+
+    @Expose(serialize = true, deserialize = false)
+    @SerializedName("phones_attributes")
+    private List<Phone> phonesAttributes;
+
+    @Expose(serialize = false, deserialize = true)
+    private Volunteer volunteer;
+
+    @Expose(serialize = true, deserialize = false)
+    @SerializedName("volunteer_attributes")
+    private Volunteer volunteerAttributes;
+
+    @Expose(serialize = false, deserialize = true)
+    private Organization organization;
+
+    @Expose(serialize = true, deserialize = false)
+    @SerializedName("organization_attributes")
+    private Organization organizationAttributes;
 
     @Expose
     @SerializedName("created_at")
@@ -81,5 +113,61 @@ public class User {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public List<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(List<Address> addresses) {
+        this.addresses = addresses;
+    }
+
+    public List<Phone> getPhones() {
+        return phones;
+    }
+
+    public void setPhones(List<Phone> phones) {
+        this.phones = phones;
+    }
+
+    public Volunteer getVolunteer() {
+        return volunteer;
+    }
+
+    public void setVolunteer(Volunteer volunteer) {
+        this.volunteer = volunteer;
+    }
+
+    public Organization getOrganization() {
+        return organization;
+    }
+
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Volunteer getVolunteerAttributes() {
+        return volunteerAttributes;
+    }
+
+    public void setVolunteerAttributes(Volunteer volunteerAttributes) {
+        this.volunteerAttributes = volunteerAttributes;
+    }
+
+    public Organization getOrganizationAttributes() {
+        return organizationAttributes;
+    }
+
+    public void setOrganizationAttributes(Organization organizationAttributes) {
+        this.organizationAttributes = organizationAttributes;
     }
 }
