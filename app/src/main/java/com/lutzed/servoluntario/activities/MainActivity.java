@@ -11,6 +11,7 @@ import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.api.requests.SignInRequest;
 import com.lutzed.servoluntario.models.User;
+import com.lutzed.servoluntario.util.AuthHelper;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -50,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        Api.getClient(this).signIn(new SignInRequest("luiz.edgar+teste8@gmail.com" , "123456")).enqueue(new Callback<User>() {
+        Api.getClient(AuthHelper.getInstance(this).getUser()).signIn(new SignInRequest("luiz.edgar+teste8@gmail.com" , "123456")).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
 

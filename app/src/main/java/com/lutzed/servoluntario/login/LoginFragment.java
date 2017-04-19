@@ -134,6 +134,7 @@ public class LoginFragment extends Fragment implements LoginContract.View {
 
     @Override
     public void navigateToMain() {
+        getActivity().finish();
         Intent intent = new Intent(getContext(), MainActivity.class);
         startActivity(intent);
     }

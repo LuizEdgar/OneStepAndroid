@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.api.requests.SignInRequest;
 import com.lutzed.servoluntario.models.User;
+import com.lutzed.servoluntario.util.AuthHelper;
 import com.lutzed.servoluntario.util.Snippets;
 
 import retrofit2.Call;
@@ -19,10 +20,12 @@ public class LoginPresenter implements LoginContract.Presenter {
 
     private final LoginContract.View mView;
     private final Api.ApiClient mApiClient;
+    private final AuthHelper mAuthHelper;
 
-    public LoginPresenter(LoginFragment loginFragment, Api.ApiClient apiClient) {
+    public LoginPresenter(LoginFragment loginFragment, Api.ApiClient apiClient, AuthHelper authHelper) {
         mView = loginFragment;
         mApiClient = apiClient;
+        mAuthHelper = authHelper;
         mView.setPresenter(this);
     }
 
@@ -63,6 +66,7 @@ public class LoginPresenter implements LoginContract.Presenter {
                             mView.setLoadingIndicator(false);
                             switch (response.code()) {
                                 case 200:
+                                    mAuthHelper.setUser(response.body());
                                     mView.navigateToMain();
                                     break;
                                 case 401:
@@ -89,6 +93,10 @@ public class LoginPresenter implements LoginContract.Presenter {
 
     @Override
     public void start() {
-
+        if (mAuthHelper.hasUser()) {
+            mView.setLoadingIndicator(true);
+            mView.navigateToMain();
+            mAuthHelper.updateUserData();
+        }
     }
 }
