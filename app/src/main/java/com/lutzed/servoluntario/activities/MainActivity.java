@@ -1,4 +1,4 @@
-package com.lutzed.servoluntario;
+package com.lutzed.servoluntario.activities;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -7,7 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.lutzed.servoluntario.api.SVApi;
+import com.lutzed.servoluntario.R;
+import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.api.requests.SignInRequest;
 import com.lutzed.servoluntario.models.User;
 
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
 
-        SVApi.getClient().signIn(new SignInRequest("luiz.edgar+teste8@gmail.com" , "123456")).enqueue(new Callback<User>() {
+        Api.getClient(this).signIn(new SignInRequest("luiz.edgar+teste8@gmail.com" , "123456")).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
 

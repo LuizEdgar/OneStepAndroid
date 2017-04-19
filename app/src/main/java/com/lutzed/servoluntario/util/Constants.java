@@ -1,4 +1,4 @@
-package com.lutzed.servoluntario.helpers;
+package com.lutzed.servoluntario.util;
 
 /**
  * Created by luizfreitas on 17/07/2016.

@@ -39,6 +39,4 @@ dependencies {
     compile 'com.facebook.stetho:stetho-okhttp3:1.5.0'
     compile 'com.facebook.stetho:stetho-js-rhino:1.5.0'
 
-
-
 }

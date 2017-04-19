@@ -5,7 +5,7 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
-import com.lutzed.servoluntario.helpers.DateHelper;
+import com.lutzed.servoluntario.util.DateHelper;
 
 /**
  * Created by luizfreitas on 17/07/2016.
