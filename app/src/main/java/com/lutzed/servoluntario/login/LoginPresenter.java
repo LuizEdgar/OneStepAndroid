@@ -35,9 +35,11 @@ public class LoginPresenter implements LoginContract.Presenter {
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
             mView.showEmailRequiredError();
+            mView.setFocusEmailField();
             cancel = true;
         } else if (!Snippets.isEmailValid(email)) {
             mView.showInvalidEmailError();
+            mView.setFocusEmailField();
             cancel = true;
         }
 
@@ -65,9 +67,11 @@ public class LoginPresenter implements LoginContract.Presenter {
                                     break;
                                 case 401:
                                     mView.showInvalidPasswordError();
+                                    mView.setFocusPasswordField();
                                     break;
                                 default:
                                     mView.showLoginDefaultError();
+                                    mView.setFocusPasswordField();
                             }
                         }
 
@@ -75,6 +79,7 @@ public class LoginPresenter implements LoginContract.Presenter {
                         public void onFailure(Call<User> call, Throwable t) {
                             mView.setLoadingIndicator(false);
                             mView.showLoginDefaultError();
+                            mView.setFocusPasswordField();
                         }
                     }
             );

@@ -75,22 +75,22 @@ public class Api {
         @GET("/me.json")
         Call<User> getMe();
 
-        @POST("me/sign_in")
+        @POST("me/sign_in.json")
         Call<User> signIn(@Body SignInRequest signInRequest);
 
-        @POST("users")
+        @POST("users.json")
         Call<User> createUser();
 
-        @GET("users")
+        @GET("users.json")
         Call<User> getUsers();
 
-        @GET("users/{userId}")
+        @GET("users/{userId}.json")
         Call<User> getUser(@Path("userId") Long userId);
 
-        @PUT("users/{userId}")
+        @PUT("users/{userId}.json")
         Call<User> updateUser(@Path("userId") Long userId, @Body User user);
 
-        @DELETE("users/{userId}")
+        @DELETE("users/{userId}.json")
         Call<User> deleteUser(@Path("userId") Long userId);
 
 
