@@ -2,6 +2,7 @@ package com.lutzed.servoluntario.util;
 
 import android.content.Context;
 
+import com.facebook.login.LoginManager;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.User;
 
@@ -33,6 +34,13 @@ public class AuthHelper {
 
         return mUser;
     }
+
+    public void signout() {
+        mAuthSharedPreferences.clear();
+        mUser = null;
+        LoginManager.getInstance().logOut();
+    }
+
 
     public boolean hasUser() {
         return mAuthSharedPreferences.hasUser();

@@ -3,6 +3,7 @@ package com.lutzed.servoluntario.api;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.lutzed.servoluntario.api.requests.FacebookSignInRequest;
 import com.lutzed.servoluntario.api.requests.SignInRequest;
 import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.util.Constants;
@@ -72,6 +73,9 @@ public class Api {
 
         @POST("me/sign_in.json")
         Call<User> signIn(@Body SignInRequest signInRequest);
+
+        @POST("me/facebook_sign_in.json")
+        Call<User> signIn(@Body FacebookSignInRequest signInRequest);
 
         @POST("users.json")
         Call<User> createUser();

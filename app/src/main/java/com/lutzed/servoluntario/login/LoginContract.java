@@ -13,6 +13,9 @@ public interface LoginContract {
         void setLoadingIndicator(boolean active);
         void navigateToMain();
         void resetLoginErrors();
+
+        void showSignUp();
+
         void showEmailRequiredError();
         void showPasswordRequiredError();
         void showInvalidEmailError();
@@ -20,9 +23,13 @@ public interface LoginContract {
         void setFocusPasswordField();
         void setFocusEmailField();
         void showLoginDefaultError();
+
+        void showFacebookLoginError();
     }
 
     interface Presenter extends BasePresenter {
         void attemptEmailLogin(String email, String password);
+
+        void attemptFacebookLogin(String token);
     }
 }

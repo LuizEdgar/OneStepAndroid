@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +19,13 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.activities.MainActivity;
 
@@ -33,16 +40,32 @@ import static com.lutzed.servoluntario.R.id.email;
  */
 public class LoginFragment extends Fragment implements LoginContract.View {
 
-    @BindView(email)
-    AutoCompleteTextView mEmailView;
-    @BindView(R.id.password)
-    EditText mPasswordView;
-    @BindView(R.id.login_progress)
-    View mProgressView;
-    @BindView(R.id.email_login_form)
-    View mLoginFormView;
+    @BindView(email) AutoCompleteTextView mEmailView;
+    @BindView(R.id.password) EditText mPasswordView;
+    @BindView(R.id.login_progress) View mProgressView;
+    @BindView(R.id.email_login_form) View mLoginFormView;
+    @BindView(R.id.login_button) LoginButton mLoginButton;
 
     private LoginContract.Presenter mPresenter;
+
+    private CallbackManager mCallbackManager;
+    private FacebookCallback mFacebookCallback = new FacebookCallback<LoginResult>() {
+        @Override
+        public void onSuccess(LoginResult loginResult) {
+            mPresenter.attemptFacebookLogin(loginResult.getAccessToken().getToken());
+        }
+
+        @Override
+        public void onCancel() {
+            Log.d("FBL", "cancel");
+        }
+
+        @Override
+        public void onError(FacebookException error) {
+            Log.d("FBL", error.getMessage());
+        }
+    };
+
 
     public static LoginFragment newInstance() {
         return new LoginFragment();
@@ -84,6 +107,11 @@ public class LoginFragment extends Fragment implements LoginContract.View {
             }
         });
 
+        mCallbackManager = CallbackManager.Factory.create();
+        mLoginButton.setReadPermissions("email");
+        mLoginButton.setFragment(this);
+        mLoginButton.registerCallback(mCallbackManager, mFacebookCallback);
+
         return root;
     }
 
@@ -96,6 +124,12 @@ public class LoginFragment extends Fragment implements LoginContract.View {
     public void resetLoginErrors() {
         mEmailView.setError(null);
         mPasswordView.setError(null);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override
@@ -140,6 +174,10 @@ public class LoginFragment extends Fragment implements LoginContract.View {
     }
 
     @Override
+    public void showSignUp() {
+    }
+
+    @Override
     public void showEmailRequiredError() {
         mEmailView.setError(getString(R.string.error_field_required));
     }
@@ -162,6 +200,11 @@ public class LoginFragment extends Fragment implements LoginContract.View {
     @Override
     public void showLoginDefaultError() {
         mPasswordView.setError(getString(R.string.error_try_later));
+    }
+
+    @Override
+    public void showFacebookLoginError() {
+        Toast.makeText(getContext(), getString(R.string.error_facebook_login), Toast.LENGTH_SHORT).show();
     }
 
     @Override

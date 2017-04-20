@@ -8,14 +8,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.lutzed.servoluntario.R;
-import com.lutzed.servoluntario.api.Api;
-import com.lutzed.servoluntario.api.requests.SignInRequest;
-import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.util.AuthHelper;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -34,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
                     mTextMessage.setText(R.string.title_dashboard);
                     return true;
                 case R.id.navigation_notifications:
+                    AuthHelper.getInstance(getApplicationContext()).signout();
+                    finish();
                     mTextMessage.setText(R.string.title_notifications);
                     return true;
             }
@@ -50,18 +45,6 @@ public class MainActivity extends AppCompatActivity {
         mTextMessage = (TextView) findViewById(R.id.message);
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-        Api.getClient(AuthHelper.getInstance(this).getUser()).signIn(new SignInRequest("luiz.edgar+teste8@gmail.com" , "123456")).enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-
-            }
-
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
-
-            }
-        });
     }
 
 }
