@@ -93,6 +93,26 @@ public class LoginPresenter implements LoginContract.Presenter {
     }
 
     @Override
+    public void recoveryPassword() {
+        mView.showPasswordRecovery();
+    }
+
+    @Override
+    public void startFacebookLogin() {
+        mView.showFacebookLogin();
+    }
+
+    @Override
+    public void volunteerSignUp() {
+        mView.showVolunteerSignUp();
+    }
+
+    @Override
+    public void organizationSignUp() {
+        mView.showOrganizationSignUp();
+    }
+
+    @Override
     public void attemptFacebookLogin(String token) {
         mView.setLoadingIndicator(true);
         mApiClient.signIn(new FacebookSignInRequest(token)).enqueue(
@@ -106,7 +126,7 @@ public class LoginPresenter implements LoginContract.Presenter {
                                 mView.navigateToMain();
                                 break;
                             case 404:
-                                mView.showSignUp();
+                                mView.showVolunteerSignUp();
                                 break;
                             case 401:
                                 mView.showFacebookLoginError();

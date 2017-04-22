@@ -102,15 +102,25 @@ public class LoginFragment extends Fragment implements LoginContract.View {
         return root;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+    }
+
     @OnClick(R.id.email_sign_in_button)
     void onEmailSignInClicked() {
         mPresenter.attemptEmailLogin(mEmailView.getText().toString(), mPasswordView.getText().toString());
     }
 
     @OnClick(R.id.facebook_sign_in_button)
-        void onFacebookSignInClicked() {
-        LoginManager.getInstance().registerCallback(mCallbackManager, mFacebookCallback);
-        LoginManager.getInstance().logInWithReadPermissions(this, Constants.FACEBOOK_PERMISSIONS);
+    void onFacebookSignInClicked() {
+        mPresenter.startFacebookLogin();
+    }
+
+    @OnClick(R.id.forgot_password_button)
+    void onForgotPasswordClicked() {
+        mPresenter.recoveryPassword();
     }
 
     @Override
@@ -120,9 +130,14 @@ public class LoginFragment extends Fragment implements LoginContract.View {
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+    public void showFacebookLogin() {
+        LoginManager.getInstance().registerCallback(mCallbackManager, mFacebookCallback);
+        LoginManager.getInstance().logInWithReadPermissions(this, Constants.FACEBOOK_PERMISSIONS);
+    }
+
+    @Override
+    public void showPasswordRecovery() {
+        Toast.makeText(getContext(), "TODO FORGOT PASSWORD", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -166,9 +181,24 @@ public class LoginFragment extends Fragment implements LoginContract.View {
         startActivity(intent);
     }
 
+    @OnClick(R.id.volunteer_sign_up_button)
+    public void onVolunteerSignUpClicked() {
+        mPresenter.volunteerSignUp();
+    }
+
     @Override
-    public void showSignUp() {
-        Toast.makeText(getContext(), "TODO SIGNUP", Toast.LENGTH_SHORT).show();
+    public void showVolunteerSignUp() {
+        Toast.makeText(getContext(), "TODO Volunteer SIGNUP", Toast.LENGTH_SHORT).show();
+    }
+
+    @OnClick(R.id.organization_sign_up_button)
+    public void onOrganizationSignUpClicked() {
+        mPresenter.organizationSignUp();
+    }
+
+    @Override
+    public void showOrganizationSignUp() {
+        Toast.makeText(getContext(), "TODO Organization SIGNUP", Toast.LENGTH_SHORT).show();
     }
 
     @Override

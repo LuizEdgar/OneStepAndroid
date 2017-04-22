@@ -24,6 +24,7 @@
     <string name="action_facebook_sign_in">Facebook Login</string>
     <string name="action_sign_up">Sign Up</string>
     <string name="action_forgot_password">Forgot password?</string>
+    <string name="action_organization_sign_up">Organization?</string>
 
 
 </resources>
