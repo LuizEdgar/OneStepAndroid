@@ -12,11 +12,9 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AutoCompleteTextView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,10 +22,11 @@ import android.widget.Toast;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
-import com.facebook.login.widget.LoginButton;
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.activities.MainActivity;
+import com.lutzed.servoluntario.util.Constants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -44,7 +43,7 @@ public class LoginFragment extends Fragment implements LoginContract.View {
     @BindView(R.id.password) EditText mPasswordView;
     @BindView(R.id.login_progress) View mProgressView;
     @BindView(R.id.email_login_form) View mLoginFormView;
-    @BindView(R.id.login_button) LoginButton mLoginButton;
+//    @BindView(R.id.login_button) LoginButton mLoginButton;
 
     private LoginContract.Presenter mPresenter;
 
@@ -88,19 +87,11 @@ public class LoginFragment extends Fragment implements LoginContract.View {
         View root = inflater.inflate(R.layout.fragment_login, container, false);
         ButterKnife.bind(this, root);
 
-        Button mEmailSignInButton = (Button) root.findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onSignInClicked();
-            }
-        });
-
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    onSignInClicked();
+                    onEmailSignInClicked();
                     return true;
                 }
                 return false;
@@ -108,16 +99,18 @@ public class LoginFragment extends Fragment implements LoginContract.View {
         });
 
         mCallbackManager = CallbackManager.Factory.create();
-        mLoginButton.setReadPermissions("email");
-        mLoginButton.setFragment(this);
-        mLoginButton.registerCallback(mCallbackManager, mFacebookCallback);
-
         return root;
     }
 
     @OnClick(R.id.email_sign_in_button)
-    void onSignInClicked() {
+    void onEmailSignInClicked() {
         mPresenter.attemptEmailLogin(mEmailView.getText().toString(), mPasswordView.getText().toString());
+    }
+
+    @OnClick(R.id.facebook_sign_in_button)
+        void onFacebookSignInClicked() {
+        LoginManager.getInstance().registerCallback(mCallbackManager, mFacebookCallback);
+        LoginManager.getInstance().logInWithReadPermissions(this, Constants.FACEBOOK_PERMISSIONS);
     }
 
     @Override
@@ -175,6 +168,7 @@ public class LoginFragment extends Fragment implements LoginContract.View {
 
     @Override
     public void showSignUp() {
+        Toast.makeText(getContext(), "TODO SIGNUP", Toast.LENGTH_SHORT).show();
     }
 
     @Override

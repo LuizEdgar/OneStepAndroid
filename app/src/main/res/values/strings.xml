@@ -21,6 +21,9 @@
     </string>
     <string name="error_try_later">Unexpected error, try later</string>
     <string name="error_facebook_login">Facebook login error, try later.</string>
+    <string name="action_facebook_sign_in">Facebook Login</string>
+    <string name="action_sign_up">Sign Up</string>
+    <string name="action_forgot_password">Forgot password?</string>
 
 
 </resources>

@@ -21,7 +21,12 @@ public class User {
 
     @Expose private String auth;
 
-    @Expose private String password;
+    @Expose(serialize = true, deserialize = false)
+    private String password;
+
+    @Expose(serialize = true, deserialize = false)
+    @SerializedName("facebook_token")
+    private String facebookToken;
 
     @Expose(serialize = false, deserialize = true)
     private List<Address> addresses;
@@ -169,5 +174,13 @@ public class User {
 
     public void setOrganizationAttributes(Organization organizationAttributes) {
         this.organizationAttributes = organizationAttributes;
+    }
+
+    public String getFacebookToken() {
+        return facebookToken;
+    }
+
+    public void setFacebookToken(String facebookToken) {
+        this.facebookToken = facebookToken;
     }
 }

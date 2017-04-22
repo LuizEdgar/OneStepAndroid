@@ -105,13 +105,14 @@ public class LoginPresenter implements LoginContract.Presenter {
                                 mAuthHelper.setUser(response.body());
                                 mView.navigateToMain();
                                 break;
+                            case 404:
+                                mView.showSignUp();
+                                break;
                             case 401:
                                 mView.showFacebookLoginError();
-                                mView.setFocusPasswordField();
                                 break;
                             default:
                                 mView.showFacebookLoginError();
-                                mView.setFocusPasswordField();
                         }
                     }
 
