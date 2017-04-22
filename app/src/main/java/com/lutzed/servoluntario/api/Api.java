@@ -1,14 +1,12 @@
 package com.lutzed.servoluntario.api;
 
-import android.content.Context;
-
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.lutzed.servoluntario.api.requests.FacebookSignInRequest;
 import com.lutzed.servoluntario.api.requests.SignInRequest;
-import com.lutzed.servoluntario.util.AuthHelper;
-import com.lutzed.servoluntario.util.Constants;
 import com.lutzed.servoluntario.models.User;
+import com.lutzed.servoluntario.util.Constants;
 
 import java.io.IOException;
 
@@ -37,7 +35,7 @@ public class Api {
     }
 
 
-    public static ApiClient getClient(final Context context) {
+    public static ApiClient getClient(final User user) {
 
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
@@ -49,10 +47,8 @@ public class Api {
                 Request newRequest;
 
                 Request.Builder builder = request.newBuilder();
-                if (context != null) {
-                    User user = AuthHelper.getUser(context);
-                    if (user != null) builder.addHeader("Authorization", "Token token=\"" + user.getAuth() + "\"");
-                }
+                if (user != null)
+                    builder.addHeader("Authorization", "Token token=\"" + user.getAuth() + "\"");
 
                 newRequest = builder.build();
                 return chain.proceed(newRequest);
@@ -75,22 +71,25 @@ public class Api {
         @GET("/me.json")
         Call<User> getMe();
 
-        @POST("me/sign_in")
+        @POST("me/sign_in.json")
         Call<User> signIn(@Body SignInRequest signInRequest);
 
-        @POST("users")
+        @POST("me/facebook_sign_in.json")
+        Call<User> signIn(@Body FacebookSignInRequest signInRequest);
+
+        @POST("users.json")
         Call<User> createUser();
 
-        @GET("users")
+        @GET("users.json")
         Call<User> getUsers();
 
-        @GET("users/{userId}")
+        @GET("users/{userId}.json")
         Call<User> getUser(@Path("userId") Long userId);
 
-        @PUT("users/{userId}")
+        @PUT("users/{userId}.json")
         Call<User> updateUser(@Path("userId") Long userId, @Body User user);
 
-        @DELETE("users/{userId}")
+        @DELETE("users/{userId}.json")
         Call<User> deleteUser(@Path("userId") Long userId);
 
 

@@ -11,18 +11,47 @@ public interface LoginContract {
 
     interface View extends BaseView<Presenter> {
         void setLoadingIndicator(boolean active);
+
         void navigateToMain();
+
         void resetLoginErrors();
+
+        void showVolunteerSignUp();
+
+        void showOrganizationSignUp();
+
         void showEmailRequiredError();
+
         void showPasswordRequiredError();
+
         void showInvalidEmailError();
+
         void showInvalidPasswordError();
+
         void setFocusPasswordField();
+
         void setFocusEmailField();
+
         void showLoginDefaultError();
+
+        void showFacebookLoginError();
+
+        void showFacebookLogin();
+
+        void showPasswordRecovery();
     }
 
     interface Presenter extends BasePresenter {
         void attemptEmailLogin(String email, String password);
+
+        void attemptFacebookLogin(String token);
+
+        void startFacebookLogin();
+
+        void recoveryPassword();
+
+        void volunteerSignUp();
+
+        void organizationSignUp();
     }
 }

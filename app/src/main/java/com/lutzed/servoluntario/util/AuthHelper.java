@@ -2,6 +2,7 @@ package com.lutzed.servoluntario.util;
 
 import android.content.Context;
 
+import com.facebook.login.LoginManager;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.User;
 
@@ -11,49 +12,56 @@ import retrofit2.Response;
 
 public class AuthHelper {
 
+    private static AuthHelper mAuthHelper;
     private static User mUser;
-    private static AuthSharedPreferences mAuthSharedPreferences;
+    private final AuthSharedPreferences mAuthSharedPreferences;
 
-    public static User getUser(Context context) {
-        AuthSharedPreferences authSharedPreferences = getAuthSharedPreferences(context);
+    private AuthHelper(AuthSharedPreferences mAuthSharedPreferences) {
+        this.mAuthSharedPreferences = mAuthSharedPreferences;
+    }
 
-        if (authSharedPreferences.hasUser() && mUser == null) {
-            initUser(context);
+    public static AuthHelper getInstance(Context context) {
+        if (mAuthHelper == null) {
+            mAuthHelper = new AuthHelper(new AuthSharedPreferences(context));
+        }
+        return mAuthHelper;
+    }
+
+    public User getUser() {
+        if (mAuthSharedPreferences.hasUser() && mUser == null) {
+            initUser();
         }
 
         return mUser;
     }
 
-    public static boolean hasUser(Context context) {
-        return getAuthSharedPreferences(context).hasUser();
+    public void signout() {
+        mAuthSharedPreferences.clear();
+        mUser = null;
+        LoginManager.getInstance().logOut();
     }
 
-    public static AuthSharedPreferences getAuthSharedPreferences(Context context) {
-        if (mAuthSharedPreferences == null) {
-            mAuthSharedPreferences = new AuthSharedPreferences(context);
-        }
-        return mAuthSharedPreferences;
+
+    public boolean hasUser() {
+        return mAuthSharedPreferences.hasUser();
     }
 
-    private static void initUser(Context context) {
-        mUser = getAuthSharedPreferences(context).getUser();
+    private void initUser() {
+        mUser = mAuthSharedPreferences.getUser();
     }
 
-    public static void setUser(Context context, User user) {
-        AuthSharedPreferences authSharedPreferences = getAuthSharedPreferences(context);
-
-        authSharedPreferences.setUser(user);
-        authSharedPreferences.setHave(true);
-
-        initUser(context);
+    public void setUser(User user) {
+        mAuthSharedPreferences.setUser(user);
+        mAuthSharedPreferences.setHave(true);
+        initUser();
     }
 
-    public static void updateUserData(final Context context, final Callback<User> callback) {
-        Call<User> meCall = Api.getClient(context).getMe();
+    public void updateUserData(final Callback<User> callback) {
+        Call<User> meCall = Api.getClient(mUser).getMe();
         meCall.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                AuthHelper.setUser(context, response.body());
+                setUser(response.body());
                 if (callback != null) callback.onResponse(call, response);
             }
 
@@ -64,7 +72,7 @@ public class AuthHelper {
         });
     }
 
-    public static void updateUserData(final Context context) {
-        updateUserData(context, null);
+    public void updateUserData() {
+        updateUserData(null);
     }
 }

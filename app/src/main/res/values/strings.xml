@@ -1,4 +1,7 @@
 <resources>
+    <string name="facebook_app_id">233886120423294</string>
+    <string name="fb_login_protocol_scheme">fb233886120423294</string>
+
     <string name="app_name">Ser Voluntário</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
@@ -17,4 +20,11 @@
         completions."
     </string>
     <string name="error_try_later">Unexpected error, try later</string>
+    <string name="error_facebook_login">Facebook login error, try later.</string>
+    <string name="action_facebook_sign_in">Facebook Login</string>
+    <string name="action_sign_up">Sign Up</string>
+    <string name="action_forgot_password">Forgot password?</string>
+    <string name="action_organization_sign_up">Organization?</string>
+
+
 </resources>

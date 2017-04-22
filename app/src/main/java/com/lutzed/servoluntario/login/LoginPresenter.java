@@ -3,8 +3,10 @@ package com.lutzed.servoluntario.login;
 import android.text.TextUtils;
 
 import com.lutzed.servoluntario.api.Api;
+import com.lutzed.servoluntario.api.requests.FacebookSignInRequest;
 import com.lutzed.servoluntario.api.requests.SignInRequest;
 import com.lutzed.servoluntario.models.User;
+import com.lutzed.servoluntario.util.AuthHelper;
 import com.lutzed.servoluntario.util.Snippets;
 
 import retrofit2.Call;
@@ -19,10 +21,12 @@ public class LoginPresenter implements LoginContract.Presenter {
 
     private final LoginContract.View mView;
     private final Api.ApiClient mApiClient;
+    private final AuthHelper mAuthHelper;
 
-    public LoginPresenter(LoginFragment loginFragment, Api.ApiClient apiClient) {
+    public LoginPresenter(LoginFragment loginFragment, Api.ApiClient apiClient, AuthHelper authHelper) {
         mView = loginFragment;
         mApiClient = apiClient;
+        mAuthHelper = authHelper;
         mView.setPresenter(this);
     }
 
@@ -35,9 +39,11 @@ public class LoginPresenter implements LoginContract.Presenter {
         // Check for a valid email address.
         if (TextUtils.isEmpty(email)) {
             mView.showEmailRequiredError();
+            mView.setFocusEmailField();
             cancel = true;
         } else if (!Snippets.isEmailValid(email)) {
             mView.showInvalidEmailError();
+            mView.setFocusEmailField();
             cancel = true;
         }
 
@@ -61,13 +67,16 @@ public class LoginPresenter implements LoginContract.Presenter {
                             mView.setLoadingIndicator(false);
                             switch (response.code()) {
                                 case 200:
+                                    mAuthHelper.setUser(response.body());
                                     mView.navigateToMain();
                                     break;
                                 case 401:
                                     mView.showInvalidPasswordError();
+                                    mView.setFocusPasswordField();
                                     break;
                                 default:
                                     mView.showLoginDefaultError();
+                                    mView.setFocusPasswordField();
                             }
                         }
 
@@ -75,6 +84,7 @@ public class LoginPresenter implements LoginContract.Presenter {
                         public void onFailure(Call<User> call, Throwable t) {
                             mView.setLoadingIndicator(false);
                             mView.showLoginDefaultError();
+                            mView.setFocusPasswordField();
                         }
                     }
             );
@@ -83,7 +93,65 @@ public class LoginPresenter implements LoginContract.Presenter {
     }
 
     @Override
-    public void start() {
+    public void recoveryPassword() {
+        mView.showPasswordRecovery();
+    }
 
+    @Override
+    public void startFacebookLogin() {
+        mView.showFacebookLogin();
+    }
+
+    @Override
+    public void volunteerSignUp() {
+        mView.showVolunteerSignUp();
+    }
+
+    @Override
+    public void organizationSignUp() {
+        mView.showOrganizationSignUp();
+    }
+
+    @Override
+    public void attemptFacebookLogin(String token) {
+        mView.setLoadingIndicator(true);
+        mApiClient.signIn(new FacebookSignInRequest(token)).enqueue(
+                new Callback<User>() {
+                    @Override
+                    public void onResponse(Call<User> call, Response<User> response) {
+                        mView.setLoadingIndicator(false);
+                        switch (response.code()) {
+                            case 200:
+                                mAuthHelper.setUser(response.body());
+                                mView.navigateToMain();
+                                break;
+                            case 404:
+                                mView.showVolunteerSignUp();
+                                break;
+                            case 401:
+                                mView.showFacebookLoginError();
+                                break;
+                            default:
+                                mView.showFacebookLoginError();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<User> call, Throwable t) {
+                        mView.setLoadingIndicator(false);
+                        mView.showFacebookLoginError();
+                        mView.setFocusPasswordField();
+                    }
+                }
+        );
+    }
+
+    @Override
+    public void start() {
+        if (mAuthHelper.hasUser()) {
+            mView.setLoadingIndicator(true);
+            mView.navigateToMain();
+            mAuthHelper.updateUserData();
+        }
     }
 }

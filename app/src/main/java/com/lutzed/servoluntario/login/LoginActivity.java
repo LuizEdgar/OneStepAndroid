@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.util.ActivityUtils;
+import com.lutzed.servoluntario.util.AuthHelper;
 
 public class LoginActivity extends AppCompatActivity{
 
@@ -29,7 +30,7 @@ public class LoginActivity extends AppCompatActivity{
         }
 
         // Create the presenter
-        loginPresenter = new LoginPresenter(loginFragment, Api.getUnauthorizedClient());
+        loginPresenter = new LoginPresenter(loginFragment, Api.getUnauthorizedClient(), AuthHelper.getInstance(this));
 
         // Load previously saved state, if available.
         if (savedInstanceState != null) {
