@@ -25,6 +25,12 @@
     <string name="action_sign_up">Sign Up</string>
     <string name="action_forgot_password">Forgot password?</string>
     <string name="action_organization_sign_up">Organization?</string>
+    <string name="error_password_match">Password do not match</string>
+    <string name="title_activity_sign_up">Sign Up</string>
+    <string name="action_toggle_to_volunteer">Create Volunteer Account</string>
+    <string name="action_toggle_to_organization">Create Organization Account</string>
+    <string name="title_create_organization">Create Organization</string>
+    <string name="title_create_volunteer">Create Volunteer</string>
 
 
 </resources>

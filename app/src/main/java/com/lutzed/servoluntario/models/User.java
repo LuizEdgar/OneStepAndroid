@@ -183,4 +183,30 @@ public class User {
     public void setFacebookToken(String facebookToken) {
         this.facebookToken = facebookToken;
     }
+
+    public enum Kind {
+        VOLUNTEER("volunteer"),
+        ORGANIZATION("organization");
+
+        private final String kind;
+
+        Kind(String kind) {
+            this.kind = kind;
+        }
+
+        public String getKind() {
+            return kind;
+        }
+
+        public static Kind fromString(String kindString) {
+            switch (kindString) {
+                case "volunteer":
+                    return VOLUNTEER;
+                case "organization":
+                    return ORGANIZATION;
+                default:
+                    return VOLUNTEER;
+            }
+        }
+    }
 }
