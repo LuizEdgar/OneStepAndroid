@@ -32,7 +32,7 @@ public class LoginPresenter implements LoginContract.Presenter {
 
     @Override
     public void attemptEmailLogin(String email, String password) {
-        mView.resetLoginErrors();
+        mView.resetErrors();
 
         boolean cancel = false;
 
@@ -104,7 +104,7 @@ public class LoginPresenter implements LoginContract.Presenter {
 
     @Override
     public void volunteerSignUp() {
-        mView.showVolunteerSignUp();
+        mView.showVolunteerSignUp(false);
     }
 
     @Override
@@ -126,7 +126,7 @@ public class LoginPresenter implements LoginContract.Presenter {
                                 mView.navigateToMain();
                                 break;
                             case 404:
-                                mView.showVolunteerSignUp();
+                                mView.showVolunteerSignUp(true);
                                 break;
                             case 401:
                                 mView.showFacebookLoginError();

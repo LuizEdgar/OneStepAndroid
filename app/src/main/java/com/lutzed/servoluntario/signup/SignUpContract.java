@@ -15,17 +15,21 @@ public interface SignUpContract {
 
         void navigateToMain();
 
-        void resetSignUpErrors();
+        void resetErrors();
 
         void showOrganizationSignUp();
 
         void showEmailRequiredError();
 
+        void showNameRequiredError();
+
+        void showUsernameRequiredError();
+
+        void showInvalidUsernameError();
+
         void showPasswordRequiredError();
 
         void showInvalidEmailError();
-
-        void showPasswordNotMatchError();
 
         void showInvalidPasswordError();
 
@@ -36,15 +40,27 @@ public interface SignUpContract {
         void showSignUpDefaultError();
 
         void showVolunteerSignUp();
+
+        void setFocusNameField();
+
+        void setFocusUsernameField();
+
+        void clearAllFields();
+
+        void populateFacebookFields(String name, String email);
     }
 
     interface Presenter extends BasePresenter {
-        void attemptSignUp(String name, String email, String password);
+        void attemptSignUp(String name, String username, String email, String password);
 
         void setSignUpUserKind(User.Kind kind);
 
         User.Kind getSignUpUserKind();
 
         void toogleSignUpMode();
+
+        void setIsFacebookSignUp(boolean isFacebookSignUp);
+
+        boolean getIsFacebookSignUp();
     }
 }

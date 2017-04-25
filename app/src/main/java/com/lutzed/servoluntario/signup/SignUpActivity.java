@@ -10,9 +10,10 @@ import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.util.ActivityUtils;
 import com.lutzed.servoluntario.util.AuthHelper;
 
-public class SignUpActivity extends AppCompatActivity{
+public class SignUpActivity extends AppCompatActivity {
 
     public static final String EXTRA_SIGN_UP_USER_KIND = "extraSignUpUserKind";
+    public static final String EXTRA_IS_FACEBOOK_SIGN_UP = "extraIsFacebookSignUp";
 
     private SignUpPresenter mSignUpPresenter;
 
@@ -25,6 +26,7 @@ public class SignUpActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
 
         User.Kind singUpKind = (User.Kind) getIntent().getSerializableExtra(EXTRA_SIGN_UP_USER_KIND);
+        boolean isFacebookSignUp = getIntent().getBooleanExtra(EXTRA_IS_FACEBOOK_SIGN_UP, false);
 
         SignUpFragment signUpFragment =
                 (SignUpFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
@@ -38,18 +40,22 @@ public class SignUpActivity extends AppCompatActivity{
         }
 
         // Create the presenter
-        mSignUpPresenter = new SignUpPresenter(signUpFragment, Api.getUnauthorizedClient(), AuthHelper.getInstance(this), singUpKind);
+        mSignUpPresenter = new SignUpPresenter(signUpFragment, Api.getUnauthorizedClient(), AuthHelper.getInstance(this), singUpKind, isFacebookSignUp);
 
         // Load previously saved state, if available.
         if (savedInstanceState != null) {
             singUpKind = (User.Kind) savedInstanceState.getSerializable(EXTRA_SIGN_UP_USER_KIND);
             mSignUpPresenter.setSignUpUserKind(singUpKind);
+
+            isFacebookSignUp = savedInstanceState.getBoolean(EXTRA_SIGN_UP_USER_KIND, false);
+            mSignUpPresenter.setIsFacebookSignUp(isFacebookSignUp);
         }
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putSerializable(EXTRA_SIGN_UP_USER_KIND, mSignUpPresenter.getSignUpUserKind());
+        outState.putSerializable(EXTRA_IS_FACEBOOK_SIGN_UP, mSignUpPresenter.getIsFacebookSignUp());
         super.onSaveInstanceState(outState);
     }
 

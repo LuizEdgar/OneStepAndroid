@@ -14,9 +14,9 @@ public interface LoginContract {
 
         void navigateToMain();
 
-        void resetLoginErrors();
+        void resetErrors();
 
-        void showVolunteerSignUp();
+        void showVolunteerSignUp(boolean isFacebookSignUp);
 
         void showOrganizationSignUp();
 

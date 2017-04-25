@@ -15,6 +15,8 @@ public class User {
 
     @Expose private String name;
 
+    @Expose private String username;
+
     @Expose private String email;
 
     @Expose private String kind;
@@ -184,6 +186,14 @@ public class User {
         this.facebookToken = facebookToken;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public enum Kind {
         VOLUNTEER("volunteer"),
         ORGANIZATION("organization");
@@ -194,7 +204,8 @@ public class User {
             this.kind = kind;
         }
 
-        public String getKind() {
+        @Override
+        public String toString() {
             return kind;
         }
 

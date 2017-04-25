@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.util.Base64;
 
 import java.io.ByteArrayOutputStream;
+import java.util.regex.Pattern;
 
 /**
  * Created by luizfreitas on 08/05/2016.
@@ -70,4 +71,11 @@ public class Snippets {
     public static boolean isEmailValid(String email) {
         return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
+
+    private static final Pattern USERNAME_PATTERN = Pattern.compile("^[a-z0-9]{3,15}$");
+
+    public static boolean isUsernameValid(String username) {
+        return !TextUtils.isEmpty(username) && USERNAME_PATTERN.matcher(username).matches();
+    }
+
 }

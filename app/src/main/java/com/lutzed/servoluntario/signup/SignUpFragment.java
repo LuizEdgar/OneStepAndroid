@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.IntentCompat;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,8 @@ import static com.lutzed.servoluntario.R.id.email;
 public class SignUpFragment extends Fragment implements SignUpContract.View {
 
     @BindView(email) AutoCompleteTextView mEmailView;
+    @BindView(R.id.name) EditText mNameView;
+    @BindView(R.id.username) EditText mUsernameView;
     @BindView(R.id.password) EditText mPasswordView;
     @BindView(R.id.login_progress) View mProgressView;
     @BindView(R.id.email_login_form) View mLoginFormView;
@@ -64,7 +67,7 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
+                if (id == R.id.sign_up || id == EditorInfo.IME_NULL) {
                     onSignUpClicked();
                     return true;
                 }
@@ -77,11 +80,13 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
 
     @OnClick(R.id.sign_up_button)
     void onSignUpClicked() {
-        mPresenter.attemptSignUp(null,null,null);
+        mPresenter.attemptSignUp(mNameView.getText().toString(), mUsernameView.getText().toString(), mEmailView.getText().toString(), mPasswordView.getText().toString());
     }
 
-    public void resetSignUpErrors() {
+    public void resetErrors() {
+        mNameView.setError(null);
         mEmailView.setError(null);
+        mUsernameView.setError(null);
         mPasswordView.setError(null);
     }
 
@@ -120,9 +125,18 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
     }
 
     @Override
+    public void clearAllFields() {
+        mNameView.setText("");
+        mEmailView.setText("");
+        mUsernameView.setText("");
+        mPasswordView.setText("");
+    }
+
+    @Override
     public void navigateToMain() {
         getActivity().finish();
         Intent intent = new Intent(getContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 
@@ -142,8 +156,33 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
     }
 
     @Override
+    public void setFocusNameField() {
+        mNameView.requestFocus();
+    }
+
+    @Override
+    public void setFocusUsernameField() {
+        mUsernameView.requestFocus();
+    }
+
+    @Override
     public void showEmailRequiredError() {
         mEmailView.setError(getString(R.string.error_field_required));
+    }
+
+    @Override
+    public void showNameRequiredError() {
+        mNameView.setError(getString(R.string.error_field_required));
+    }
+
+    @Override
+    public void showUsernameRequiredError() {
+        mUsernameView.setError(getString(R.string.error_field_required));
+    }
+
+    @Override
+    public void showInvalidUsernameError() {
+        mUsernameView.setError(getString(R.string.error_invalid_username));
     }
 
     @Override
@@ -154,11 +193,6 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
     @Override
     public void showInvalidEmailError() {
         mEmailView.setError(getString(R.string.error_invalid_email));
-    }
-
-    @Override
-    public void showPasswordNotMatchError() {
-        mPasswordView.setError(getString(R.string.error_password_match));
     }
 
     @Override
@@ -179,8 +213,12 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
     @Override
     public void showSignUpDefaultError() {
         Toast.makeText(getContext(), "TODO Defaul signUp error", Toast.LENGTH_SHORT).show();
-
     }
 
+    @Override
+    public void populateFacebookFields(String name, String email) {
+        mNameView.setText(name);
+        mEmailView.setText(email);
+    }
 }
 

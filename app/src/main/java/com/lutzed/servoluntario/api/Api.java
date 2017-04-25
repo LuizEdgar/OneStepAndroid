@@ -78,7 +78,7 @@ public class Api {
         Call<User> signIn(@Body FacebookSignInRequest signInRequest);
 
         @POST("users.json")
-        Call<User> createUser();
+        Call<User> createUser(@Body User user);
 
         @GET("users.json")
         Call<User> getUsers();

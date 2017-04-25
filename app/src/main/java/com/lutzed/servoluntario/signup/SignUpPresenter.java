@@ -1,8 +1,23 @@
 package com.lutzed.servoluntario.signup;
 
+import android.os.Bundle;
+import android.text.TextUtils;
+
+import com.facebook.AccessToken;
+import com.facebook.GraphRequest;
+import com.facebook.GraphResponse;
 import com.lutzed.servoluntario.api.Api;
+import com.lutzed.servoluntario.models.Organization;
 import com.lutzed.servoluntario.models.User;
+import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.AuthHelper;
+import com.lutzed.servoluntario.util.Snippets;
+
+import org.json.JSONObject;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 import static com.lutzed.servoluntario.models.User.Kind.ORGANIZATION;
 import static com.lutzed.servoluntario.models.User.Kind.VOLUNTEER;
@@ -17,18 +32,110 @@ public class SignUpPresenter implements SignUpContract.Presenter {
     private final Api.ApiClient mApiClient;
     private final AuthHelper mAuthHelper;
     private User.Kind mCurrentSignUpUserKind;
+    private boolean mIsFacebookSignUp;
+    private String mGender;
 
-    public SignUpPresenter(SignUpFragment signUpFragment, Api.ApiClient apiClient, AuthHelper authHelper, User.Kind kind) {
+    public SignUpPresenter(SignUpFragment signUpFragment, Api.ApiClient apiClient, AuthHelper authHelper, User.Kind kind, boolean isFacebookSignUp) {
         mView = signUpFragment;
         mApiClient = apiClient;
         mAuthHelper = authHelper;
         mCurrentSignUpUserKind = kind;
+        mIsFacebookSignUp = isFacebookSignUp;
         mView.setPresenter(this);
     }
 
     @Override
-    public void attemptSignUp(String name, String email, String password) {
+    public void attemptSignUp(String name, String username, String email, String password) {
+        mView.resetErrors();
 
+        boolean cancel = false;
+
+        // Check for a valid name
+        if (TextUtils.isEmpty(name)) {
+            mView.showNameRequiredError();
+            mView.setFocusNameField();
+            cancel = true;
+        }
+
+        // Check for a valid password, if the user entered one.
+        if (TextUtils.isEmpty(username)) {
+            mView.showUsernameRequiredError();
+            if (!cancel) mView.setFocusUsernameField();
+            cancel = true;
+        } else if (!Snippets.isUsernameValid(username)) {
+            mView.showInvalidUsernameError();
+            if (!cancel) mView.setFocusUsernameField();
+            cancel = true;
+        }
+
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(email)) {
+            mView.showEmailRequiredError();
+            if (!cancel) mView.setFocusEmailField();
+            cancel = true;
+        } else if (!Snippets.isEmailValid(email)) {
+            mView.showInvalidEmailError();
+            if (!cancel) mView.setFocusEmailField();
+            cancel = true;
+        }
+
+        // Check for a valid password, if the user entered one.
+        if (TextUtils.isEmpty(password)) {
+            mView.showPasswordRequiredError();
+            if (!cancel) mView.setFocusPasswordField();
+            cancel = true;
+        } else if (!Snippets.isPasswordValid(password)) {
+            mView.showInvalidPasswordError();
+            if (!cancel) mView.setFocusPasswordField();
+            cancel = true;
+        }
+
+        if (!cancel){
+            mView.setLoadingIndicator(true);
+
+            User user = new User();
+            user.setKind(mCurrentSignUpUserKind.toString());
+            switch (mCurrentSignUpUserKind) {
+                case VOLUNTEER:
+                    Volunteer volunteer = new Volunteer();
+                    volunteer.setGender(mGender);
+                    user.setVolunteerAttributes(volunteer);
+
+                    if (mIsFacebookSignUp) user.setFacebookToken(AccessToken.getCurrentAccessToken().getToken());
+
+                    break;
+                case ORGANIZATION:
+                    user.setOrganizationAttributes(new Organization());
+                    break;
+            }
+            user.setName(name);
+            user.setUsername(username);
+            user.setEmail(email);
+            user.setPassword(password);
+
+            mApiClient.createUser(user).enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    mView.setLoadingIndicator(false);
+                    switch (response.code()) {
+                        case 201:
+                            mAuthHelper.setUser(response.body());
+                            mView.navigateToMain();
+                            break;
+                        case 422:
+                            mView.showSignUpDefaultError();
+                            break;
+                        default:
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<User> call, Throwable t) {
+                    mView.setLoadingIndicator(false);
+                    mView.showSignUpDefaultError();
+                }
+            });
+        }
     }
 
     @Override
@@ -41,6 +148,16 @@ public class SignUpPresenter implements SignUpContract.Presenter {
                 setSignUpUserKind(VOLUNTEER);
                 break;
         }
+    }
+
+    @Override
+    public void setIsFacebookSignUp(boolean isFacebookSignUp) {
+        mIsFacebookSignUp = isFacebookSignUp;
+    }
+
+    @Override
+    public boolean getIsFacebookSignUp() {
+        return mIsFacebookSignUp;
     }
 
     @Override
@@ -58,6 +175,8 @@ public class SignUpPresenter implements SignUpContract.Presenter {
                 mView.showOrganizationSignUp();
                 break;
         }
+        mView.clearAllFields();
+        mView.setFocusNameField();
     }
 
     @Override
@@ -68,6 +187,27 @@ public class SignUpPresenter implements SignUpContract.Presenter {
     @Override
     public void start() {
         sendSignUpModeToView(mCurrentSignUpUserKind);
+        if (mIsFacebookSignUp) populateFacebookData();
+    }
+
+    private void populateFacebookData(){
+        mView.setLoadingIndicator(true);
+        GraphRequest request = GraphRequest.newMeRequest(
+                AccessToken.getCurrentAccessToken(),
+                new GraphRequest.GraphJSONObjectCallback() {
+                    @Override
+                    public void onCompleted(
+                            JSONObject me,
+                            GraphResponse response) {
+                        mView.setLoadingIndicator(false);
+                        mView.populateFacebookFields(me.optString("name"), me.optString("email"));
+                        mGender = me.optString("gender");
+                    }
+                });
+        Bundle parameters = new Bundle();
+        parameters.putString("fields", "id, name, email, gender");
+        request.setParameters(parameters);
+        request.executeAsync();
     }
 
 }

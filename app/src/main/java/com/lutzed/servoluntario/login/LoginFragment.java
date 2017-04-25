@@ -126,7 +126,7 @@ public class LoginFragment extends Fragment implements LoginContract.View {
     }
 
     @Override
-    public void resetLoginErrors() {
+    public void resetErrors() {
         mEmailView.setError(null);
         mPasswordView.setError(null);
     }
@@ -189,9 +189,10 @@ public class LoginFragment extends Fragment implements LoginContract.View {
     }
 
     @Override
-    public void showVolunteerSignUp() {
+    public void showVolunteerSignUp(boolean isFacebookSignUp) {
         Intent intent = new Intent(getContext(), SignUpActivity.class);
         intent.putExtra(SignUpActivity.EXTRA_SIGN_UP_USER_KIND, User.Kind.VOLUNTEER);
+        intent.putExtra(SignUpActivity.EXTRA_IS_FACEBOOK_SIGN_UP, isFacebookSignUp);
         startActivity(intent);
     }
 
