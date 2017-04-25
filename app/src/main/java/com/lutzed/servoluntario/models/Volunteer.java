@@ -5,8 +5,6 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-import okhttp3.OkHttpClient;
-
 /**
  * Created by luizfreitas on 25/07/2016.
  */
@@ -30,6 +28,8 @@ public class Volunteer {
     @Expose private String cpf;
 
     @Expose private String rg;
+
+    @Expose private String gender;
 
     @Expose private Boolean verified;
 
@@ -172,5 +172,13 @@ public class Volunteer {
 
     public void setSkills(List<Skill> skills) {
         this.skills = skills;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 }

@@ -15,6 +15,8 @@ public class User {
 
     @Expose private String name;
 
+    @Expose private String username;
+
     @Expose private String email;
 
     @Expose private String kind;
@@ -182,5 +184,56 @@ public class User {
 
     public void setFacebookToken(String facebookToken) {
         this.facebookToken = facebookToken;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public List<Phone> getPhonesAttributes() {
+        return phonesAttributes;
+    }
+
+    public void setPhonesAttributes(List<Phone> phonesAttributes) {
+        this.phonesAttributes = phonesAttributes;
+    }
+
+    public List<Address> getAddressesAttributes() {
+        return addressesAttributes;
+    }
+
+    public void setAddressesAttributes(List<Address> addressesAttributes) {
+        this.addressesAttributes = addressesAttributes;
+    }
+
+    public enum Kind {
+        VOLUNTEER("volunteer"),
+        ORGANIZATION("organization");
+
+        private final String kind;
+
+        Kind(String kind) {
+            this.kind = kind;
+        }
+
+        @Override
+        public String toString() {
+            return kind;
+        }
+
+        public static Kind fromString(String kindString) {
+            switch (kindString) {
+                case "volunteer":
+                    return VOLUNTEER;
+                case "organization":
+                    return ORGANIZATION;
+                default:
+                    return VOLUNTEER;
+            }
+        }
     }
 }

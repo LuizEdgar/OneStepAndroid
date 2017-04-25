@@ -1,4 +1,4 @@
-package com.lutzed.servoluntario.login;
+package com.lutzed.servoluntario.signup;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -7,8 +7,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.util.Log;
+import android.support.v4.content.IntentCompat;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,16 +20,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.login.LoginManager;
-import com.facebook.login.LoginResult;
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.activities.MainActivity;
-import com.lutzed.servoluntario.models.User;
-import com.lutzed.servoluntario.signup.SignUpActivity;
-import com.lutzed.servoluntario.util.Constants;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,37 +32,22 @@ import static com.lutzed.servoluntario.R.id.email;
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginFragment extends Fragment implements LoginContract.View {
+public class SignUpFragment extends Fragment implements SignUpContract.View {
 
     @BindView(email) AutoCompleteTextView mEmailView;
+    @BindView(R.id.name) EditText mNameView;
+    @BindView(R.id.name_input_layout) TextInputLayout mNameInputLayout;
+    @BindView(R.id.username) EditText mUsernameView;
     @BindView(R.id.password) EditText mPasswordView;
+    @BindView(R.id.phone) EditText mPhoneView;
     @BindView(R.id.login_progress) View mProgressView;
     @BindView(R.id.email_login_form) View mLoginFormView;
-//    @BindView(R.id.login_button) LoginButton mLoginButton;
+    @BindView(R.id.toggle_sign_up_mode_button) TextView mToggleSignUpModeButton;
 
-    private LoginContract.Presenter mPresenter;
+    private SignUpContract.Presenter mPresenter;
 
-    private CallbackManager mCallbackManager;
-    private FacebookCallback mFacebookCallback = new FacebookCallback<LoginResult>() {
-        @Override
-        public void onSuccess(LoginResult loginResult) {
-            mPresenter.attemptFacebookLogin(loginResult.getAccessToken().getToken());
-        }
-
-        @Override
-        public void onCancel() {
-            Log.d("FBL", "cancel");
-        }
-
-        @Override
-        public void onError(FacebookException error) {
-            Log.d("FBL", error.getMessage());
-        }
-    };
-
-
-    public static LoginFragment newInstance() {
-        return new LoginFragment();
+    public static SignUpFragment newInstance() {
+        return new SignUpFragment();
     }
 
     @Override
@@ -79,67 +57,40 @@ public class LoginFragment extends Fragment implements LoginContract.View {
     }
 
     @Override
-    public void setPresenter(LoginContract.Presenter presenter) {
+    public void setPresenter(SignUpContract.Presenter presenter) {
         mPresenter = presenter;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_login, container, false);
+        View root = inflater.inflate(R.layout.fragment_sign_up, container, false);
         ButterKnife.bind(this, root);
 
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    onEmailSignInClicked();
+                if (id == R.id.sign_up || id == EditorInfo.IME_NULL) {
+                    onSignUpClicked();
                     return true;
                 }
                 return false;
             }
         });
 
-        mCallbackManager = CallbackManager.Factory.create();
         return root;
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+    @OnClick(R.id.sign_up_button)
+    void onSignUpClicked() {
+        mPresenter.attemptSignUp(mNameView.getText().toString().trim(), mUsernameView.getText().toString().trim().toLowerCase(), mEmailView.getText().toString().trim(), mPasswordView.getText().toString(), mPhoneView.getText().toString());
     }
 
-    @OnClick(R.id.email_sign_in_button)
-    void onEmailSignInClicked() {
-        mPresenter.attemptEmailLogin(mEmailView.getText().toString(), mPasswordView.getText().toString());
-    }
-
-    @OnClick(R.id.facebook_sign_in_button)
-    void onFacebookSignInClicked() {
-        mPresenter.startFacebookLogin();
-    }
-
-    @OnClick(R.id.forgot_password_button)
-    void onForgotPasswordClicked() {
-        mPresenter.recoveryPassword();
-    }
-
-    @Override
     public void resetErrors() {
+        mNameView.setError(null);
         mEmailView.setError(null);
+        mUsernameView.setError(null);
         mPasswordView.setError(null);
-    }
-
-    @Override
-    public void showFacebookLogin() {
-        LoginManager.getInstance().registerCallback(mCallbackManager, mFacebookCallback);
-        LoginManager.getInstance().logInWithReadPermissions(this, Constants.FACEBOOK_PERMISSIONS);
-    }
-
-    @Override
-    public void showPasswordRecovery() {
-        Toast.makeText(getContext(), "TODO FORGOT PASSWORD", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -177,40 +128,67 @@ public class LoginFragment extends Fragment implements LoginContract.View {
     }
 
     @Override
+    public void clearAllFields() {
+        mNameView.setText("");
+        mEmailView.setText("");
+        mUsernameView.setText("");
+        mPasswordView.setText("");
+    }
+
+    @Override
     public void navigateToMain() {
         getActivity().finish();
         Intent intent = new Intent(getContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
 
-    @OnClick(R.id.volunteer_sign_up_button)
-    public void onVolunteerSignUpClicked() {
-        mPresenter.volunteerSignUp();
-    }
-
-    @Override
-    public void showVolunteerSignUp(boolean isFacebookSignUp) {
-        Intent intent = new Intent(getContext(), SignUpActivity.class);
-        intent.putExtra(SignUpActivity.EXTRA_SIGN_UP_USER_KIND, User.Kind.VOLUNTEER);
-        intent.putExtra(SignUpActivity.EXTRA_IS_FACEBOOK_SIGN_UP, isFacebookSignUp);
-        startActivity(intent);
-    }
-
-    @OnClick(R.id.organization_sign_up_button)
+    @OnClick(R.id.toggle_sign_up_mode_button)
     public void onOrganizationSignUpClicked() {
-        mPresenter.organizationSignUp();
+        mPresenter.toogleSignUpMode();
     }
 
     @Override
-    public void showOrganizationSignUp() {
-        Intent intent = new Intent(getContext(), SignUpActivity.class);
-        intent.putExtra(SignUpActivity.EXTRA_SIGN_UP_USER_KIND, User.Kind.ORGANIZATION);
-        startActivity(intent);
+    public void setupOrganizationSignUpPrompts() {
+        mNameInputLayout.setHint(getString(R.string.prompt_organization_name));
+        mToggleSignUpModeButton.setText(R.string.action_toggle_to_volunteer);
+    }
+
+    @Override
+    public void setupVolunteerSignUpPrompts() {
+        mNameInputLayout.setHint(getString(R.string.prompt_name));
+        mToggleSignUpModeButton.setText(R.string.action_toggle_to_organization);
+    }
+
+
+    @Override
+    public void setFocusNameField() {
+        mNameView.requestFocus();
+    }
+
+    @Override
+    public void setFocusUsernameField() {
+        mUsernameView.requestFocus();
     }
 
     @Override
     public void showEmailRequiredError() {
         mEmailView.setError(getString(R.string.error_field_required));
+    }
+
+    @Override
+    public void showNameRequiredError() {
+        mNameView.setError(getString(R.string.error_field_required));
+    }
+
+    @Override
+    public void showUsernameRequiredError() {
+        mUsernameView.setError(getString(R.string.error_field_required));
+    }
+
+    @Override
+    public void showInvalidUsernameError() {
+        mUsernameView.setError(getString(R.string.error_invalid_username));
     }
 
     @Override
@@ -229,16 +207,6 @@ public class LoginFragment extends Fragment implements LoginContract.View {
     }
 
     @Override
-    public void showLoginDefaultError() {
-        mPasswordView.setError(getString(R.string.error_try_later));
-    }
-
-    @Override
-    public void showFacebookLoginError() {
-        Toast.makeText(getContext(), getString(R.string.error_facebook_login), Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     public void setFocusPasswordField() {
         mPasswordView.requestFocus();
     }
@@ -246,6 +214,37 @@ public class LoginFragment extends Fragment implements LoginContract.View {
     @Override
     public void setFocusEmailField() {
         mEmailView.requestFocus();
+    }
+
+    @Override
+    public void showSignUpDefaultError() {
+        Toast.makeText(getContext(), "TODO Defaul signUp error", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void populateFacebookFields(String name, String email) {
+        mNameView.setText(name);
+        mEmailView.setText(email);
+    }
+
+    @Override
+    public void setPhoneFieldVisibility(boolean isVisible) {
+        mPhoneView.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void showPhoneRequiredError() {
+        mPhoneView.setError(getString(R.string.error_field_required));
+    }
+
+    @Override
+    public void setFocusPhoneField() {
+        mPhoneView.requestFocus();
+    }
+
+    @Override
+    public void showInvalidPhoneError() {
+        mPhoneView.setError(getString(R.string.error_invalid_phone));
     }
 }
 
