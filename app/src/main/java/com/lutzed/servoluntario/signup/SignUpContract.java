@@ -17,7 +17,7 @@ public interface SignUpContract {
 
         void resetErrors();
 
-        void showOrganizationSignUp();
+        void setupOrganizationSignUpPrompts();
 
         void showEmailRequiredError();
 
@@ -39,7 +39,7 @@ public interface SignUpContract {
 
         void showSignUpDefaultError();
 
-        void showVolunteerSignUp();
+        void setupVolunteerSignUpPrompts();
 
         void setFocusNameField();
 
@@ -48,10 +48,18 @@ public interface SignUpContract {
         void clearAllFields();
 
         void populateFacebookFields(String name, String email);
+
+        void setPhoneFieldVisibility(boolean isVisible);
+
+        void showPhoneRequiredError();
+
+        void setFocusPhoneField();
+
+        void showInvalidPhoneError();
     }
 
     interface Presenter extends BasePresenter {
-        void attemptSignUp(String name, String username, String email, String password);
+        void attemptSignUp(String name, String username, String email, String password, String phone);
 
         void setSignUpUserKind(User.Kind kind);
 

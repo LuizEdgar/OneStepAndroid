@@ -1,8 +1,10 @@
 package com.lutzed.servoluntario.signup;
 
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.api.Api;
@@ -24,6 +26,10 @@ public class SignUpActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         User.Kind singUpKind = (User.Kind) getIntent().getSerializableExtra(EXTRA_SIGN_UP_USER_KIND);
         boolean isFacebookSignUp = getIntent().getBooleanExtra(EXTRA_IS_FACEBOOK_SIGN_UP, false);
@@ -59,5 +65,14 @@ public class SignUpActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 }

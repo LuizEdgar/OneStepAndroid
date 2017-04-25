@@ -47,6 +47,10 @@ public class Phone {
         this.kind = kind;
     }
 
+    public void setKind(Kind kind) {
+        this.kind = kind.toString();
+    }
+
     public String getCreatedAt() {
         return createdAt;
     }
@@ -61,5 +65,39 @@ public class Phone {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public enum Kind {
+        OTHER("other"),
+        MOBILE("mobile"),
+        WORK("work"),
+        HOME("home"),
+        FAX("fax");
+
+        private final String kind;
+
+        Kind(String kind) {
+            this.kind = kind;
+        }
+
+        @Override
+        public String toString() {
+            return kind;
+        }
+
+        public static Kind fromString(String kindString) {
+            switch (kindString) {
+                case "mobile":
+                    return MOBILE;
+                case "work":
+                    return WORK;
+                case "home":
+                    return HOME;
+                case "fax":
+                    return FAX;
+                default:
+                    return OTHER;
+            }
+        }
     }
 }

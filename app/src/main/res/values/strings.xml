@@ -35,6 +35,9 @@
     <string name="prompt_username">Username</string>
     <string name="action_sign_up_short">Sign Up</string>
     <string name="error_invalid_username">Invalid username!</string>
+    <string name="prompt_organization_name">Organization Name</string>
+    <string name="prompt_phone">Contact Phone</string>
+    <string name="error_invalid_phone">Phone invalid.</string>
 
 
 </resources>

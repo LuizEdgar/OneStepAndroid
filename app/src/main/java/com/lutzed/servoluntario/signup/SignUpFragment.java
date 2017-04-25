@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.IntentCompat;
 import android.view.KeyEvent;
@@ -35,8 +36,10 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
 
     @BindView(email) AutoCompleteTextView mEmailView;
     @BindView(R.id.name) EditText mNameView;
+    @BindView(R.id.name_input_layout) TextInputLayout mNameInputLayout;
     @BindView(R.id.username) EditText mUsernameView;
     @BindView(R.id.password) EditText mPasswordView;
+    @BindView(R.id.phone) EditText mPhoneView;
     @BindView(R.id.login_progress) View mProgressView;
     @BindView(R.id.email_login_form) View mLoginFormView;
     @BindView(R.id.toggle_sign_up_mode_button) TextView mToggleSignUpModeButton;
@@ -80,7 +83,7 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
 
     @OnClick(R.id.sign_up_button)
     void onSignUpClicked() {
-        mPresenter.attemptSignUp(mNameView.getText().toString(), mUsernameView.getText().toString(), mEmailView.getText().toString(), mPasswordView.getText().toString());
+        mPresenter.attemptSignUp(mNameView.getText().toString().trim(), mUsernameView.getText().toString().trim().toLowerCase(), mEmailView.getText().toString().trim(), mPasswordView.getText().toString(), mPhoneView.getText().toString());
     }
 
     public void resetErrors() {
@@ -146,14 +149,17 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
     }
 
     @Override
-    public void showOrganizationSignUp() {
+    public void setupOrganizationSignUpPrompts() {
+        mNameInputLayout.setHint(getString(R.string.prompt_organization_name));
         mToggleSignUpModeButton.setText(R.string.action_toggle_to_volunteer);
     }
 
     @Override
-    public void showVolunteerSignUp() {
+    public void setupVolunteerSignUpPrompts() {
+        mNameInputLayout.setHint(getString(R.string.prompt_name));
         mToggleSignUpModeButton.setText(R.string.action_toggle_to_organization);
     }
+
 
     @Override
     public void setFocusNameField() {
@@ -219,6 +225,26 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
     public void populateFacebookFields(String name, String email) {
         mNameView.setText(name);
         mEmailView.setText(email);
+    }
+
+    @Override
+    public void setPhoneFieldVisibility(boolean isVisible) {
+        mPhoneView.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void showPhoneRequiredError() {
+        mPhoneView.setError(getString(R.string.error_field_required));
+    }
+
+    @Override
+    public void setFocusPhoneField() {
+        mPhoneView.requestFocus();
+    }
+
+    @Override
+    public void showInvalidPhoneError() {
+        mPhoneView.setError(getString(R.string.error_invalid_phone));
     }
 }
 

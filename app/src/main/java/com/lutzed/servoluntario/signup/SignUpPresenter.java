@@ -8,12 +8,16 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.Organization;
+import com.lutzed.servoluntario.models.Phone;
 import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.AuthHelper;
 import com.lutzed.servoluntario.util.Snippets;
 
 import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -45,7 +49,7 @@ public class SignUpPresenter implements SignUpContract.Presenter {
     }
 
     @Override
-    public void attemptSignUp(String name, String username, String email, String password) {
+    public void attemptSignUp(String name, String username, String email, String password, String phoneNumber) {
         mView.resetErrors();
 
         boolean cancel = false;
@@ -55,6 +59,19 @@ public class SignUpPresenter implements SignUpContract.Presenter {
             mView.showNameRequiredError();
             mView.setFocusNameField();
             cancel = true;
+        }
+
+        // Check for a valid phoneNumber ONLY if Organization.
+        if (mCurrentSignUpUserKind == ORGANIZATION) {
+            if (TextUtils.isEmpty(phoneNumber)) {
+                mView.showPhoneRequiredError();
+                if (!cancel) mView.setFocusPhoneField();
+                cancel = true;
+            } else if (!Snippets.isPhoneValid(phoneNumber)) {
+                mView.showInvalidPhoneError();
+                if (!cancel) mView.setFocusPhoneField();
+                cancel = true;
+            }
         }
 
         // Check for a valid password, if the user entered one.
@@ -90,7 +107,7 @@ public class SignUpPresenter implements SignUpContract.Presenter {
             cancel = true;
         }
 
-        if (!cancel){
+        if (!cancel) {
             mView.setLoadingIndicator(true);
 
             User user = new User();
@@ -101,11 +118,19 @@ public class SignUpPresenter implements SignUpContract.Presenter {
                     volunteer.setGender(mGender);
                     user.setVolunteerAttributes(volunteer);
 
-                    if (mIsFacebookSignUp) user.setFacebookToken(AccessToken.getCurrentAccessToken().getToken());
+                    if (mIsFacebookSignUp)
+                        user.setFacebookToken(AccessToken.getCurrentAccessToken().getToken());
 
                     break;
                 case ORGANIZATION:
                     user.setOrganizationAttributes(new Organization());
+
+                    List<Phone> phones = new ArrayList<>();
+                    Phone phone = new Phone();
+                    phone.setNumber(phoneNumber);
+                    phones.add(phone);
+                    user.setPhonesAttributes(phones);
+
                     break;
             }
             user.setName(name);
@@ -166,13 +191,15 @@ public class SignUpPresenter implements SignUpContract.Presenter {
         sendSignUpModeToView(mCurrentSignUpUserKind);
     }
 
-    private void sendSignUpModeToView(User.Kind kind){
+    private void sendSignUpModeToView(User.Kind kind) {
         switch (kind) {
             case VOLUNTEER:
-                mView.showVolunteerSignUp();
+                mView.setupVolunteerSignUpPrompts();
+                mView.setPhoneFieldVisibility(false);
                 break;
             case ORGANIZATION:
-                mView.showOrganizationSignUp();
+                mView.setupOrganizationSignUpPrompts();
+                mView.setPhoneFieldVisibility(true);
                 break;
         }
         mView.clearAllFields();
@@ -190,7 +217,7 @@ public class SignUpPresenter implements SignUpContract.Presenter {
         if (mIsFacebookSignUp) populateFacebookData();
     }
 
-    private void populateFacebookData(){
+    private void populateFacebookData() {
         mView.setLoadingIndicator(true);
         GraphRequest request = GraphRequest.newMeRequest(
                 AccessToken.getCurrentAccessToken(),

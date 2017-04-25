@@ -194,6 +194,22 @@ public class User {
         this.username = username;
     }
 
+    public List<Phone> getPhonesAttributes() {
+        return phonesAttributes;
+    }
+
+    public void setPhonesAttributes(List<Phone> phonesAttributes) {
+        this.phonesAttributes = phonesAttributes;
+    }
+
+    public List<Address> getAddressesAttributes() {
+        return addressesAttributes;
+    }
+
+    public void setAddressesAttributes(List<Address> addressesAttributes) {
+        this.addressesAttributes = addressesAttributes;
+    }
+
     public enum Kind {
         VOLUNTEER("volunteer"),
         ORGANIZATION("organization");

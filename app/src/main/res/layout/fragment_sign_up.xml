@@ -33,6 +33,7 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
+                android:id="@+id/name_input_layout"
                 android:layout_height="wrap_content">
 
                 <EditText
@@ -54,6 +55,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/prompt_username"
+                    android:maxLines="1"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/phone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/prompt_phone"
+                    android:inputType="phone"
                     android:maxLines="1"/>
 
             </android.support.design.widget.TextInputLayout>
@@ -100,10 +115,10 @@
                 android:textStyle="bold"/>
 
             <TextView
-                android:visibility="gone"
                 android:id="@+id/toggle_sign_up_mode_button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:visibility="gone"/>
 
         </LinearLayout>
     </ScrollView>

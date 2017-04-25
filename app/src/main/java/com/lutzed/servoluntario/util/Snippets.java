@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Patterns;
 
 import java.io.ByteArrayOutputStream;
 import java.util.regex.Pattern;
@@ -78,4 +79,7 @@ public class Snippets {
         return !TextUtils.isEmpty(username) && USERNAME_PATTERN.matcher(username).matches();
     }
 
+    public static boolean isPhoneValid(String phone) {
+        return !TextUtils.isEmpty(phone) && Patterns.PHONE.matcher(phone).matches();
+    }
 }
