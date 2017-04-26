@@ -25,7 +25,7 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.lutzed.servoluntario.R;
-import com.lutzed.servoluntario.activities.MainActivity;
+import com.lutzed.servoluntario.main.MainActivity;
 import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.signup.SignUpActivity;
 import com.lutzed.servoluntario.util.Constants;
@@ -43,7 +43,7 @@ public class LoginFragment extends Fragment implements LoginContract.View {
 
     @BindView(email) AutoCompleteTextView mEmailView;
     @BindView(R.id.password) EditText mPasswordView;
-    @BindView(R.id.login_progress) View mProgressView;
+    @BindView(R.id.progress) View mProgressView;
     @BindView(R.id.email_login_form) View mLoginFormView;
 //    @BindView(R.id.login_button) LoginButton mLoginButton;
 

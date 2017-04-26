@@ -15,6 +15,8 @@ public class Volunteer {
 
     @Expose private String about;
 
+    @Expose private String occupation;
+
     @Expose
     @SerializedName("day_availability")
     private Integer dayAvailability;
@@ -180,5 +182,13 @@ public class Volunteer {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public String getOccupation() {
+        return occupation;
+    }
+
+    public void setOccupation(String occupation) {
+        this.occupation = occupation;
     }
 }

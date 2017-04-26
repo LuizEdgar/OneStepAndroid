@@ -145,7 +145,7 @@ public class SignUpPresenter implements SignUpContract.Presenter {
                     switch (response.code()) {
                         case 201:
                             mAuthHelper.setUser(response.body());
-                            mView.navigateToMain();
+                            mView.navigateToCompletion();
                             break;
                         case 422:
                             mView.showSignUpDefaultError();

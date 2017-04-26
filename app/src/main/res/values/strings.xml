@@ -38,6 +38,10 @@
     <string name="prompt_organization_name">Organization Name</string>
     <string name="prompt_phone">Contact Phone</string>
     <string name="error_invalid_phone">Phone invalid.</string>
+    <string name="title_activity_completion">Complete Profile</string>
+    <string name="action_save">Save</string>
+    <string name="prompt_about">About</string>
+    <string name="prompt_occupation">Occupation</string>
 
 
 </resources>

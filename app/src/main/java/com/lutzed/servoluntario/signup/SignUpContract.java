@@ -1,7 +1,7 @@
 package com.lutzed.servoluntario.signup;
 
-import com.lutzed.servoluntario.BasePresenter;
-import com.lutzed.servoluntario.BaseView;
+import com.lutzed.servoluntario.interfaces.BasePresenter;
+import com.lutzed.servoluntario.interfaces.BaseView;
 import com.lutzed.servoluntario.models.User;
 
 /**
@@ -13,7 +13,7 @@ public interface SignUpContract {
     interface View extends BaseView<Presenter> {
         void setLoadingIndicator(boolean active);
 
-        void navigateToMain();
+        void navigateToCompletion();
 
         void resetErrors();
 
