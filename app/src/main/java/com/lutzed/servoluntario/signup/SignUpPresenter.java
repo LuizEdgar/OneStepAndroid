@@ -158,6 +158,7 @@ public class SignUpPresenter implements SignUpContract.Presenter {
                 public void onFailure(Call<User> call, Throwable t) {
                     mView.setLoadingIndicator(false);
                     mView.showSignUpDefaultError();
+                    t.printStackTrace();
                 }
             });
         }

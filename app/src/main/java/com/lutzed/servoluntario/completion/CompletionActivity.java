@@ -22,8 +22,38 @@ public class CompletionActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        VolunteerCompletionFragment volunteerCompletionFragment =
-                (VolunteerCompletionFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        switch (AuthHelper.getInstance(this).getUser().getKindEnum()) {
+            case VOLUNTEER:
+                setupVolunteerCompletion(savedInstanceState);
+                break;
+            case ORGANIZATION:
+                setupOrganizationCompletion(savedInstanceState);
+                break;
+        }
+
+    }
+
+    private void setupOrganizationCompletion(Bundle savedInstanceState) {
+        VolunteerCompletionFragment volunteerCompletionFragment = (VolunteerCompletionFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        if (volunteerCompletionFragment == null) {
+            // Create the fragment
+            volunteerCompletionFragment = VolunteerCompletionFragment.newInstance();
+            ActivityUtils.addFragmentToActivity(
+                    getSupportFragmentManager(), volunteerCompletionFragment, R.id.contentFrame);
+        }
+
+        AuthHelper authHelper = AuthHelper.getInstance(this);
+        // Create the presenter
+        mVolunteerCompletionPresenter = new VolunteerCompletionPresenter(volunteerCompletionFragment, Api.getClient(authHelper.getUser()), authHelper);
+
+        // Load previously saved state, if available.
+        if (savedInstanceState != null) {
+
+        }
+    }
+
+    private void setupVolunteerCompletion(Bundle savedInstanceState) {
+        VolunteerCompletionFragment volunteerCompletionFragment = (VolunteerCompletionFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
 
         if (volunteerCompletionFragment == null) {
             // Create the fragment
@@ -32,11 +62,13 @@ public class CompletionActivity extends AppCompatActivity {
                     getSupportFragmentManager(), volunteerCompletionFragment, R.id.contentFrame);
         }
 
+        AuthHelper authHelper = AuthHelper.getInstance(this);
         // Create the presenter
-        mVolunteerCompletionPresenter = new VolunteerCompletionPresenter(volunteerCompletionFragment, Api.getUnauthorizedClient(), AuthHelper.getInstance(this));
+        mVolunteerCompletionPresenter = new VolunteerCompletionPresenter(volunteerCompletionFragment, Api.getClient(authHelper.getUser()), authHelper);
 
         // Load previously saved state, if available.
         if (savedInstanceState != null) {
+
         }
     }
 

@@ -15,10 +15,15 @@ public interface VolunteerCompletionContract {
         void navigateToMain();
 
         void resetErrors();
+
+        void setAboutField(String about);
+
+        void setOccupationField(String occupation);
+
+        void showDefaultSaveError();
     }
 
     interface Presenter extends BasePresenter {
-
-        void saveProfile();
+        void saveProfile(String about, String occupation);
     }
 }

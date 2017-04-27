@@ -94,6 +94,10 @@ public class User {
         return kind;
     }
 
+    public Kind getKindEnum() {
+        return Kind.fromString(kind);
+    }
+
     public void setKind(String kind) {
         this.kind = kind;
     }

@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.main.MainActivity;
@@ -24,12 +25,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
+import static com.lutzed.servoluntario.R.id.about;
+
 /**
  * A login screen that offers login via email/password.
  */
 public class VolunteerCompletionFragment extends Fragment implements VolunteerCompletionContract.View {
 
-    @BindView(R.id.about) EditText mAboutView;
+    @BindView(about) EditText mAboutView;
     @BindView(R.id.occupation) EditText mOccupationView;
     @BindView(R.id.progress) View mProgressView;
     @BindView(R.id.volunteer_completion_form) View mLoginFormView;
@@ -73,7 +76,7 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
 
     @OnClick(R.id.save_button)
     void onSaveClicked() {
-        mPresenter.saveProfile();
+        mPresenter.saveProfile(mAboutView.getText().toString(), mOccupationView.getText().toString());
     }
 
     public void resetErrors() {
@@ -122,6 +125,20 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
-    
+
+    @Override
+    public void setAboutField(String about) {
+        mAboutView.setText(about);
+    }
+
+    @Override
+    public void setOccupationField(String occupation) {
+        mOccupationView.setText(occupation);
+    }
+
+    @Override
+    public void showDefaultSaveError() {
+        Toast.makeText(getContext(), "DEFAULT SAVE ERROR", Toast.LENGTH_SHORT).show();
+    }
 }
 

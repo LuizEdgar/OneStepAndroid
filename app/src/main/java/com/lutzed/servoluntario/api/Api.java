@@ -30,10 +30,9 @@ import retrofit2.http.Path;
  */
 public class Api {
 
-    public static ApiClient getUnauthorizedClient() {
+    public static ApiClient getClient() {
         return getClient(null);
     }
-
 
     public static ApiClient getClient(final User user) {
 

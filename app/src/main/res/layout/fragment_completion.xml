@@ -7,7 +7,6 @@
               android:orientation="vertical"
               tools:context="com.lutzed.servoluntario.signup.SignUpActivity">
 
-    <!-- Login progress -->
     <ProgressBar
         android:id="@+id/progress"
         style="?android:attr/progressBarStyleLarge"
@@ -68,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="@string/action_sign_in"
+                android:text="@string/action_save"
                 android:textStyle="bold"/>
 
         </LinearLayout>
