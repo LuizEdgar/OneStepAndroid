@@ -7,7 +7,7 @@ import com.lutzed.servoluntario.interfaces.BaseView;
  * Created by luizfreitas on 18/04/2017.
  */
 
-public interface VolunteerCompletionContract {
+public interface OrganizationCompletionContract {
 
     interface View extends BaseView<Presenter> {
         void setLoadingIndicator(boolean active);
@@ -18,12 +18,16 @@ public interface VolunteerCompletionContract {
 
         void setAboutField(String about);
 
-        void setOccupationField(String occupation);
+        void setNeedField(String need);
+
+        void setGoalField(String goal);
+
+        void setSiteField(String site);
 
         void showDefaultSaveError();
     }
 
     interface Presenter extends BasePresenter {
-        void saveProfile(String about, String occupation);
+        void saveProfile(String about, String need, String goal, String site);
     }
 }

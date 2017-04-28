@@ -25,22 +25,22 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.lutzed.servoluntario.R.id.about;
-
 /**
  * A login screen that offers login via email/password.
  */
-public class VolunteerCompletionFragment extends Fragment implements VolunteerCompletionContract.View {
+public class OrganizationCompletionFragment extends Fragment implements OrganizationCompletionContract.View {
 
-    @BindView(about) EditText mAboutView;
-    @BindView(R.id.occupation) EditText mOccupationView;
+    @BindView(R.id.about) EditText mAboutView;
+    @BindView(R.id.site) EditText mSiteView;
+    @BindView(R.id.goal) EditText mGoalView;
+    @BindView(R.id.need) EditText mNeedView;
     @BindView(R.id.progress) View mProgressView;
-    @BindView(R.id.volunteer_completion_form) View mLoginFormView;
+    @BindView(R.id.organization_completion_form) View mFormView;
+    //
+    private OrganizationCompletionContract.Presenter mPresenter;
 
-    private VolunteerCompletionContract.Presenter mPresenter;
-
-    public static VolunteerCompletionFragment newInstance() {
-        return new VolunteerCompletionFragment();
+    public static OrganizationCompletionFragment newInstance() {
+        return new OrganizationCompletionFragment();
     }
 
     @Override
@@ -50,17 +50,17 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
     }
 
     @Override
-    public void setPresenter(VolunteerCompletionContract.Presenter presenter) {
+    public void setPresenter(OrganizationCompletionContract.Presenter presenter) {
         mPresenter = presenter;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_volunteer_completion, container, false);
+        View root = inflater.inflate(R.layout.fragment_organization_completion, container, false);
         ButterKnife.bind(this, root);
 
-        mOccupationView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mSiteView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
                 if (id == R.id.save || id == EditorInfo.IME_NULL) {
@@ -76,12 +76,14 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
 
     @OnClick(R.id.save_button)
     void onSaveClicked() {
-        mPresenter.saveProfile(mAboutView.getText().toString(), mOccupationView.getText().toString());
+        mPresenter.saveProfile(mAboutView.getText().toString(), mNeedView.getText().toString(), mGoalView.getText().toString(), mSiteView.getText().toString());
     }
 
     public void resetErrors() {
-       mAboutView.setError(null);
-       mOccupationView.setError(null);
+        mAboutView.setError(null);
+        mNeedView.setError(null);
+        mGoalView.setError(null);
+        mSiteView.setError(null);
     }
 
     @Override
@@ -93,12 +95,12 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(active ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
+            mFormView.setVisibility(active ? View.GONE : View.VISIBLE);
+            mFormView.animate().setDuration(shortAnimTime).alpha(
                     active ? 0 : 1).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(active ? View.GONE : View.VISIBLE);
+                    mFormView.setVisibility(active ? View.GONE : View.VISIBLE);
                 }
             });
 
@@ -114,7 +116,7 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
             // The ViewPropertyAnimator APIs are not available, so simply show
             // and hide the relevant UI components.
             mProgressView.setVisibility(active ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(active ? View.GONE : View.VISIBLE);
+            mFormView.setVisibility(active ? View.GONE : View.VISIBLE);
         }
     }
 
@@ -132,13 +134,24 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
     }
 
     @Override
-    public void setOccupationField(String occupation) {
-        mOccupationView.setText(occupation);
+    public void setNeedField(String need) {
+        mNeedView.setText(need);
+    }
+
+    @Override
+    public void setGoalField(String goal) {
+        mGoalView.setText(goal);
+    }
+
+    @Override
+    public void setSiteField(String site) {
+        mSiteView.setText(site);
     }
 
     @Override
     public void showDefaultSaveError() {
         Toast.makeText(getContext(), "DEFAULT SAVE ERROR", Toast.LENGTH_SHORT).show();
     }
+
 }
 

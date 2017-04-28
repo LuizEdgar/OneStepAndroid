@@ -5,7 +5,7 @@
               android:layout_height="match_parent"
               android:gravity="center_horizontal"
               android:orientation="vertical"
-              tools:context="com.lutzed.servoluntario.signup.SignUpActivity">
+              tools:context="com.lutzed.servoluntario.completion.CompletionActivity">
 
     <ProgressBar
         android:id="@+id/progress"
@@ -16,12 +16,12 @@
         android:visibility="gone"/>
 
     <ScrollView
-        android:id="@+id/login_form"
+        android:id="@+id/form"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/volunteer_completion_form"
+            android:id="@+id/organization_completion_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -49,10 +49,38 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/occupation"
+                    android:id="@+id/goal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_occupation"
+                    android:hint="@string/prompt_goal"
+                    android:inputType="textCapSentences"
+                    android:maxLines="1"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/need"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/prompt_need"
+                    android:inputType="textCapSentences"
+                    android:maxLines="1"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/site"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/prompt_site"
                     android:imeActionId="@+id/save"
                     android:imeActionLabel="@string/action_save"
                     android:imeOptions="actionUnspecified"

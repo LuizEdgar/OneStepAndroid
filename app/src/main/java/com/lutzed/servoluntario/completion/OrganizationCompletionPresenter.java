@@ -6,8 +6,8 @@ import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.lutzed.servoluntario.api.Api;
+import com.lutzed.servoluntario.models.Organization;
 import com.lutzed.servoluntario.models.User;
-import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.AuthHelper;
 
 import org.json.JSONObject;
@@ -20,35 +20,35 @@ import retrofit2.Response;
  * Created by luizfreitas on 18/04/2017.
  */
 
-public class VolunteerCompletionPresenter implements VolunteerCompletionContract.Presenter {
+public class OrganizationCompletionPresenter implements OrganizationCompletionContract.Presenter {
 
-    private final VolunteerCompletionContract.View mView;
+    private final OrganizationCompletionContract.View mView;
     private final Api.ApiClient mApiClient;
     private final User mUser;
     private final AuthHelper mAuthHelper;
 
-    public VolunteerCompletionPresenter(VolunteerCompletionFragment volunteerCompletionFragment, Api.ApiClient apiClient, AuthHelper authHelper) {
+    public OrganizationCompletionPresenter(OrganizationCompletionFragment volunteerCompletionFragment, Api.ApiClient apiClient, AuthHelper authHelper) {
         mView = volunteerCompletionFragment;
         mApiClient = apiClient;
         mAuthHelper = authHelper;
         mUser = authHelper.getUser();
         mView.setPresenter(this);
-
-
     }
 
     @Override
-    public void saveProfile(String about, String occupation) {
+    public void saveProfile(String about, String need, String goal, String site) {
         mView.resetErrors();
 
         User user = new User();
         user.setId(mUser.getId());
 
-        Volunteer volunteerAttributes = new Volunteer();
-        volunteerAttributes.setId(mUser.getVolunteer().getId());
-        volunteerAttributes.setAbout(about);
-        volunteerAttributes.setOccupation(occupation);
-        user.setVolunteerAttributes(volunteerAttributes);
+        Organization organizationAttributes = new Organization();
+        organizationAttributes.setId(mUser.getOrganization().getId());
+        organizationAttributes.setAbout(about);
+        organizationAttributes.setNeed(need);
+        organizationAttributes.setGoal(goal);
+        organizationAttributes.setSite(site);
+        user.setOrganizationAttributes(organizationAttributes);
 
         mView.setLoadingIndicator(true);
         mApiClient.updateUser(user.getId(), user).enqueue(new Callback<User>() {
@@ -82,8 +82,11 @@ public class VolunteerCompletionPresenter implements VolunteerCompletionContract
 
     private void populateUserData() {
         User user = mAuthHelper.getUser();
-        mView.setAboutField(user.getVolunteer().getAbout());
-        mView.setOccupationField(user.getVolunteer().getOccupation());
+        Organization organization = user.getOrganization();
+        mView.setAboutField(organization.getAbout());
+        mView.setNeedField(organization.getNeed());
+        mView.setSiteField(organization.getSite());
+        mView.setGoalField(organization.getGoal());
     }
 
     private void populateFacebookData() {

@@ -13,6 +13,7 @@ import com.lutzed.servoluntario.util.AuthHelper;
 public class CompletionActivity extends AppCompatActivity {
 
     private VolunteerCompletionPresenter mVolunteerCompletionPresenter;
+    private OrganizationCompletionPresenter mOrganizationCompletionPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,17 +35,17 @@ public class CompletionActivity extends AppCompatActivity {
     }
 
     private void setupOrganizationCompletion(Bundle savedInstanceState) {
-        VolunteerCompletionFragment volunteerCompletionFragment = (VolunteerCompletionFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        OrganizationCompletionFragment volunteerCompletionFragment = (OrganizationCompletionFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         if (volunteerCompletionFragment == null) {
             // Create the fragment
-            volunteerCompletionFragment = VolunteerCompletionFragment.newInstance();
+            volunteerCompletionFragment = OrganizationCompletionFragment.newInstance();
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), volunteerCompletionFragment, R.id.contentFrame);
         }
 
         AuthHelper authHelper = AuthHelper.getInstance(this);
         // Create the presenter
-        mVolunteerCompletionPresenter = new VolunteerCompletionPresenter(volunteerCompletionFragment, Api.getClient(authHelper.getUser()), authHelper);
+        mOrganizationCompletionPresenter = new OrganizationCompletionPresenter(volunteerCompletionFragment, Api.getClient(authHelper.getUser()), authHelper);
 
         // Load previously saved state, if available.
         if (savedInstanceState != null) {
