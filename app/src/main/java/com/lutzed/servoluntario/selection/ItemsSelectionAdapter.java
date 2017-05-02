@@ -4,13 +4,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lutzed.servoluntario.R;
-import com.lutzed.servoluntario.selection.ItemsSelectionFragment.OnListFragmentInteractionListener;
 import com.lutzed.servoluntario.models.SelectableItem;
+import com.lutzed.servoluntario.selection.ItemsSelectionFragment.OnListFragmentInteractionListener;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link SelectableItem} and makes a call to the
@@ -35,28 +40,29 @@ public class ItemsSelectionAdapter extends RecyclerView.Adapter<ItemsSelectionAd
         }
     }
 
+    public void addData(List<? extends SelectableItem> items) {
+        if (items == null || items.isEmpty()) {
+            return;
+        }
+
+        int beforeSize = getItemCount();
+
+        mValues.addAll(items);
+        notifyItemRangeInserted(beforeSize, items.size());
+    }
+
     public void swapData(List<? extends SelectableItem> items) {
         clearData();
-
-        if (items == null || items.size() == 0) {
-            return;
-        }
-
-        mValues.addAll(items);
-        notifyItemRangeInserted(0, items.size());
+        addData(items);
     }
 
-    public void addData(List<? extends SelectableItem> items) {
-        int currentSize = items.size();
-
-        if (items == null || items.size() == 0) {
-            return;
+    List<Long> getSelectedItemsIds() {
+        List<Long> list = new ArrayList<>();
+        for (SelectableItem item : mValues) {
+            if (item.isSelected()) list.add(item.getId());
         }
-
-        mValues.addAll(items);
-        notifyItemRangeInserted(currentSize, items.size());
+        return list;
     }
-
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -68,17 +74,19 @@ public class ItemsSelectionAdapter extends RecyclerView.Adapter<ItemsSelectionAd
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getId()+"");
-        holder.mContentView.setText(mValues.get(position).getDisplayName());
+        holder.mIdView.setText(mValues.get(position).getId() + "");
+        holder.mContentView.setText(mValues.get(position).getName());
+
+        holder.mCheckMark.setVisibility(holder.mItem.isSelected() ? View.VISIBLE : View.INVISIBLE);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
-                    // Notify the active callbacks interface (the activity, if the
-                    // fragment is attached to one) that an item has been selected.
                     mListener.onListFragmentInteraction(holder.mItem);
                 }
+                holder.mItem.setSelected(!holder.mItem.isSelected());
+                holder.mCheckMark.setVisibility(holder.mItem.isSelected() ? View.VISIBLE : View.INVISIBLE);
             }
         });
     }
@@ -88,17 +96,20 @@ public class ItemsSelectionAdapter extends RecyclerView.Adapter<ItemsSelectionAd
         return mValues.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public SelectableItem mItem;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        final View mView;
+        @BindView(R.id.id) TextView mIdView;
+        @BindView(R.id.content) TextView mContentView;
+        @BindView(R.id.checkMark) ImageView mCheckMark;
 
-        public ViewHolder(View view) {
+        SelectableItem mItem;
+
+
+        ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
-            mContentView = (TextView) view.findViewById(R.id.content);
+
+            ButterKnife.bind(this, mView);
         }
 
         @Override

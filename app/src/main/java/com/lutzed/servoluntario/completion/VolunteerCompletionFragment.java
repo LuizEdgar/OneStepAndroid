@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lutzed.servoluntario.R;
+import com.lutzed.servoluntario.main.MainActivity;
 import com.lutzed.servoluntario.selection.ItemsSelectionActivity;
 
 import butterknife.BindView;
@@ -122,6 +123,24 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
     public void navigateToChooseSkills() {
         getActivity().finish();
         Intent intent = new Intent(getContext(), ItemsSelectionActivity.class);
+        intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_KIND, ItemsSelectionActivity.Kind.SKILL);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    @Override
+    public void navigateToChooseCauses() {
+        getActivity().finish();
+        Intent intent = new Intent(getContext(), ItemsSelectionActivity.class);
+        intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_KIND, ItemsSelectionActivity.Kind.CAUSE);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    @Override
+    public void navigateToMain() {
+        getActivity().finish();
+        Intent intent = new Intent(getContext(), MainActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

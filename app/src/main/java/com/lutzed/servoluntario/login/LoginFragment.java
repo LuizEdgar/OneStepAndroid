@@ -25,8 +25,8 @@ import com.facebook.FacebookException;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.lutzed.servoluntario.R;
+import com.lutzed.servoluntario.main.MainActivity;
 import com.lutzed.servoluntario.models.User;
-import com.lutzed.servoluntario.selection.ItemsSelectionActivity;
 import com.lutzed.servoluntario.signup.SignUpActivity;
 import com.lutzed.servoluntario.util.Constants;
 
@@ -179,8 +179,9 @@ public class LoginFragment extends Fragment implements LoginContract.View {
     @Override
     public void navigateToMain() {
         getActivity().finish();
-//        Intent intent = new Intent(getContext(), MainActivity.class);
-        Intent intent = new Intent(getContext(), ItemsSelectionActivity.class);
+        Intent intent = new Intent(getContext(), MainActivity.class);
+//        Intent intent = new Intent(getContext(), ItemsSelectionActivity.class);
+//        intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_KIND, ItemsSelectionActivity.Kind.SKILL);
         startActivity(intent);
     }
 

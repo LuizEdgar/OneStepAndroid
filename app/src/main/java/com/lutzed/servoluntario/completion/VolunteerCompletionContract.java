@@ -16,6 +16,10 @@ public interface VolunteerCompletionContract {
 
         void resetErrors();
 
+        void navigateToMain();
+
+        void navigateToChooseCauses();
+
         void setAboutField(String about);
 
         void setOccupationField(String occupation);

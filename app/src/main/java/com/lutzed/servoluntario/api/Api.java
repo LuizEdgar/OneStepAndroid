@@ -27,6 +27,7 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by luizfreitas on 17/07/2016.
@@ -83,13 +84,13 @@ public class Api {
         Call<User> createUser(@Body User user);
 
         @GET("users.json")
-        Call<List<User>> getUsers();
+        Call<List<User>> getUsers(@Query("page") int page);
 
         @GET("causes.json")
-        Call<List<Cause>> getCauses();
+        Call<List<Cause>> getCauses(@Query("page") int page);
 
         @GET("skills.json")
-        Call<List<Skill>> getSkills();
+        Call<List<Skill>> getSkills(@Query("page") int page);
 
         @GET("users/{userId}.json")
         Call<User> getUser(@Path("userId") Long userId);

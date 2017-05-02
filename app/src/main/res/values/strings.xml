@@ -47,6 +47,7 @@
     <string name="prompt_need">Need</string>
     <string name="prompt_site">Site</string>
     <string name="title_activity_items_selection">Selection</string>
+    <string name="action_next">Next</string>
 
 
 </resources>

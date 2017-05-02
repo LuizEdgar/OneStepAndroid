@@ -1,16 +1,24 @@
 package com.lutzed.servoluntario.selection;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.IntentCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.lutzed.servoluntario.R;
+import com.lutzed.servoluntario.main.MainActivity;
 import com.lutzed.servoluntario.models.SelectableItem;
+import com.lutzed.servoluntario.util.EndlessRecyclerViewScrollListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +34,8 @@ public class ItemsSelectionFragment extends Fragment implements ItemsSelectionCo
     private ItemsSelectionContract.Presenter mPresenter;
 
     private OnListFragmentInteractionListener mListener;
+
+    private EndlessRecyclerViewScrollListener mScrollListener;
 
     public ItemsSelectionFragment() {
     }
@@ -45,6 +55,8 @@ public class ItemsSelectionFragment extends Fragment implements ItemsSelectionCo
 
         if (getArguments() != null) {
         }
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -65,18 +77,46 @@ public class ItemsSelectionFragment extends Fragment implements ItemsSelectionCo
 
         ButterKnife.bind(this, view);
 
-        mRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
 
         mRecyclerView.setAdapter(new ItemsSelectionAdapter(new ArrayList<SelectableItem>(), mListener));
+
+
+        mScrollListener = new EndlessRecyclerViewScrollListener(gridLayoutManager) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                // Triggered only when new data needs to be appended to the list
+                // Add whatever code is needed to append new items to the bottom of the list
+                mPresenter.loadItems(false);
+            }
+        };
+        mRecyclerView.addOnScrollListener(mScrollListener);
 
         mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mPresenter.loadItems(true);
+                mPresenter.refreshItems();
+                mScrollListener.resetState();
             }
         });
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.next, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_next) {
+            mPresenter.saveItems(((ItemsSelectionAdapter) mRecyclerView.getAdapter()).getSelectedItemsIds());
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -95,20 +135,57 @@ public class ItemsSelectionFragment extends Fragment implements ItemsSelectionCo
     }
 
     @Override
-    public void showItems(List<? extends SelectableItem> items, boolean isSwap) {
+    public void clearItems() {
         ItemsSelectionAdapter adapter = (ItemsSelectionAdapter) mRecyclerView.getAdapter();
+        adapter.clearData();
+    }
 
-        if (isSwap)
-            adapter.swapData(items);
-        else
-            adapter.addData(items);
+    @Override
+    public void swapItems(List<? extends SelectableItem> items) {
+        ItemsSelectionAdapter adapter = (ItemsSelectionAdapter) mRecyclerView.getAdapter();
+        adapter.swapData(items);
+    }
 
-        mSwipeRefreshLayout.setRefreshing(false);
+    @Override
+    public void addItems(List<? extends SelectableItem> items) {
+        ItemsSelectionAdapter adapter = (ItemsSelectionAdapter) mRecyclerView.getAdapter();
+        adapter.addData(items);
     }
 
     @Override
     public boolean isActive() {
         return isAdded();
+    }
+
+    @Override
+    public void setSavingIndicator(boolean active) {
+        Toast.makeText(getContext(), "Saving...", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void navigateToChooseSkills() {
+        getActivity().finish();
+        Intent intent = new Intent(getContext(), ItemsSelectionActivity.class);
+        intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_KIND, ItemsSelectionActivity.Kind.SKILL);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    @Override
+    public void navigateToChooseCauses() {
+        getActivity().finish();
+        Intent intent = new Intent(getContext(), ItemsSelectionActivity.class);
+        intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_KIND, ItemsSelectionActivity.Kind.CAUSE);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+    @Override
+    public void navigateToMain() {
+        getActivity().finish();
+        Intent intent = new Intent(getContext(), MainActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
     }
 
     @Override

@@ -16,6 +16,10 @@ public interface OrganizationCompletionContract {
 
         void resetErrors();
 
+        void navigateToChooseCauses();
+
+        void navigateToMain();
+
         void setAboutField(String about);
 
         void setNeedField(String need);

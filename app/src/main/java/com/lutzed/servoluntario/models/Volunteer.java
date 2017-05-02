@@ -47,14 +47,14 @@ public class Volunteer {
 
     @Expose(serialize = true, deserialize = false)
     @SerializedName("cause_ids")
-    private List<Integer> causeIds;
+    private List<Long> causeIds;
 
     @Expose(serialize = false, deserialize = true)
     private List<Skill> skills;
 
     @Expose(serialize = true, deserialize = false)
     @SerializedName("skill_ids")
-    private List<Integer> skillIds;
+    private List<Long> skillIds;
 
     @Expose
     @SerializedName("birth_at")
@@ -216,19 +216,19 @@ public class Volunteer {
         this.educationsAttributes = educationsAttributes;
     }
 
-    public List<Integer> getCauseIds() {
+    public List<Long> getCauseIds() {
         return causeIds;
     }
 
-    public void setCauseIds(List<Integer> causeIds) {
+    public void setCauseIds(List<Long> causeIds) {
         this.causeIds = causeIds;
     }
 
-    public List<Integer> getSkillIds() {
+    public List<Long> getSkillIds() {
         return skillIds;
     }
 
-    public void setSkillIds(List<Integer> skillIds) {
+    public void setSkillIds(List<Long> skillIds) {
         this.skillIds = skillIds;
     }
 }

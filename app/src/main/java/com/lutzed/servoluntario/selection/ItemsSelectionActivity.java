@@ -9,9 +9,9 @@ import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.util.ActivityUtils;
 import com.lutzed.servoluntario.util.AuthHelper;
 
-public class ItemsSelectionActivity extends AppCompatActivity{
+public class ItemsSelectionActivity extends AppCompatActivity {
 
-    private SkillsSelectionPresenter mPresenter;
+    public static final String EXTRA_ITEM_SELECTION_KIND = "extra_item_selection_kind";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +21,15 @@ public class ItemsSelectionActivity extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Kind kind = (Kind) getIntent().getSerializableExtra(EXTRA_ITEM_SELECTION_KIND);
+        if (kind == Kind.SKILL) {
+            setupSkillItemSelectionKind(savedInstanceState);
+        } else if (kind == Kind.CAUSE) {
+            setupCauseItemSelectionKind(savedInstanceState);
+        }
+    }
+
+    private void setupSkillItemSelectionKind(Bundle savedInstanceState) {
         ItemsSelectionFragment fragment =
                 (ItemsSelectionFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
         if (fragment == null) {
@@ -31,10 +40,33 @@ public class ItemsSelectionActivity extends AppCompatActivity{
         }
 
         // Create the presenter
-        mPresenter = new SkillsSelectionPresenter(fragment, Api.getClient(AuthHelper.getInstance(this).getUser()));
+        SkillsSelectionPresenter presenter = new SkillsSelectionPresenter(fragment, Api.getClient(AuthHelper.getInstance(this).getUser()), AuthHelper.getInstance(this));
 
         // Load previously saved state, if available.
         if (savedInstanceState != null) {
         }
+    }
+
+    public void setupCauseItemSelectionKind(Bundle savedInstanceState) {
+        ItemsSelectionFragment fragment =
+                (ItemsSelectionFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        if (fragment == null) {
+            // Create the fragment
+            fragment = ItemsSelectionFragment.newInstance();
+            ActivityUtils.addFragmentToActivity(
+                    getSupportFragmentManager(), fragment, R.id.contentFrame);
+        }
+
+        // Create the presenter
+        CauseSelectionPresenter presenter = new CauseSelectionPresenter(fragment, Api.getClient(AuthHelper.getInstance(this).getUser()), AuthHelper.getInstance(this));
+
+        // Load previously saved state, if available.
+        if (savedInstanceState != null) {
+        }
+    }
+
+    public enum Kind {
+        SKILL,
+        CAUSE;
     }
 }

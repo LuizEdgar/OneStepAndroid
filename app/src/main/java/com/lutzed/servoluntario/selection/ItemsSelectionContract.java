@@ -15,20 +15,34 @@ public interface ItemsSelectionContract {
     interface View extends BaseView<Presenter> {
         void setLoadingIndicator(boolean active);
 
+        void navigateToChooseSkills();
+
+        void navigateToChooseCauses();
+
+        void navigateToMain();
+
         void showDefaultSaveError();
 
         void showNoItems();
 
         void showLoadingError();
 
-        void showItems(List<? extends SelectableItem> items, boolean isSwap);
+        void clearItems();
+
+        void swapItems(List<? extends SelectableItem> items);
+
+        void addItems(List<? extends SelectableItem> items);
 
         boolean isActive();
+
+        void setSavingIndicator(boolean active);
     }
 
     interface Presenter extends BasePresenter {
         void loadItems(boolean isRefresh);
 
-        void saveSelection();
+        void saveItems(List<Long> selectedIds);
+
+        void refreshItems();
     }
 }

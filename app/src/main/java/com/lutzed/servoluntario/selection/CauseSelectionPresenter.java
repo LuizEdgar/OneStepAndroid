@@ -2,7 +2,7 @@ package com.lutzed.servoluntario.selection;
 
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.Organization;
-import com.lutzed.servoluntario.models.Skill;
+import com.lutzed.servoluntario.models.Cause;
 import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.AuthHelper;
@@ -17,14 +17,14 @@ import retrofit2.Response;
  * Created by luizfreitas on 18/04/2017.
  */
 
-public class SkillsSelectionPresenter implements ItemsSelectionContract.Presenter {
+public class CauseSelectionPresenter implements ItemsSelectionContract.Presenter {
 
     private final ItemsSelectionContract.View mView;
     private final Api.ApiClient mApiClient;
     private final AuthHelper mAuthHelper;
     private int mPageToGet;
 
-    public SkillsSelectionPresenter(ItemsSelectionFragment loginFragment, Api.ApiClient apiClient, AuthHelper authHelper) {
+    public CauseSelectionPresenter(ItemsSelectionFragment loginFragment, Api.ApiClient apiClient, AuthHelper authHelper) {
         mView = loginFragment;
         mApiClient = apiClient;
         mView.setPresenter(this);
@@ -46,9 +46,9 @@ public class SkillsSelectionPresenter implements ItemsSelectionContract.Presente
     public void loadItems(final boolean isRefresh) {
         if (isRefresh) mPageToGet = 1;
 
-        mApiClient.getSkills(mPageToGet).enqueue(new Callback<List<Skill>>() {
+        mApiClient.getCauses(mPageToGet).enqueue(new Callback<List<Cause>>() {
             @Override
-            public void onResponse(Call<List<Skill>> call, Response<List<Skill>> response) {
+            public void onResponse(Call<List<Cause>> call, Response<List<Cause>> response) {
                 if (isRefresh) {
                     mView.swapItems(response.body());
                 } else {
@@ -59,7 +59,7 @@ public class SkillsSelectionPresenter implements ItemsSelectionContract.Presente
             }
 
             @Override
-            public void onFailure(Call<List<Skill>> call, Throwable t) {
+            public void onFailure(Call<List<Cause>> call, Throwable t) {
                 mView.setLoadingIndicator(false);
                 mView.showLoadingError();
             }
@@ -76,13 +76,13 @@ public class SkillsSelectionPresenter implements ItemsSelectionContract.Presente
             case VOLUNTEER:
                 Volunteer volunteerAttributes = new Volunteer();
                 volunteerAttributes.setId(mAuthHelper.getUser().getVolunteer().getId());
-                volunteerAttributes.setSkillIds(selectedIds);
+                volunteerAttributes.setCauseIds(selectedIds);
                 user.setVolunteerAttributes(volunteerAttributes);
                 break;
             case ORGANIZATION:
                 Organization organizationAttributes = new Organization();
                 organizationAttributes.setId(mAuthHelper.getUser().getOrganization().getId());
-                organizationAttributes.setSkillIds(selectedIds);
+                organizationAttributes.setCauseIds(selectedIds);
                 user.setOrganizationAttributes(organizationAttributes);
                 break;
         }
@@ -95,7 +95,7 @@ public class SkillsSelectionPresenter implements ItemsSelectionContract.Presente
                 switch (response.code()) {
                     case 200:
                         mAuthHelper.setUser(response.body());
-                        mView.navigateToChooseCauses();
+                        mView.navigateToMain();
                         break;
                     case 422:
                         mView.showDefaultSaveError();
