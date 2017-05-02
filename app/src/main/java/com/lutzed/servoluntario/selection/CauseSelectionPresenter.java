@@ -24,12 +24,15 @@ public class CauseSelectionPresenter implements ItemsSelectionContract.Presenter
     private final AuthHelper mAuthHelper;
     private int mPageToGet;
 
+    private List<Long> selectedCauses;
+
     public CauseSelectionPresenter(ItemsSelectionFragment loginFragment, Api.ApiClient apiClient, AuthHelper authHelper) {
         mView = loginFragment;
         mApiClient = apiClient;
         mView.setPresenter(this);
         mPageToGet = 1;
         mAuthHelper = authHelper;
+        selectedCauses = mAuthHelper.getUser().getCauseIds();
     }
 
     @Override
@@ -49,6 +52,9 @@ public class CauseSelectionPresenter implements ItemsSelectionContract.Presenter
         mApiClient.getCauses(mPageToGet).enqueue(new Callback<List<Cause>>() {
             @Override
             public void onResponse(Call<List<Cause>> call, Response<List<Cause>> response) {
+                for (Cause cause : response.body()) {
+                    cause.setSelected(selectedCauses.contains(cause.getId()));
+                }
                 if (isRefresh) {
                     mView.swapItems(response.body());
                 } else {

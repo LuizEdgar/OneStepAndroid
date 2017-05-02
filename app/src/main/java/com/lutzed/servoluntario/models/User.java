@@ -3,7 +3,10 @@ package com.lutzed.servoluntario.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.lutzed.servoluntario.models.User.Kind.VOLUNTEER;
 
 /**
  * Created by luizfreitas on 25/07/2016.
@@ -65,6 +68,34 @@ public class User {
     @Expose
     @SerializedName("updated_at")
     private String updatedAt;
+
+    public List<Long> getSkillsIds(){
+        List<Long> ids = new ArrayList<>();
+        List<Skill> skills;
+        if (getKindEnum() == VOLUNTEER){
+            skills = getVolunteer().getSkills();
+        }else{
+            skills = getOrganization().getSkills();
+        }
+        for (Skill skill : skills) {
+            ids.add(skill.getId());
+        }
+        return ids;
+    }
+
+    public List<Long> getCauseIds(){
+        List<Long> ids = new ArrayList<>();
+        List<Cause> causes;
+        if (getKindEnum() == VOLUNTEER){
+            causes = getVolunteer().getCauses();
+        }else{
+            causes = getOrganization().getCauses();
+        }
+        for (Cause cause : causes) {
+            ids.add(cause.getId());
+        }
+        return ids;
+    }
 
     public Long getId() {
         return id;

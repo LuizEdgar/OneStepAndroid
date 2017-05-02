@@ -24,12 +24,15 @@ public class SkillsSelectionPresenter implements ItemsSelectionContract.Presente
     private final AuthHelper mAuthHelper;
     private int mPageToGet;
 
+    private List<Long> selectedSkills;
+
     public SkillsSelectionPresenter(ItemsSelectionFragment loginFragment, Api.ApiClient apiClient, AuthHelper authHelper) {
         mView = loginFragment;
         mApiClient = apiClient;
         mView.setPresenter(this);
         mPageToGet = 1;
         mAuthHelper = authHelper;
+        selectedSkills = mAuthHelper.getUser().getSkillsIds();
     }
 
     @Override
@@ -49,6 +52,9 @@ public class SkillsSelectionPresenter implements ItemsSelectionContract.Presente
         mApiClient.getSkills(mPageToGet).enqueue(new Callback<List<Skill>>() {
             @Override
             public void onResponse(Call<List<Skill>> call, Response<List<Skill>> response) {
+                for (Skill skill : response.body()) {
+                    skill.setSelected(selectedSkills.contains(skill.getId()));
+                }
                 if (isRefresh) {
                     mView.swapItems(response.body());
                 } else {
