@@ -5,10 +5,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lutzed.servoluntario.api.requests.FacebookSignInRequest;
 import com.lutzed.servoluntario.api.requests.SignInRequest;
+import com.lutzed.servoluntario.models.Cause;
+import com.lutzed.servoluntario.models.Skill;
 import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.util.Constants;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -80,7 +83,13 @@ public class Api {
         Call<User> createUser(@Body User user);
 
         @GET("users.json")
-        Call<User> getUsers();
+        Call<List<User>> getUsers();
+
+        @GET("causes.json")
+        Call<List<Cause>> getCauses();
+
+        @GET("skills.json")
+        Call<List<Skill>> getSkills();
 
         @GET("users/{userId}.json")
         Call<User> getUser(@Path("userId") Long userId);

@@ -19,7 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lutzed.servoluntario.R;
-import com.lutzed.servoluntario.main.MainActivity;
+import com.lutzed.servoluntario.selection.ItemsSelectionActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -123,7 +123,7 @@ public class OrganizationCompletionFragment extends Fragment implements Organiza
     @Override
     public void navigateToChooseSkills() {
         getActivity().finish();
-        Intent intent = new Intent(getContext(), MainActivity.class);
+        Intent intent = new Intent(getContext(), ItemsSelectionActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

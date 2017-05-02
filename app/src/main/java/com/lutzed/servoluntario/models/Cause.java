@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by luizfreitas on 25/07/2016.
  */
 
-public class Cause {
+public class Cause implements SelectableItem{
 
     @Expose private Long id;
 
@@ -22,6 +22,11 @@ public class Cause {
     @Expose
     @SerializedName("updated_at")
     private String updatedAt;
+
+    @Override
+    public String getDisplayName() {
+        return getName();
+    }
 
     public Long getId() {
         return id;
