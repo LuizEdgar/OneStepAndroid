@@ -15,6 +15,8 @@ public class Volunteer {
 
     @Expose private String about;
 
+    @Expose private String occupation;
+
     @Expose
     @SerializedName("day_availability")
     private Integer dayAvailability;
@@ -34,17 +36,18 @@ public class Volunteer {
     @Expose private Boolean verified;
 
     @Expose(serialize = false, deserialize = true)
-    private List<Education> educations;
+    private List<Cause> causes;
 
     @Expose(serialize = true, deserialize = false)
-    @SerializedName("educations_attributes")
-    private List<Education> educationsAttributes;
+    @SerializedName("cause_ids")
+    private List<Long> causeIds;
 
     @Expose(serialize = false, deserialize = true)
     private List<Skill> skills;
 
     @Expose(serialize = true, deserialize = false)
-    private List<Integer> skill_ids;
+    @SerializedName("skill_ids")
+    private List<Long> skillIds;
 
     @Expose
     @SerializedName("birth_at")
@@ -158,14 +161,6 @@ public class Volunteer {
         this.updatedAt = updatedAt;
     }
 
-    public List<Education> getEducations() {
-        return educations;
-    }
-
-    public void setEducations(List<Education> educations) {
-        this.educations = educations;
-    }
-
     public List<Skill> getSkills() {
         return skills;
     }
@@ -180,5 +175,37 @@ public class Volunteer {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public String getOccupation() {
+        return occupation;
+    }
+
+    public void setOccupation(String occupation) {
+        this.occupation = occupation;
+    }
+
+    public List<Cause> getCauses() {
+        return causes;
+    }
+
+    public void setCauses(List<Cause> causes) {
+        this.causes = causes;
+    }
+
+    public List<Long> getCauseIds() {
+        return causeIds;
+    }
+
+    public void setCauseIds(List<Long> causeIds) {
+        this.causeIds = causeIds;
+    }
+
+    public List<Long> getSkillIds() {
+        return skillIds;
+    }
+
+    public void setSkillIds(List<Long> skillIds) {
+        this.skillIds = skillIds;
     }
 }

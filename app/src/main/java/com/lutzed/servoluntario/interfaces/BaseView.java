@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package com.lutzed.servoluntario;
+package com.lutzed.servoluntario.interfaces;
 
-public interface BasePresenter {
+public interface BaseView<T> {
 
-    void start();
+    void setPresenter(T presenter);
 
 }

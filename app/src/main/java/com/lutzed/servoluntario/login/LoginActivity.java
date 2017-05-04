@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity{
         }
 
         // Create the presenter
-        mLoginPresenter = new LoginPresenter(loginFragment, Api.getUnauthorizedClient(), AuthHelper.getInstance(this));
+        mLoginPresenter = new LoginPresenter(loginFragment, Api.getClient(), AuthHelper.getInstance(this));
 
         // Load previously saved state, if available.
         if (savedInstanceState != null) {

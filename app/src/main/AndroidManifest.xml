@@ -18,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".activities.MainActivity"
+            android:name=".main.MainActivity"
             android:label="@string/app_name">
         </activity>
         <activity
@@ -34,6 +34,16 @@
         <activity
             android:name=".signup.SignUpActivity"
             android:label="@string/title_activity_sign_up"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".completion.CompletionActivity"
+            android:label="@string/title_activity_completion"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
+        <activity
+            android:name=".selection.ItemsSelectionActivity"
+            android:label="@string/title_activity_items_selection"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
 

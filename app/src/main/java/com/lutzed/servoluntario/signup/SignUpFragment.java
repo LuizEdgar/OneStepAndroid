@@ -21,7 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lutzed.servoluntario.R;
-import com.lutzed.servoluntario.activities.MainActivity;
+import com.lutzed.servoluntario.completion.CompletionActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,8 +40,8 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
     @BindView(R.id.username) EditText mUsernameView;
     @BindView(R.id.password) EditText mPasswordView;
     @BindView(R.id.phone) EditText mPhoneView;
-    @BindView(R.id.login_progress) View mProgressView;
-    @BindView(R.id.email_login_form) View mLoginFormView;
+    @BindView(R.id.progress) View mProgressView;
+    @BindView(R.id.sign_up_form) View mLoginFormView;
     @BindView(R.id.toggle_sign_up_mode_button) TextView mToggleSignUpModeButton;
 
     private SignUpContract.Presenter mPresenter;
@@ -136,9 +136,9 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
     }
 
     @Override
-    public void navigateToMain() {
+    public void navigateToCompletion() {
         getActivity().finish();
-        Intent intent = new Intent(getContext(), MainActivity.class);
+        Intent intent = new Intent(getContext(), CompletionActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }

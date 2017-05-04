@@ -46,7 +46,7 @@ public class SignUpActivity extends AppCompatActivity {
         }
 
         // Create the presenter
-        mSignUpPresenter = new SignUpPresenter(signUpFragment, Api.getUnauthorizedClient(), AuthHelper.getInstance(this), singUpKind, isFacebookSignUp);
+        mSignUpPresenter = new SignUpPresenter(signUpFragment, Api.getClient(), AuthHelper.getInstance(this), singUpKind, isFacebookSignUp);
 
         // Load previously saved state, if available.
         if (savedInstanceState != null) {

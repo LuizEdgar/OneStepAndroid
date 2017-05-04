@@ -1,7 +1,7 @@
 package com.lutzed.servoluntario.login;
 
-import com.lutzed.servoluntario.BasePresenter;
-import com.lutzed.servoluntario.BaseView;
+import com.lutzed.servoluntario.interfaces.BasePresenter;
+import com.lutzed.servoluntario.interfaces.BaseView;
 
 /**
  * Created by luizfreitas on 18/04/2017.

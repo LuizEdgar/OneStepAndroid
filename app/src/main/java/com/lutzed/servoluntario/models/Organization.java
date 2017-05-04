@@ -31,13 +31,15 @@ public class Organization {
     private List<Cause> causes;
 
     @Expose(serialize = true, deserialize = false)
-    private List<Integer> cause_ids;
+    @SerializedName("cause_ids")
+    private List<Long> causeIds;
 
     @Expose(serialize = false, deserialize = true)
     private List<Skill> skills;
 
     @Expose(serialize = true, deserialize = false)
-    private List<Integer> skill_ids;
+    @SerializedName("skill_ids")
+    private List<Long> skillIds;
 
     @Expose
     @SerializedName("established_at")
@@ -165,5 +167,21 @@ public class Organization {
 
     public void setSkills(List<Skill> skills) {
         this.skills = skills;
+    }
+
+    public List<Long> getCauseIds() {
+        return causeIds;
+    }
+
+    public void setCauseIds(List<Long> causeIds) {
+        this.causeIds = causeIds;
+    }
+
+    public List<Long> getSkillIds() {
+        return skillIds;
+    }
+
+    public void setSkillIds(List<Long> skillIds) {
+        this.skillIds = skillIds;
     }
 }

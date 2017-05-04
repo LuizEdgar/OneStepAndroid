@@ -5,10 +5,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lutzed.servoluntario.api.requests.FacebookSignInRequest;
 import com.lutzed.servoluntario.api.requests.SignInRequest;
+import com.lutzed.servoluntario.models.Cause;
+import com.lutzed.servoluntario.models.Skill;
 import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.util.Constants;
 
 import java.io.IOException;
+import java.util.List;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -24,16 +27,16 @@ import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 /**
  * Created by luizfreitas on 17/07/2016.
  */
 public class Api {
 
-    public static ApiClient getUnauthorizedClient() {
+    public static ApiClient getClient() {
         return getClient(null);
     }
-
 
     public static ApiClient getClient(final User user) {
 
@@ -81,7 +84,13 @@ public class Api {
         Call<User> createUser(@Body User user);
 
         @GET("users.json")
-        Call<User> getUsers();
+        Call<List<User>> getUsers(@Query("page") int page);
+
+        @GET("causes.json")
+        Call<List<Cause>> getCauses(@Query("page") int page);
+
+        @GET("skills.json")
+        Call<List<Skill>> getSkills(@Query("page") int page);
 
         @GET("users/{userId}.json")
         Call<User> getUser(@Path("userId") Long userId);

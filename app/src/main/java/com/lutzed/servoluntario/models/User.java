@@ -3,7 +3,10 @@ package com.lutzed.servoluntario.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.lutzed.servoluntario.models.User.Kind.VOLUNTEER;
 
 /**
  * Created by luizfreitas on 25/07/2016.
@@ -31,11 +34,11 @@ public class User {
     private String facebookToken;
 
     @Expose(serialize = false, deserialize = true)
-    private List<Address> addresses;
+    private List<Location> locations;
 
     @Expose(serialize = true, deserialize = false)
-    @SerializedName("addresses_attributes")
-    private List<Address> addressesAttributes;
+    @SerializedName("locations_attributes")
+    private List<Location> locationsAttributes;
 
     @Expose(serialize = false, deserialize = true)
     private List<Phone> phones;
@@ -66,6 +69,34 @@ public class User {
     @SerializedName("updated_at")
     private String updatedAt;
 
+    public List<Long> getSkillsIds(){
+        List<Long> ids = new ArrayList<>();
+        List<Skill> skills;
+        if (getKindEnum() == VOLUNTEER){
+            skills = getVolunteer().getSkills();
+        }else{
+            skills = getOrganization().getSkills();
+        }
+        for (Skill skill : skills) {
+            ids.add(skill.getId());
+        }
+        return ids;
+    }
+
+    public List<Long> getCauseIds(){
+        List<Long> ids = new ArrayList<>();
+        List<Cause> causes;
+        if (getKindEnum() == VOLUNTEER){
+            causes = getVolunteer().getCauses();
+        }else{
+            causes = getOrganization().getCauses();
+        }
+        for (Cause cause : causes) {
+            ids.add(cause.getId());
+        }
+        return ids;
+    }
+
     public Long getId() {
         return id;
     }
@@ -92,6 +123,10 @@ public class User {
 
     public String getKind() {
         return kind;
+    }
+
+    public Kind getKindEnum() {
+        return Kind.fromString(kind);
     }
 
     public void setKind(String kind) {
@@ -122,12 +157,12 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    public List<Address> getAddresses() {
-        return addresses;
+    public List<Location> getLocations() {
+        return locations;
     }
 
-    public void setAddresses(List<Address> addresses) {
-        this.addresses = addresses;
+    public void setLocations(List<Location> locations) {
+        this.locations = locations;
     }
 
     public List<Phone> getPhones() {
@@ -202,12 +237,12 @@ public class User {
         this.phonesAttributes = phonesAttributes;
     }
 
-    public List<Address> getAddressesAttributes() {
-        return addressesAttributes;
+    public List<Location> getLocationsAttributes() {
+        return locationsAttributes;
     }
 
-    public void setAddressesAttributes(List<Address> addressesAttributes) {
-        this.addressesAttributes = addressesAttributes;
+    public void setLocationsAttributes(List<Location> locationsAttributes) {
+        this.locationsAttributes = locationsAttributes;
     }
 
     public enum Kind {

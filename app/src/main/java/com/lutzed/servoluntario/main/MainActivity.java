@@ -1,4 +1,4 @@
-package com.lutzed.servoluntario.activities;
+package com.lutzed.servoluntario.main;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;

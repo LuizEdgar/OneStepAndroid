@@ -57,7 +57,7 @@ public class AuthHelper {
     }
 
     public void updateUserData(final Callback<User> callback) {
-        Call<User> meCall = Api.getClient(mUser).getMe();
+        Call<User> meCall = Api.getClient(getUser()).getMe();
         meCall.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
