@@ -34,11 +34,11 @@ public class User {
     private String facebookToken;
 
     @Expose(serialize = false, deserialize = true)
-    private List<Address> addresses;
+    private List<Location> locations;
 
     @Expose(serialize = true, deserialize = false)
-    @SerializedName("addresses_attributes")
-    private List<Address> addressesAttributes;
+    @SerializedName("locations_attributes")
+    private List<Location> locationsAttributes;
 
     @Expose(serialize = false, deserialize = true)
     private List<Phone> phones;
@@ -157,12 +157,12 @@ public class User {
         this.updatedAt = updatedAt;
     }
 
-    public List<Address> getAddresses() {
-        return addresses;
+    public List<Location> getLocations() {
+        return locations;
     }
 
-    public void setAddresses(List<Address> addresses) {
-        this.addresses = addresses;
+    public void setLocations(List<Location> locations) {
+        this.locations = locations;
     }
 
     public List<Phone> getPhones() {
@@ -237,12 +237,12 @@ public class User {
         this.phonesAttributes = phonesAttributes;
     }
 
-    public List<Address> getAddressesAttributes() {
-        return addressesAttributes;
+    public List<Location> getLocationsAttributes() {
+        return locationsAttributes;
     }
 
-    public void setAddressesAttributes(List<Address> addressesAttributes) {
-        this.addressesAttributes = addressesAttributes;
+    public void setLocationsAttributes(List<Location> locationsAttributes) {
+        this.locationsAttributes = locationsAttributes;
     }
 
     public enum Kind {

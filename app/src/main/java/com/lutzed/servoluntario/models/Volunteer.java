@@ -36,13 +36,6 @@ public class Volunteer {
     @Expose private Boolean verified;
 
     @Expose(serialize = false, deserialize = true)
-    private List<Education> educations;
-
-    @Expose(serialize = true, deserialize = false)
-    @SerializedName("educations_attributes")
-    private List<Education> educationsAttributes;
-
-    @Expose(serialize = false, deserialize = true)
     private List<Cause> causes;
 
     @Expose(serialize = true, deserialize = false)
@@ -168,14 +161,6 @@ public class Volunteer {
         this.updatedAt = updatedAt;
     }
 
-    public List<Education> getEducations() {
-        return educations;
-    }
-
-    public void setEducations(List<Education> educations) {
-        this.educations = educations;
-    }
-
     public List<Skill> getSkills() {
         return skills;
     }
@@ -206,14 +191,6 @@ public class Volunteer {
 
     public void setCauses(List<Cause> causes) {
         this.causes = causes;
-    }
-
-    public List<Education> getEducationsAttributes() {
-        return educationsAttributes;
-    }
-
-    public void setEducationsAttributes(List<Education> educationsAttributes) {
-        this.educationsAttributes = educationsAttributes;
     }
 
     public List<Long> getCauseIds() {
