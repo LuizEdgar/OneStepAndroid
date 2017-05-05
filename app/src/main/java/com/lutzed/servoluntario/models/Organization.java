@@ -13,19 +13,31 @@ public class Organization {
 
     @Expose private Long id;
 
+    @Expose private String name;
+
     @Expose private String cnpj;
 
     @Expose private String site;
 
     @Expose private String about;
 
-    @Expose private String requirements;
-
-    @Expose private String goal;
-
-    @Expose private String need;
+    @Expose private String mission;
 
     @Expose private Integer size;
+
+    @Expose(serialize = false, deserialize = true)
+    private List<Location> locations;
+
+    @Expose(serialize = true, deserialize = false)
+    @SerializedName("locations_attributes")
+    private List<Location> locationsAttributes;
+
+    @Expose(serialize = false, deserialize = true)
+    private List<Contact> contacts;
+
+    @Expose(serialize = true, deserialize = false)
+    @SerializedName("contacts_attributes")
+    private List<Contact> contactsAttributes;
 
     @Expose(serialize = false, deserialize = true)
     private List<Cause> causes;
@@ -87,30 +99,6 @@ public class Organization {
 
     public void setAbout(String about) {
         this.about = about;
-    }
-
-    public String getRequirements() {
-        return requirements;
-    }
-
-    public void setRequirements(String requirements) {
-        this.requirements = requirements;
-    }
-
-    public String getGoal() {
-        return goal;
-    }
-
-    public void setGoal(String goal) {
-        this.goal = goal;
-    }
-
-    public String getNeed() {
-        return need;
-    }
-
-    public void setNeed(String need) {
-        this.need = need;
     }
 
     public Integer getSize() {
@@ -183,5 +171,53 @@ public class Organization {
 
     public void setSkillIds(List<Long> skillIds) {
         this.skillIds = skillIds;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getMission() {
+        return mission;
+    }
+
+    public void setMission(String mission) {
+        this.mission = mission;
+    }
+
+    public List<Location> getLocations() {
+        return locations;
+    }
+
+    public void setLocations(List<Location> locations) {
+        this.locations = locations;
+    }
+
+    public List<Location> getLocationsAttributes() {
+        return locationsAttributes;
+    }
+
+    public void setLocationsAttributes(List<Location> locationsAttributes) {
+        this.locationsAttributes = locationsAttributes;
+    }
+
+    public List<Contact> getContacts() {
+        return contacts;
+    }
+
+    public void setContacts(List<Contact> contacts) {
+        this.contacts = contacts;
+    }
+
+    public List<Contact> getContactsAttributes() {
+        return contactsAttributes;
+    }
+
+    public void setContactsAttributes(List<Contact> contactsAttributes) {
+        this.contactsAttributes = contactsAttributes;
     }
 }

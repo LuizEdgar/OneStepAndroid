@@ -33,8 +33,7 @@ public class OrganizationCompletionFragment extends Fragment implements Organiza
 
     @BindView(R.id.about) EditText mAboutView;
     @BindView(R.id.site) EditText mSiteView;
-    @BindView(R.id.goal) EditText mGoalView;
-    @BindView(R.id.need) EditText mNeedView;
+    @BindView(R.id.mission) EditText mMissionView;
     @BindView(R.id.progress) View mProgressView;
     @BindView(R.id.organization_completion_form) View mFormView;
     //
@@ -77,13 +76,12 @@ public class OrganizationCompletionFragment extends Fragment implements Organiza
 
     @OnClick(R.id.save_button)
     void onSaveClicked() {
-        mPresenter.saveProfile(mAboutView.getText().toString(), mNeedView.getText().toString(), mGoalView.getText().toString(), mSiteView.getText().toString());
+        mPresenter.saveProfile(mAboutView.getText().toString(), mMissionView.getText().toString(), mSiteView.getText().toString());
     }
 
     public void resetErrors() {
         mAboutView.setError(null);
-        mNeedView.setError(null);
-        mGoalView.setError(null);
+        mMissionView.setError(null);
         mSiteView.setError(null);
     }
 
@@ -153,13 +151,8 @@ public class OrganizationCompletionFragment extends Fragment implements Organiza
     }
 
     @Override
-    public void setNeedField(String need) {
-        mNeedView.setText(need);
-    }
-
-    @Override
-    public void setGoalField(String goal) {
-        mGoalView.setText(goal);
+    public void setMissionField(String goal) {
+        mMissionView.setText(goal);
     }
 
     @Override

@@ -49,24 +49,10 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/goal"
+                    android:id="@+id/mission"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_goal"
-                    android:inputType="textCapSentences"
-                    android:maxLines="1"/>
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/need"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_need"
+                    android:hint="@string/prompt_mission"
                     android:inputType="textCapSentences"
                     android:maxLines="1"/>
 

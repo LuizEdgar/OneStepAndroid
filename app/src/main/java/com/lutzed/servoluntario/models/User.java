@@ -16,8 +16,6 @@ public class User {
 
     @Expose private Long id;
 
-    @Expose private String name;
-
     @Expose private String username;
 
     @Expose private String email;
@@ -32,20 +30,6 @@ public class User {
     @Expose(serialize = true, deserialize = false)
     @SerializedName("facebook_token")
     private String facebookToken;
-
-    @Expose(serialize = false, deserialize = true)
-    private List<Location> locations;
-
-    @Expose(serialize = true, deserialize = false)
-    @SerializedName("locations_attributes")
-    private List<Location> locationsAttributes;
-
-    @Expose(serialize = false, deserialize = true)
-    private List<Phone> phones;
-
-    @Expose(serialize = true, deserialize = false)
-    @SerializedName("phones_attributes")
-    private List<Phone> phonesAttributes;
 
     @Expose(serialize = false, deserialize = true)
     private Volunteer volunteer;
@@ -105,14 +89,6 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -155,22 +131,6 @@ public class User {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public List<Location> getLocations() {
-        return locations;
-    }
-
-    public void setLocations(List<Location> locations) {
-        this.locations = locations;
-    }
-
-    public List<Phone> getPhones() {
-        return phones;
-    }
-
-    public void setPhones(List<Phone> phones) {
-        this.phones = phones;
     }
 
     public Volunteer getVolunteer() {
@@ -227,22 +187,6 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public List<Phone> getPhonesAttributes() {
-        return phonesAttributes;
-    }
-
-    public void setPhonesAttributes(List<Phone> phonesAttributes) {
-        this.phonesAttributes = phonesAttributes;
-    }
-
-    public List<Location> getLocationsAttributes() {
-        return locationsAttributes;
-    }
-
-    public void setLocationsAttributes(List<Location> locationsAttributes) {
-        this.locationsAttributes = locationsAttributes;
     }
 
     public enum Kind {

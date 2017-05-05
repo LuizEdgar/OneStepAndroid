@@ -16,11 +16,11 @@
 #   public *;
 #}
 
-# Uncomment this to preserve the line number information for
+# Uncomment this to preserve the line phone information for
 # debugging stack traces.
 #-keepattributes SourceFile,LineNumberTable
 
-# If you keep the line number information, uncomment this to
+# If you keep the line phone information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 

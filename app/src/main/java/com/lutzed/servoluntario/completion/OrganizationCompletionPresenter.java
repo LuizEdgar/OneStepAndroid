@@ -36,7 +36,7 @@ public class OrganizationCompletionPresenter implements OrganizationCompletionCo
     }
 
     @Override
-    public void saveProfile(String about, String need, String goal, String site) {
+    public void saveProfile(String about, String mission, String site) {
         mView.resetErrors();
 
         User user = new User();
@@ -45,8 +45,7 @@ public class OrganizationCompletionPresenter implements OrganizationCompletionCo
         Organization organizationAttributes = new Organization();
         organizationAttributes.setId(mUser.getOrganization().getId());
         organizationAttributes.setAbout(about);
-        organizationAttributes.setNeed(need);
-        organizationAttributes.setGoal(goal);
+        organizationAttributes.setMission(mission);
         organizationAttributes.setSite(site);
         user.setOrganizationAttributes(organizationAttributes);
 
@@ -84,9 +83,8 @@ public class OrganizationCompletionPresenter implements OrganizationCompletionCo
         User user = mAuthHelper.getUser();
         Organization organization = user.getOrganization();
         mView.setAboutField(organization.getAbout());
-        mView.setNeedField(organization.getNeed());
         mView.setSiteField(organization.getSite());
-        mView.setGoalField(organization.getGoal());
+        mView.setMissionField(organization.getMission());
     }
 
     private void populateFacebookData() {

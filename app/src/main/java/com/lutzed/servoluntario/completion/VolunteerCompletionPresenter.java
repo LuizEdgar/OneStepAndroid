@@ -33,8 +33,6 @@ public class VolunteerCompletionPresenter implements VolunteerCompletionContract
         mAuthHelper = authHelper;
         mUser = authHelper.getUser();
         mView.setPresenter(this);
-
-
     }
 
     @Override

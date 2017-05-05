@@ -22,9 +22,7 @@ public interface OrganizationCompletionContract {
 
         void setAboutField(String about);
 
-        void setNeedField(String need);
-
-        void setGoalField(String goal);
+        void setMissionField(String goal);
 
         void setSiteField(String site);
 
@@ -32,6 +30,6 @@ public interface OrganizationCompletionContract {
     }
 
     interface Presenter extends BasePresenter {
-        void saveProfile(String about, String need, String goal, String site);
+        void saveProfile(String about, String mission, String site);
     }
 }

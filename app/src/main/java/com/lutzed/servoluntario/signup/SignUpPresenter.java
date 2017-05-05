@@ -7,8 +7,8 @@ import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.lutzed.servoluntario.api.Api;
+import com.lutzed.servoluntario.models.Contact;
 import com.lutzed.servoluntario.models.Organization;
-import com.lutzed.servoluntario.models.Phone;
 import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.AuthHelper;
@@ -115,7 +115,10 @@ public class SignUpPresenter implements SignUpContract.Presenter {
             switch (mCurrentSignUpUserKind) {
                 case VOLUNTEER:
                     Volunteer volunteer = new Volunteer();
+
+                    volunteer.setName(name);
                     volunteer.setGender(mGender);
+
                     user.setVolunteerAttributes(volunteer);
 
                     if (mIsFacebookSignUp)
@@ -123,17 +126,20 @@ public class SignUpPresenter implements SignUpContract.Presenter {
 
                     break;
                 case ORGANIZATION:
-                    user.setOrganizationAttributes(new Organization());
+                    Organization organization = new Organization();
 
-                    List<Phone> phones = new ArrayList<>();
-                    Phone phone = new Phone();
-                    phone.setNumber(phoneNumber);
-                    phones.add(phone);
-                    user.setPhonesAttributes(phones);
+                    organization.setName(name);
+
+                    List<Contact> contacts = new ArrayList<>();
+                    Contact contact = new Contact();
+                    contact.setPhone(phoneNumber);
+                    contacts.add(contact);
+                    organization.setContactsAttributes(contacts);
+
+                    user.setOrganizationAttributes(organization);
 
                     break;
             }
-            user.setName(name);
             user.setUsername(username);
             user.setEmail(email);
             user.setPassword(password);
