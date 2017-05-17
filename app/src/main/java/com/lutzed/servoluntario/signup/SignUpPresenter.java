@@ -132,6 +132,8 @@ public class SignUpPresenter implements SignUpContract.Presenter {
 
                     List<Contact> contacts = new ArrayList<>();
                     Contact contact = new Contact();
+                    contact.setName(name);
+                    contact.setEmail(email);
                     contact.setPhone(phoneNumber);
                     contacts.add(contact);
                     organization.setContactsAttributes(contacts);

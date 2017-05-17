@@ -21,14 +21,15 @@ public class SkillsSelectionPresenter implements ItemsSelectionContract.Presente
 
     private final ItemsSelectionContract.View mView;
     private final Api.ApiClient mApiClient;
+    private final ItemsSelectionActivity.Mode mSelectionMode;
     private final AuthHelper mAuthHelper;
     private int mPageToGet;
-
     private List<Long> selectedSkills;
 
-    public SkillsSelectionPresenter(ItemsSelectionFragment loginFragment, Api.ApiClient apiClient, AuthHelper authHelper) {
+    public SkillsSelectionPresenter(ItemsSelectionFragment loginFragment, Api.ApiClient apiClient, AuthHelper authHelper, ItemsSelectionActivity.Mode mode) {
         mView = loginFragment;
         mApiClient = apiClient;
+        mSelectionMode = mode;
         mView.setPresenter(this);
         mPageToGet = 1;
         mAuthHelper = authHelper;

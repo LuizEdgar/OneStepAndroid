@@ -1,10 +1,9 @@
-package com.lutzed.servoluntario.selection;
+package com.lutzed.servoluntario.opportunity;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lutzed.servoluntario.R;
@@ -22,16 +21,14 @@ import butterknife.ButterKnife;
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class ItemsSelectionAdapter extends RecyclerView.Adapter<ItemsSelectionAdapter.ViewHolder> {
+public class ItemsSelectableOpportunityAdapter extends RecyclerView.Adapter<ItemsSelectableOpportunityAdapter.ViewHolder> {
 
     private final List<SelectableItem> mValues;
     private final OnListFragmentInteractionListener mListener;
-    private final ItemsSelectionActivity.Mode mMode;
 
-    public ItemsSelectionAdapter(List<SelectableItem> items, OnListFragmentInteractionListener listener, ItemsSelectionActivity.Mode mode) {
+    public ItemsSelectableOpportunityAdapter(List<SelectableItem> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
-        mMode = mode;
     }
 
     public void clearData() {
@@ -53,6 +50,15 @@ public class ItemsSelectionAdapter extends RecyclerView.Adapter<ItemsSelectionAd
         notifyItemRangeInserted(beforeSize, items.size());
     }
 
+    public void addDataAtStart(List<? extends SelectableItem> items) {
+        if (items == null || items.isEmpty()) {
+            return;
+        }
+
+        mValues.addAll(0, items);
+        notifyItemRangeInserted(0, items.size());
+    }
+
     public void swapData(List<? extends SelectableItem> items) {
         clearData();
         addData(items);
@@ -69,28 +75,21 @@ public class ItemsSelectionAdapter extends RecyclerView.Adapter<ItemsSelectionAd
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_selection, parent, false);
+                .inflate(R.layout.item_selectable_opportunity, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, final int position) {
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).getId() + "");
         holder.mContentView.setText(mValues.get(position).getName());
 
-        holder.mCheckMark.setVisibility(holder.mItem.isSelected() ? View.VISIBLE : View.INVISIBLE);
-
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mMode == ItemsSelectionActivity.Mode.MULTIPLE){
-                    holder.mItem.setSelected(!holder.mItem.isSelected());
-                    holder.mCheckMark.setVisibility(holder.mItem.isSelected() ? View.VISIBLE : View.INVISIBLE);
-                }else{
-                    if (null != mListener) {
-                        mListener.onListFragmentInteraction(holder.mItem);
-                    }
+                if (null != mListener) {
+                    mListener.onListFragmentInteraction(holder.mItem, position);
                 }
             }
         });
@@ -105,10 +104,8 @@ public class ItemsSelectionAdapter extends RecyclerView.Adapter<ItemsSelectionAd
         final View mView;
         @BindView(R.id.id) TextView mIdView;
         @BindView(R.id.content) TextView mContentView;
-        @BindView(R.id.checkMark) ImageView mCheckMark;
 
         SelectableItem mItem;
-
 
         ViewHolder(View view) {
             super(view);

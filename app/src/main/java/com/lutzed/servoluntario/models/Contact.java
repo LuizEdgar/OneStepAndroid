@@ -1,5 +1,7 @@
 package com.lutzed.servoluntario.models;
 
+import android.text.TextUtils;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -24,6 +26,13 @@ public class Contact {
     @Expose
     @SerializedName("updated_at")
     private String updatedAt;
+
+    public Contact() {
+    }
+
+    public Contact(String name) {
+        this.name = name;
+    }
 
     public Long getId() {
         return id;
@@ -73,4 +82,11 @@ public class Contact {
         this.email = email;
     }
 
+    @Override
+    public String toString() {
+        String s = name;
+        if (!TextUtils.isEmpty(phone)) s += " - " + phone;
+        if (!TextUtils.isEmpty(email)) s += " - " + email;
+        return s;
+    }
 }

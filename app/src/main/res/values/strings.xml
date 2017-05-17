@@ -46,5 +46,13 @@
     <string name="prompt_site">Site</string>
     <string name="title_activity_items_selection">Selection</string>
     <string name="action_next">Next</string>
+    <string name="title_activity_create_opportunity">Create Opportunity</string>
+    <string name="prompt_title">Title</string>
+    <string name="prompt_description">Description</string>
+    <string name="prompt_volunteers_number">Volunteers Number</string>
+    <string name="prompt_time_commitment">Time Commitment</string>
+    <string name="prompt_others_requirements">Others Requirements</string>
+    <string name="prompt_tags">Tags</string>
+    <string name="prompt_contact">Contact</string>
 
 </resources>

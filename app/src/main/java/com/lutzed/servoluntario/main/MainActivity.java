@@ -1,5 +1,6 @@
 package com.lutzed.servoluntario.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
@@ -8,6 +9,7 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.lutzed.servoluntario.R;
+import com.lutzed.servoluntario.opportunity.CreateOpportunityActivity;
 import com.lutzed.servoluntario.util.AuthHelper;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
                     mTextMessage.setText(R.string.title_home);
                     return true;
                 case R.id.navigation_dashboard:
+                    Intent intent = new Intent(MainActivity.this, CreateOpportunityActivity.class);
+                    startActivity(intent);
                     mTextMessage.setText(R.string.title_dashboard);
                     return true;
                 case R.id.navigation_notifications:

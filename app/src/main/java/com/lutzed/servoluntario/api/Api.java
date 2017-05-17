@@ -6,6 +6,8 @@ import com.google.gson.GsonBuilder;
 import com.lutzed.servoluntario.api.requests.FacebookSignInRequest;
 import com.lutzed.servoluntario.api.requests.SignInRequest;
 import com.lutzed.servoluntario.models.Cause;
+import com.lutzed.servoluntario.models.Contact;
+import com.lutzed.servoluntario.models.Location;
 import com.lutzed.servoluntario.models.Skill;
 import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.util.Constants;
@@ -73,6 +75,18 @@ public class Api {
 
         @GET("/me.json")
         Call<User> getMe();
+
+        @GET("/me/contacts.json")
+        Call<List<Contact>> getMeContacts();
+
+        @GET("/me/locations.json")
+        Call<List<Location>> getMeLocations();
+
+        @GET("/me/causes.json")
+        Call<List<Skill>> getMeSkills();
+
+        @GET("/me/skills.json")
+        Call<List<Cause>> getMeCauses();
 
         @POST("me/sign_in.json")
         Call<User> signIn(@Body SignInRequest signInRequest);

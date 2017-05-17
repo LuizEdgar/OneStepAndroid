@@ -21,14 +21,16 @@ public class CauseSelectionPresenter implements ItemsSelectionContract.Presenter
 
     private final ItemsSelectionContract.View mView;
     private final Api.ApiClient mApiClient;
+    private final ItemsSelectionActivity.Mode mMode;
     private final AuthHelper mAuthHelper;
     private int mPageToGet;
 
     private List<Long> selectedCauses;
 
-    public CauseSelectionPresenter(ItemsSelectionFragment loginFragment, Api.ApiClient apiClient, AuthHelper authHelper) {
+    public CauseSelectionPresenter(ItemsSelectionFragment loginFragment, Api.ApiClient apiClient, AuthHelper authHelper, ItemsSelectionActivity.Mode mode) {
         mView = loginFragment;
         mApiClient = apiClient;
+        mMode = mode;
         mView.setPresenter(this);
         mPageToGet = 1;
         mAuthHelper = authHelper;
