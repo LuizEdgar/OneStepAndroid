@@ -19,9 +19,9 @@ import retrofit2.Response;
  * Created by luizfreitas on 18/04/2017.
  */
 
-public class CreateOpportunityPresenter implements CreateOpportunityContract.Presenter {
+public class OpportunityPresenter implements OpportunityContract.Presenter {
 
-    private final CreateOpportunityContract.View mView;
+    private final OpportunityContract.View mView;
     private final Api.ApiClient mApiClient;
     private final AuthHelper mAuthHelper;
     private Opportunity mOpportunity;
@@ -30,8 +30,8 @@ public class CreateOpportunityPresenter implements CreateOpportunityContract.Pre
     private List<Skill> skills;
     private List<Long> skillIds;
 
-    public CreateOpportunityPresenter(CreateOpportunityFragment createOpportunityFragment, Api.ApiClient apiClient, AuthHelper authHelper, Opportunity opportunity) {
-        mView = createOpportunityFragment;
+    public OpportunityPresenter(OpportunityFragment opportunityFragment, Api.ApiClient apiClient, AuthHelper authHelper, Opportunity opportunity) {
+        mView = opportunityFragment;
         mApiClient = apiClient;
         mAuthHelper = authHelper;
         mView.setPresenter(this);

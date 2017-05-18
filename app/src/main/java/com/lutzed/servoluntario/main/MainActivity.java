@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.Opportunity;
-import com.lutzed.servoluntario.opportunity.CreateOpportunityActivity;
+import com.lutzed.servoluntario.opportunity.OpportunityActivity;
 import com.lutzed.servoluntario.util.AuthHelper;
 
 import retrofit2.Call;
@@ -30,15 +30,15 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     mTextMessage.setText(R.string.title_home);
-                    Intent intent = new Intent(MainActivity.this, CreateOpportunityActivity.class);
+                    Intent intent = new Intent(MainActivity.this, OpportunityActivity.class);
                     startActivity(intent);
                     return true;
                 case R.id.navigation_dashboard:
                     Api.getClient(AuthHelper.getInstance(MainActivity.this).getUser()).getOpportunity(12l).enqueue(new Callback<Opportunity>() {
                         @Override
                         public void onResponse(Call<Opportunity> call, Response<Opportunity> response) {
-                            Intent intent = new Intent(MainActivity.this, CreateOpportunityActivity.class);
-                            intent.putExtra(CreateOpportunityActivity.EXTRA_OPPORTUNITY, response.body());
+                            Intent intent = new Intent(MainActivity.this, OpportunityActivity.class);
+                            intent.putExtra(OpportunityActivity.EXTRA_OPPORTUNITY, response.body());
                             startActivity(intent);
                         }
 

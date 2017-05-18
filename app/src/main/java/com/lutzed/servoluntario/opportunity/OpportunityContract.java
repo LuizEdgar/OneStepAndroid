@@ -12,7 +12,7 @@ import java.util.List;
  * Created by luizfreitas on 18/04/2017.
  */
 
-public interface CreateOpportunityContract {
+public interface OpportunityContract {
 
     interface View extends BaseView<Presenter> {
         void setLoadingIndicator(boolean active);

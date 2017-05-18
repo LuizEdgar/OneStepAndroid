@@ -12,11 +12,11 @@ import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.util.ActivityUtils;
 import com.lutzed.servoluntario.util.AuthHelper;
 
-public class CreateOpportunityActivity extends AppCompatActivity {
+public class OpportunityActivity extends AppCompatActivity {
 
     public static final String EXTRA_OPPORTUNITY = "extra_opportunity";
 
-    private CreateOpportunityPresenter mCreateOpportunityPresenter;
+    private OpportunityPresenter mOpportunityPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,22 +30,22 @@ public class CreateOpportunityActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        CreateOpportunityFragment createOpportunityFragment =
-                (CreateOpportunityFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        OpportunityFragment opportunityFragment =
+                (OpportunityFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
 
 
-        if (createOpportunityFragment == null) {
+        if (opportunityFragment == null) {
             // Create the fragment
-            createOpportunityFragment = CreateOpportunityFragment.newInstance();
+            opportunityFragment = OpportunityFragment.newInstance();
             ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), createOpportunityFragment, R.id.contentFrame);
+                    getSupportFragmentManager(), opportunityFragment, R.id.contentFrame);
         }
 
         AuthHelper authHelper = AuthHelper.getInstance(this);
         // Create the presenter
 
         Opportunity opportunity = getIntent().getParcelableExtra(EXTRA_OPPORTUNITY);
-        mCreateOpportunityPresenter = new CreateOpportunityPresenter(createOpportunityFragment, Api.getClient(authHelper.getUser()), authHelper, opportunity);
+        mOpportunityPresenter = new OpportunityPresenter(opportunityFragment, Api.getClient(authHelper.getUser()), authHelper, opportunity);
 
         // Load previously saved state, if available.
         if (savedInstanceState != null) {

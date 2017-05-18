@@ -21,7 +21,7 @@ import butterknife.ButterKnife;
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class ItemsOpportunityAdapter extends RecyclerView.Adapter<ItemsOpportunityAdapter.ViewHolder> {
+public class OpportunityItemsAdapter extends RecyclerView.Adapter<OpportunityItemsAdapter.ViewHolder> {
 
     private final List<SelectableItem> mValues;
     private final OnAdapterListener mListener;
@@ -30,7 +30,7 @@ public class ItemsOpportunityAdapter extends RecyclerView.Adapter<ItemsOpportuni
         void onAdapterInteraction(SelectableItem mItem, int adapterPosition);
     }
 
-    public ItemsOpportunityAdapter(List<SelectableItem> items, OnAdapterListener listener) {
+    public OpportunityItemsAdapter(List<SelectableItem> items, OnAdapterListener listener) {
         mValues = items;
         mListener = listener;
     }

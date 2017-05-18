@@ -37,7 +37,7 @@ import butterknife.OnClick;
 /**
  * A login screen that offers login via email/password.
  */
-public class CreateOpportunityFragment extends Fragment implements CreateOpportunityContract.View {
+public class OpportunityFragment extends Fragment implements OpportunityContract.View {
 
     @BindView(R.id.title) EditText mTitleView;
     @BindView(R.id.description) EditText mDescriptionView;
@@ -52,10 +52,10 @@ public class CreateOpportunityFragment extends Fragment implements CreateOpportu
     @BindView(R.id.progress) View mProgressView;
     @BindView(R.id.create_opportunity_form) View mLoginFormView;
 
-    private CreateOpportunityContract.Presenter mPresenter;
+    private OpportunityContract.Presenter mPresenter;
 
-    public static CreateOpportunityFragment newInstance() {
-        return new CreateOpportunityFragment();
+    public static OpportunityFragment newInstance() {
+        return new OpportunityFragment();
     }
 
     @Override
@@ -65,7 +65,7 @@ public class CreateOpportunityFragment extends Fragment implements CreateOpportu
     }
 
     @Override
-    public void setPresenter(CreateOpportunityContract.Presenter presenter) {
+    public void setPresenter(OpportunityContract.Presenter presenter) {
         mPresenter = presenter;
     }
 
@@ -99,7 +99,7 @@ public class CreateOpportunityFragment extends Fragment implements CreateOpportu
         SelectableItem item = new Skill();
         item.setName("Add");
         baseAddItem.add(item);
-        mCausesRecyclerView.setAdapter(new ItemsOpportunityAdapter(baseAddItem, new ItemsOpportunityAdapter.OnAdapterListener() {
+        mCausesRecyclerView.setAdapter(new OpportunityItemsAdapter(baseAddItem, new OpportunityItemsAdapter.OnAdapterListener() {
             @Override
             public void onAdapterInteraction(SelectableItem mItem, int adapterPosition) {
                 if (adapterPosition == mCausesRecyclerView.getAdapter().getItemCount() - 1) {
@@ -107,7 +107,7 @@ public class CreateOpportunityFragment extends Fragment implements CreateOpportu
                 }
             }
         }));
-        mSkillsRecyclerView.setAdapter(new ItemsOpportunityAdapter(new ArrayList<>(baseAddItem), new ItemsOpportunityAdapter.OnAdapterListener() {
+        mSkillsRecyclerView.setAdapter(new OpportunityItemsAdapter(new ArrayList<>(baseAddItem), new OpportunityItemsAdapter.OnAdapterListener() {
             @Override
             public void onAdapterInteraction(SelectableItem mItem, int adapterPosition) {
                 if (adapterPosition == mSkillsRecyclerView.getAdapter().getItemCount() - 1) {
@@ -131,8 +131,8 @@ public class CreateOpportunityFragment extends Fragment implements CreateOpportu
             contact = (Contact) mContactSpinner.getSpinner().getSelectedItem();
         }
 
-        List<Long> skillIds = ((ItemsOpportunityAdapter) mSkillsRecyclerView.getAdapter()).getItemsIds();
-        List<Long> causeIds = ((ItemsOpportunityAdapter) mCausesRecyclerView.getAdapter()).getItemsIds();
+        List<Long> skillIds = ((OpportunityItemsAdapter) mSkillsRecyclerView.getAdapter()).getItemsIds();
+        List<Long> causeIds = ((OpportunityItemsAdapter) mCausesRecyclerView.getAdapter()).getItemsIds();
         String volunteersNumber = mVolunteersNumberView.getText().toString().trim();
         String timeCommitment = mTimeCommitmentView.getText().toString().trim();
         String othersRequirements = mOthersRequirementsView.getText().toString().trim();
@@ -191,13 +191,13 @@ public class CreateOpportunityFragment extends Fragment implements CreateOpportu
 
     @Override
     public void swapCauses(List<? extends SelectableItem> causes) {
-        ItemsOpportunityAdapter adapter = (ItemsOpportunityAdapter) mCausesRecyclerView.getAdapter();
+        OpportunityItemsAdapter adapter = (OpportunityItemsAdapter) mCausesRecyclerView.getAdapter();
         adapter.addDataAtEnd(causes, true, true);
     }
 
     @Override
     public void swapSkills(List<? extends SelectableItem> skills) {
-        ItemsOpportunityAdapter adapter = (ItemsOpportunityAdapter) mSkillsRecyclerView.getAdapter();
+        OpportunityItemsAdapter adapter = (OpportunityItemsAdapter) mSkillsRecyclerView.getAdapter();
         adapter.addDataAtEnd(skills, true, true);
     }
 
