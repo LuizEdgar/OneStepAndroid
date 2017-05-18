@@ -8,10 +8,13 @@ import android.view.MenuItem;
 
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.api.Api;
+import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.util.ActivityUtils;
 import com.lutzed.servoluntario.util.AuthHelper;
 
 public class CreateOpportunityActivity extends AppCompatActivity {
+
+    public static final String EXTRA_OPPORTUNITY = "extra_opportunity";
 
     private CreateOpportunityPresenter mCreateOpportunityPresenter;
 
@@ -40,7 +43,9 @@ public class CreateOpportunityActivity extends AppCompatActivity {
 
         AuthHelper authHelper = AuthHelper.getInstance(this);
         // Create the presenter
-        mCreateOpportunityPresenter = new CreateOpportunityPresenter(createOpportunityFragment, Api.getClient(authHelper.getUser()), authHelper);
+
+        Opportunity opportunity = getIntent().getParcelableExtra(EXTRA_OPPORTUNITY);
+        mCreateOpportunityPresenter = new CreateOpportunityPresenter(createOpportunityFragment, Api.getClient(authHelper.getUser()), authHelper, opportunity);
 
         // Load previously saved state, if available.
         if (savedInstanceState != null) {

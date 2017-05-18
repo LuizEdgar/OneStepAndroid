@@ -1,5 +1,8 @@
 package com.lutzed.servoluntario.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -7,7 +10,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by luizfreitas on 25/07/2016.
  */
 
-public class Location {
+public class Location implements Parcelable {
 
     @Expose private Long id;
 
@@ -106,4 +109,49 @@ public class Location {
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.address1);
+        dest.writeString(this.address2);
+        dest.writeString(this.city);
+        dest.writeString(this.state);
+        dest.writeString(this.country);
+        dest.writeString(this.postcode);
+        dest.writeString(this.createdAt);
+        dest.writeString(this.updatedAt);
+    }
+
+    public Location() {
+    }
+
+    protected Location(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.address1 = in.readString();
+        this.address2 = in.readString();
+        this.city = in.readString();
+        this.state = in.readString();
+        this.country = in.readString();
+        this.postcode = in.readString();
+        this.createdAt = in.readString();
+        this.updatedAt = in.readString();
+    }
+
+    public static final Parcelable.Creator<Location> CREATOR = new Parcelable.Creator<Location>() {
+        @Override
+        public Location createFromParcel(Parcel source) {
+            return new Location(source);
+        }
+
+        @Override
+        public Location[] newArray(int size) {
+            return new Location[size];
+        }
+    };
 }

@@ -1,5 +1,7 @@
 package com.lutzed.servoluntario.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.google.gson.annotations.Expose;
@@ -9,7 +11,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by luizfreitas on 25/07/2016.
  */
 
-public class Contact {
+public class Contact implements Parcelable {
 
     @Expose private Long id;
 
@@ -89,4 +91,40 @@ public class Contact {
         if (!TextUtils.isEmpty(email)) s += " - " + email;
         return s;
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.phone);
+        dest.writeString(this.name);
+        dest.writeString(this.email);
+        dest.writeString(this.createdAt);
+        dest.writeString(this.updatedAt);
+    }
+
+    protected Contact(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.phone = in.readString();
+        this.name = in.readString();
+        this.email = in.readString();
+        this.createdAt = in.readString();
+        this.updatedAt = in.readString();
+    }
+
+    public static final Parcelable.Creator<Contact> CREATOR = new Parcelable.Creator<Contact>() {
+        @Override
+        public Contact createFromParcel(Parcel source) {
+            return new Contact(source);
+        }
+
+        @Override
+        public Contact[] newArray(int size) {
+            return new Contact[size];
+        }
+    };
 }

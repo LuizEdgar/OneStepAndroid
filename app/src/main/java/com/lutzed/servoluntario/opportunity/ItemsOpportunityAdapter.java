@@ -10,6 +10,7 @@ import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.selection.ItemsSelectionFragment.OnListFragmentInteractionListener;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -20,7 +21,7 @@ import butterknife.ButterKnife;
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class ItemsSelectableOpportunityAdapter extends RecyclerView.Adapter<ItemsSelectableOpportunityAdapter.ViewHolder> {
+public class ItemsOpportunityAdapter extends RecyclerView.Adapter<ItemsOpportunityAdapter.ViewHolder> {
 
     private final List<SelectableItem> mValues;
     private final OnAdapterListener mListener;
@@ -29,7 +30,7 @@ public class ItemsSelectableOpportunityAdapter extends RecyclerView.Adapter<Item
         void onAdapterInteraction(SelectableItem mItem, int adapterPosition);
     }
 
-    public ItemsSelectableOpportunityAdapter(List<SelectableItem> items, OnAdapterListener listener) {
+    public ItemsOpportunityAdapter(List<SelectableItem> items, OnAdapterListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -40,16 +41,16 @@ public class ItemsSelectableOpportunityAdapter extends RecyclerView.Adapter<Item
         if (size > 0) {
 
             SelectableItem last = null;
-            if (ignoreLast){
+            if (ignoreLast) {
                 last = mValues.get(size - 1);
             }
 
             mValues.clear();
 
-            if (ignoreLast){
+            if (ignoreLast) {
                 mValues.add(last);
-                this.notifyItemRangeRemoved(0, size -1);
-            }else{
+                this.notifyItemRangeRemoved(0, size - 1);
+            } else {
                 this.notifyItemRangeRemoved(0, size);
             }
 
@@ -77,7 +78,7 @@ public class ItemsSelectableOpportunityAdapter extends RecyclerView.Adapter<Item
     }
 
     public void addDataAtEnd(List<? extends SelectableItem> items, boolean ignoreLast, boolean swapData) {
-        if (swapData){
+        if (swapData) {
             clearData(true);
         }
 
@@ -86,7 +87,7 @@ public class ItemsSelectableOpportunityAdapter extends RecyclerView.Adapter<Item
         }
 
         int startPosition = mValues.size();
-        if (ignoreLast){
+        if (ignoreLast) {
             startPosition = Math.max(startPosition - 1, 0);
         }
 
@@ -98,6 +99,14 @@ public class ItemsSelectableOpportunityAdapter extends RecyclerView.Adapter<Item
     public void swapData(List<? extends SelectableItem> items) {
         clearData(false);
         addData(items);
+    }
+
+    List<Long> getItemsIds() {
+        List<Long> list = new ArrayList<>();
+        for (SelectableItem item : mValues) {
+            list.add(item.getId());
+        }
+        return list;
     }
 
     @Override

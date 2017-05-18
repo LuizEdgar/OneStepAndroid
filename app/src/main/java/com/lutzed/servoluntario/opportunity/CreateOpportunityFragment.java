@@ -39,7 +39,7 @@ import butterknife.OnClick;
  */
 public class CreateOpportunityFragment extends Fragment implements CreateOpportunityContract.View {
 
-    @BindView(R.id.title) EditText mNameView;
+    @BindView(R.id.title) EditText mTitleView;
     @BindView(R.id.description) EditText mDescriptionView;
     @BindView(R.id.volunteersNumber) EditText mVolunteersNumberView;
     @BindView(R.id.timeCommitment) EditText mTimeCommitmentView;
@@ -99,7 +99,7 @@ public class CreateOpportunityFragment extends Fragment implements CreateOpportu
         SelectableItem item = new Skill();
         item.setName("Add");
         baseAddItem.add(item);
-        mCausesRecyclerView.setAdapter(new ItemsSelectableOpportunityAdapter(baseAddItem, new ItemsSelectableOpportunityAdapter.OnAdapterListener() {
+        mCausesRecyclerView.setAdapter(new ItemsOpportunityAdapter(baseAddItem, new ItemsOpportunityAdapter.OnAdapterListener() {
             @Override
             public void onAdapterInteraction(SelectableItem mItem, int adapterPosition) {
                 if (adapterPosition == mCausesRecyclerView.getAdapter().getItemCount() - 1) {
@@ -107,7 +107,7 @@ public class CreateOpportunityFragment extends Fragment implements CreateOpportu
                 }
             }
         }));
-        mSkillsRecyclerView.setAdapter(new ItemsSelectableOpportunityAdapter(new ArrayList<>(baseAddItem), new ItemsSelectableOpportunityAdapter.OnAdapterListener() {
+        mSkillsRecyclerView.setAdapter(new ItemsOpportunityAdapter(new ArrayList<>(baseAddItem), new ItemsOpportunityAdapter.OnAdapterListener() {
             @Override
             public void onAdapterInteraction(SelectableItem mItem, int adapterPosition) {
                 if (adapterPosition == mSkillsRecyclerView.getAdapter().getItemCount() - 1) {
@@ -121,11 +121,28 @@ public class CreateOpportunityFragment extends Fragment implements CreateOpportu
 
     @OnClick(R.id.save_button)
     void onSignUpClicked() {
-        mPresenter.attemptCreateOpportunity();
+        String title = mTitleView.getText().toString().trim();
+        String description = mDescriptionView.getText().toString().trim();
+
+        int selectedItemPosition = mContactSpinner.getSpinner().getSelectedItemPosition();
+        int spinnerCount = mContactSpinner.getSpinner().getCount();
+        Contact contact = null;
+        if (selectedItemPosition > 0 && selectedItemPosition < spinnerCount - 1){
+            contact = (Contact) mContactSpinner.getSpinner().getSelectedItem();
+        }
+
+        List<Long> skillIds = ((ItemsOpportunityAdapter) mSkillsRecyclerView.getAdapter()).getItemsIds();
+        List<Long> causeIds = ((ItemsOpportunityAdapter) mCausesRecyclerView.getAdapter()).getItemsIds();
+        String volunteersNumber = mVolunteersNumberView.getText().toString().trim();
+        String timeCommitment = mTimeCommitmentView.getText().toString().trim();
+        String othersRequirements = mOthersRequirementsView.getText().toString().trim();
+        String tags = mTagsView.getText().toString().trim();
+
+        mPresenter.attemptCreateOpportunity(title, description, contact, skillIds, causeIds, volunteersNumber, timeCommitment, othersRequirements, tags);
     }
 
     public void resetErrors() {
-        mNameView.setError(null);
+        mTitleView.setError(null);
     }
 
     @Override
@@ -173,14 +190,14 @@ public class CreateOpportunityFragment extends Fragment implements CreateOpportu
     }
 
     @Override
-    public void addCauses(List<? extends SelectableItem> causes) {
-        ItemsSelectableOpportunityAdapter adapter = (ItemsSelectableOpportunityAdapter) mCausesRecyclerView.getAdapter();
+    public void swapCauses(List<? extends SelectableItem> causes) {
+        ItemsOpportunityAdapter adapter = (ItemsOpportunityAdapter) mCausesRecyclerView.getAdapter();
         adapter.addDataAtEnd(causes, true, true);
     }
 
     @Override
-    public void addSkills(List<? extends SelectableItem> skills) {
-        ItemsSelectableOpportunityAdapter adapter = (ItemsSelectableOpportunityAdapter) mSkillsRecyclerView.getAdapter();
+    public void swapSkills(List<? extends SelectableItem> skills) {
+        ItemsOpportunityAdapter adapter = (ItemsOpportunityAdapter) mSkillsRecyclerView.getAdapter();
         adapter.addDataAtEnd(skills, true, true);
     }
 
@@ -226,6 +243,36 @@ public class CreateOpportunityFragment extends Fragment implements CreateOpportu
                 mPresenter.onNewSelectableItemsAdded(data.<SelectableItem>getParcelableArrayListExtra(ItemsSelectionActivity.EXTRA_ITEMS_SELECTED));
             }
         }
+    }
+
+    @Override
+    public void setTitle(String title) {
+        mTitleView.setText(title);
+    }
+
+    @Override
+    public void setDescription(String description) {
+        mDescriptionView.setText(description);
+    }
+
+    @Override
+    public void setVolunteersNumber(Integer volunteersNumber) {
+        mVolunteersNumberView.setText(String.valueOf(volunteersNumber));
+    }
+
+    @Override
+    public void setTimeCommitment(String timeCommitment) {
+        mTimeCommitmentView.setText(timeCommitment);
+    }
+
+    @Override
+    public void setOthersRequirements(String othersRequirements) {
+        mOthersRequirementsView.setText(othersRequirements);
+    }
+
+    @Override
+    public void setTags(String tags) {
+        mTagsView.setText(tags);
     }
 }
 

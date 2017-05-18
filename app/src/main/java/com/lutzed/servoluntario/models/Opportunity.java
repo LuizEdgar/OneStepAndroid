@@ -1,5 +1,8 @@
 package com.lutzed.servoluntario.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -10,7 +13,7 @@ import java.util.List;
  * Created by luizfreitas on 25/07/2016.
  */
 
-public class Opportunity {
+public class Opportunity implements Parcelable {
 
     @Expose private Long id;
 
@@ -31,40 +34,40 @@ public class Opportunity {
     @Expose private String description;
 
     @Expose
-    @SerializedName("timeCommitment")
-    private String time_commitment;
+    @SerializedName("time_commitment")
+    private String timeCommitment;
 
     @Expose
-    @SerializedName("othersRequirements")
-    private String others_requirements;
+    @SerializedName("others_requirements")
+    private String othersRequirements;
 
     @Expose private String tags;
 
     @Expose(serialize = false, deserialize = true)
-    private List<Location> locations;
+    private Location location;
 
     @Expose(serialize = true, deserialize = false)
-    @SerializedName("locations_attributes")
-    private List<Location> locationsAttributes;
+    @SerializedName("location_attributes")
+    private Location locationAttributes;
 
     @Expose(serialize = false, deserialize = true)
-    private List<Contact> contacts;
+    private Contact contact;
 
     @Expose(serialize = true, deserialize = false)
-    @SerializedName("contacts_attributes")
-    private List<Contact> contactsAttributes;
+    @SerializedName("contact_attributes")
+    private Contact contactAttributes;
 
     @Expose(serialize = false, deserialize = true)
     private List<Cause> causes;
 
-    @Expose(serialize = true, deserialize = false)
+    @Expose
     @SerializedName("cause_ids")
     private List<Long> causeIds;
 
     @Expose(serialize = false, deserialize = true)
     private List<Skill> skills;
 
-    @Expose(serialize = true, deserialize = false)
+    @Expose
     @SerializedName("skill_ids")
     private List<Long> skillIds;
 
@@ -90,7 +93,7 @@ public class Opportunity {
 
     @Expose
     @SerializedName("opportunitable_type")
-    private Long opportunitableType;
+    private String opportunitableType;
 
     @Expose
     @SerializedName("created_at")
@@ -148,22 +151,6 @@ public class Opportunity {
         this.description = description;
     }
 
-    public String getTime_commitment() {
-        return time_commitment;
-    }
-
-    public void setTime_commitment(String time_commitment) {
-        this.time_commitment = time_commitment;
-    }
-
-    public String getOthers_requirements() {
-        return others_requirements;
-    }
-
-    public void setOthers_requirements(String others_requirements) {
-        this.others_requirements = others_requirements;
-    }
-
     public String getTags() {
         return tags;
     }
@@ -172,36 +159,36 @@ public class Opportunity {
         this.tags = tags;
     }
 
-    public List<Location> getLocations() {
-        return locations;
+    public Location getLocation() {
+        return location;
     }
 
-    public void setLocations(List<Location> locations) {
-        this.locations = locations;
+    public void setLocation(Location location) {
+        this.location = location;
     }
 
-    public List<Location> getLocationsAttributes() {
-        return locationsAttributes;
+    public Location getLocationAttributes() {
+        return locationAttributes;
     }
 
-    public void setLocationsAttributes(List<Location> locationsAttributes) {
-        this.locationsAttributes = locationsAttributes;
+    public void setLocationAttributes(Location locationAttributes) {
+        this.locationAttributes = locationAttributes;
     }
 
-    public List<Contact> getContacts() {
-        return contacts;
+    public Contact getContact() {
+        return contact;
     }
 
-    public void setContacts(List<Contact> contacts) {
-        this.contacts = contacts;
+    public void setContact(Contact contact) {
+        this.contact = contact;
     }
 
-    public List<Contact> getContactsAttributes() {
-        return contactsAttributes;
+    public Contact getContactAttributes() {
+        return contactAttributes;
     }
 
-    public void setContactsAttributes(List<Contact> contactsAttributes) {
-        this.contactsAttributes = contactsAttributes;
+    public void setContactAttributes(Contact contactAttributes) {
+        this.contactAttributes = contactAttributes;
     }
 
     public List<Cause> getCauses() {
@@ -276,11 +263,11 @@ public class Opportunity {
         this.opportunitableId = opportunitableId;
     }
 
-    public Long getOpportunitableType() {
+    public String getOpportunitableType() {
         return opportunitableType;
     }
 
-    public void setOpportunitableType(Long opportunitableType) {
+    public void setOpportunitableType(String opportunitableType) {
         this.opportunitableType = opportunitableType;
     }
 
@@ -300,41 +287,98 @@ public class Opportunity {
         this.updatedAt = updatedAt;
     }
 
-    public void addCauses(List<Cause> causes, boolean clearBefore) {
-        if (this.causes == null) {
-            this.causes = new ArrayList<>();
-        } else {
-            if (clearBefore) this.causes.clear();
-        }
-        this.causes.addAll(causes);
-
-        if (causeIds == null) {
-            causeIds = new ArrayList<>();
-        } else {
-            if (clearBefore) this.causeIds.clear();
-        }
-
-        for (SelectableItem cause : causes) {
-            causeIds.add(cause.getId());
-        }
+    public String getTimeCommitment() {
+        return timeCommitment;
     }
 
-    public void addSkills(List<Skill> skills, boolean clearBefore) {
-        if (this.skills == null) {
-            this.skills = new ArrayList<>();
-        } else {
-            if (clearBefore) this.skills.clear();
-        }
-        this.skills.addAll(skills);
-
-        if (skillIds == null) {
-            skillIds = new ArrayList<>();
-        } else {
-            if (clearBefore) this.skillIds.clear();
-        }
-
-        for (SelectableItem skill : skills) {
-            skillIds.add(skill.getId());
-        }
+    public void setTimeCommitment(String timeCommitment) {
+        this.timeCommitment = timeCommitment;
     }
+
+    public String getOthersRequirements() {
+        return othersRequirements;
+    }
+
+    public void setOthersRequirements(String othersRequirements) {
+        this.othersRequirements = othersRequirements;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.title);
+        dest.writeValue(this.isOngoing);
+        dest.writeValue(this.isVirtual);
+        dest.writeValue(this.volunteersNumber);
+        dest.writeString(this.description);
+        dest.writeString(this.timeCommitment);
+        dest.writeString(this.othersRequirements);
+        dest.writeString(this.tags);
+        dest.writeParcelable(this.location, flags);
+        dest.writeParcelable(this.locationAttributes, flags);
+        dest.writeParcelable(this.contact, flags);
+        dest.writeParcelable(this.contactAttributes, flags);
+        dest.writeTypedList(this.causes);
+        dest.writeList(this.causeIds);
+        dest.writeTypedList(this.skills);
+        dest.writeList(this.skillIds);
+        dest.writeString(this.startDateAt);
+        dest.writeString(this.endDateAt);
+        dest.writeString(this.startTimeAt);
+        dest.writeString(this.endTimeAt);
+        dest.writeValue(this.opportunitableId);
+        dest.writeString(this.opportunitableType);
+        dest.writeString(this.createdAt);
+        dest.writeString(this.updatedAt);
+    }
+
+    public Opportunity() {
+    }
+
+    protected Opportunity(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.title = in.readString();
+        this.isOngoing = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.isVirtual = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.volunteersNumber = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.description = in.readString();
+        this.timeCommitment = in.readString();
+        this.othersRequirements = in.readString();
+        this.tags = in.readString();
+        this.location = in.readParcelable(Location.class.getClassLoader());
+        this.locationAttributes = in.readParcelable(Location.class.getClassLoader());
+        this.contact = in.readParcelable(Contact.class.getClassLoader());
+        this.contactAttributes = in.readParcelable(Contact.class.getClassLoader());
+        this.causes = in.createTypedArrayList(Cause.CREATOR);
+        this.causeIds = new ArrayList<Long>();
+        in.readList(this.causeIds, Long.class.getClassLoader());
+        this.skills = in.createTypedArrayList(Skill.CREATOR);
+        this.skillIds = new ArrayList<Long>();
+        in.readList(this.skillIds, Long.class.getClassLoader());
+        this.startDateAt = in.readString();
+        this.endDateAt = in.readString();
+        this.startTimeAt = in.readString();
+        this.endTimeAt = in.readString();
+        this.opportunitableId = (Long) in.readValue(Long.class.getClassLoader());
+        this.opportunitableType = in.readString();
+        this.createdAt = in.readString();
+        this.updatedAt = in.readString();
+    }
+
+    public static final Parcelable.Creator<Opportunity> CREATOR = new Parcelable.Creator<Opportunity>() {
+        @Override
+        public Opportunity createFromParcel(Parcel source) {
+            return new Opportunity(source);
+        }
+
+        @Override
+        public Opportunity[] newArray(int size) {
+            return new Opportunity[size];
+        }
+    };
 }

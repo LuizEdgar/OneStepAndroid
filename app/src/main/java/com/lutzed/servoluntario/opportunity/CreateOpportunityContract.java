@@ -21,27 +21,35 @@ public interface CreateOpportunityContract {
 
         void setContacts(List<Contact> contacts, List<Long> selectedContactsIds);
 
-        void addCauses(List<? extends SelectableItem> causes);
+        void swapCauses(List<? extends SelectableItem> causes);
 
-        void addSkills(List<? extends SelectableItem> skills);
+        void swapSkills(List<? extends SelectableItem> skills);
 
         void setOpportunity(Opportunity opportunity);
 
         void showCreateNewContact();
 
-        void showAddNewCause(List<Long> excludedCauses);
+        void showAddNewCause(List<Long> checkedItems);
 
-        void showAddNewSkill(List<Long> excludedCauses);
+        void showAddNewSkill(List<Long> checkedItems);
+
+        void setTitle(String title);
+
+        void setDescription(String description);
+
+        void setVolunteersNumber(Integer volunteersNumber);
+
+        void setTimeCommitment(String timeCommitment);
+
+        void setOthersRequirements(String othersRequirements);
+
+        void setTags(String tags);
     }
 
     interface Presenter extends BasePresenter {
-        void attemptCreateOpportunity();
+        void attemptCreateOpportunity(String title, String description, Contact contact, List<Long> skillIds, List<Long> causeIds, String volunteersNumber, String timeCommitment, String othersRequirements, String tags);
 
         void loadContacts();
-
-        void loadSkills();
-
-        void loadCauses();
 
         void createNewContact();
 

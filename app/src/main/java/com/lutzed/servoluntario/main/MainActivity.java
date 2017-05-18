@@ -9,8 +9,14 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.lutzed.servoluntario.R;
+import com.lutzed.servoluntario.api.Api;
+import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.opportunity.CreateOpportunityActivity;
 import com.lutzed.servoluntario.util.AuthHelper;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,10 +30,24 @@ public class MainActivity extends AppCompatActivity {
             switch (item.getItemId()) {
                 case R.id.navigation_home:
                     mTextMessage.setText(R.string.title_home);
-                    return true;
-                case R.id.navigation_dashboard:
                     Intent intent = new Intent(MainActivity.this, CreateOpportunityActivity.class);
                     startActivity(intent);
+                    return true;
+                case R.id.navigation_dashboard:
+                    Api.getClient(AuthHelper.getInstance(MainActivity.this).getUser()).getOpportunity(12l).enqueue(new Callback<Opportunity>() {
+                        @Override
+                        public void onResponse(Call<Opportunity> call, Response<Opportunity> response) {
+                            Intent intent = new Intent(MainActivity.this, CreateOpportunityActivity.class);
+                            intent.putExtra(CreateOpportunityActivity.EXTRA_OPPORTUNITY, response.body());
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onFailure(Call<Opportunity> call, Throwable t) {
+                            t.printStackTrace();
+                        }
+                    });
+
                     mTextMessage.setText(R.string.title_dashboard);
                     return true;
                 case R.id.navigation_notifications:

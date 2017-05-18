@@ -8,6 +8,7 @@ import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.models.Skill;
 import com.lutzed.servoluntario.util.AuthHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -23,11 +24,11 @@ public class CreateOpportunityPresenter implements CreateOpportunityContract.Pre
     private final CreateOpportunityContract.View mView;
     private final Api.ApiClient mApiClient;
     private final AuthHelper mAuthHelper;
-    private final Opportunity mOpportunity;
-
-    public CreateOpportunityPresenter(CreateOpportunityFragment createOpportunityFragment, Api.ApiClient apiClient, AuthHelper authHelper) {
-        this(createOpportunityFragment, apiClient, authHelper, null);
-    }
+    private Opportunity mOpportunity;
+    private List<Cause> causes;
+    private List<Long> causeIds;
+    private List<Skill> skills;
+    private List<Long> skillIds;
 
     public CreateOpportunityPresenter(CreateOpportunityFragment createOpportunityFragment, Api.ApiClient apiClient, AuthHelper authHelper, Opportunity opportunity) {
         mView = createOpportunityFragment;
@@ -36,25 +37,71 @@ public class CreateOpportunityPresenter implements CreateOpportunityContract.Pre
         mView.setPresenter(this);
 
         if (opportunity == null) {
-            mOpportunity = new Opportunity();
+            causes = new ArrayList<>();
+            causeIds = new ArrayList<>();
+            skills = new ArrayList<>();
+            skillIds = new ArrayList<>();
         } else {
             mOpportunity = opportunity;
+            causes = mOpportunity.getCauses();
+            causeIds = mOpportunity.getCauseIds();
+            skills = mOpportunity.getSkills();
+            skillIds = mOpportunity.getSkillIds();
         }
     }
 
     @Override
     public void start() {
         loadContacts();
-        if (mOpportunity.getId() != null) {
-            mView.addCauses(mOpportunity.getCauses());
-            mView.addSkills(mOpportunity.getSkills());
+        if (mOpportunity != null){
+            mView.setTitle(mOpportunity.getTitle());
+            mView.setDescription(mOpportunity.getDescription());
+            mView.setVolunteersNumber(mOpportunity.getVolunteersNumber());
+            mView.setTimeCommitment(mOpportunity.getTimeCommitment());
+            mView.setOthersRequirements(mOpportunity.getOthersRequirements());
+            mView.setTags(mOpportunity.getTags());
+            mView.swapCauses(mOpportunity.getCauses());
+            mView.swapSkills(mOpportunity.getSkills());
         }
+
     }
 
     @Override
-    public void attemptCreateOpportunity() {
+    public void attemptCreateOpportunity(String title, String description, Contact contact, List<Long> skillIds, List<Long> causeIds, String volunteersNumber, String timeCommitment, String othersRequirements, String tags) {
         mView.resetErrors();
 
+        boolean isUpdate = mOpportunity != null;
+
+        int volunteersNumberInt = 10;
+
+        Opportunity opportunity = new Opportunity();
+        if (isUpdate){
+            opportunity.setId(mOpportunity.getId());
+        }
+        opportunity.setTitle(title);
+        opportunity.setDescription(description);
+        opportunity.setContactAttributes(contact);
+        opportunity.setVolunteersNumber(volunteersNumberInt);
+        opportunity.setTimeCommitment(timeCommitment);
+        opportunity.setOthersRequirements(othersRequirements);
+        opportunity.setCauseIds(causeIds);
+        opportunity.setSkillIds(skillIds);
+        opportunity.setTags(tags);
+
+        Callback<Opportunity> opportunityCallback = new Callback<Opportunity>() {
+            @Override
+            public void onResponse(Call<Opportunity> call, Response<Opportunity> response) {
+
+            }
+
+            @Override
+            public void onFailure(Call<Opportunity> call, Throwable t) {
+                t.printStackTrace();
+            }
+        };
+
+        if (isUpdate) mApiClient.updateOpportunity(opportunity.getId(), opportunity).enqueue(opportunityCallback);
+        else mApiClient.createOpportunity(opportunity).enqueue(opportunityCallback);
     }
 
     @Override
@@ -73,48 +120,18 @@ public class CreateOpportunityPresenter implements CreateOpportunityContract.Pre
     }
 
     @Override
-    public void loadSkills() {
-        mApiClient.getMeSkills().enqueue(new Callback<List<Skill>>() {
-            @Override
-            public void onResponse(Call<List<Skill>> call, Response<List<Skill>> response) {
-                mView.addSkills(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<List<Skill>> call, Throwable t) {
-
-            }
-        });
-    }
-
-    @Override
-    public void loadCauses() {
-        mApiClient.getMeCauses().enqueue(new Callback<List<Cause>>() {
-            @Override
-            public void onResponse(Call<List<Cause>> call, Response<List<Cause>> response) {
-                mView.addCauses(response.body());
-            }
-
-            @Override
-            public void onFailure(Call<List<Cause>> call, Throwable t) {
-
-            }
-        });
-    }
-
-    @Override
     public void createNewContact() {
         mView.showCreateNewContact();
     }
 
     @Override
     public void addNewCause() {
-        mView.showAddNewCause(mOpportunity.getCauseIds());
+        mView.showAddNewCause(causeIds);
     }
 
     @Override
     public void addNewSkill() {
-        mView.showAddNewSkill(mOpportunity.getSkillIds());
+        mView.showAddNewSkill(skillIds);
     }
 
     @Override
@@ -124,11 +141,31 @@ public class CreateOpportunityPresenter implements CreateOpportunityContract.Pre
         SelectableItem typeTestItem = selectableItems.get(0);
 
         if (typeTestItem instanceof Skill) {
-            mView.addSkills(selectableItems);
-            mOpportunity.addSkills((List<Skill>) selectableItems, true);
+            replaceSkills((List<Skill>) selectableItems);
+            mView.swapSkills(this.skills);
         } else if (typeTestItem instanceof Cause) {
-            mView.addCauses(selectableItems);
-            mOpportunity.addCauses((List<Cause>) selectableItems, true);
+            replaceCauses((List<Cause>) selectableItems);
+            mView.swapCauses(this.causes);
+        }
+    }
+
+    public void replaceCauses(List<Cause> causes) {
+        this.causes.clear();
+        this.causeIds.clear();
+
+        for (SelectableItem cause : causes) {
+            this.causes.add((Cause) cause);
+            this.causeIds.add(cause.getId());
+        }
+    }
+
+    public void replaceSkills(List<Skill> skills) {
+        this.skills.clear();
+        this.skillIds.clear();
+
+        for (SelectableItem skill : skills) {
+            this.skills.add((Skill) skill);
+            this.skillIds.add(skill.getId());
         }
     }
 

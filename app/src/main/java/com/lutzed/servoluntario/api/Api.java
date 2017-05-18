@@ -8,6 +8,7 @@ import com.lutzed.servoluntario.api.requests.SignInRequest;
 import com.lutzed.servoluntario.models.Cause;
 import com.lutzed.servoluntario.models.Contact;
 import com.lutzed.servoluntario.models.Location;
+import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.Skill;
 import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.util.Constants;
@@ -115,6 +116,14 @@ public class Api {
         @DELETE("users/{userId}.json")
         Call<User> deleteUser(@Path("userId") Long userId);
 
+        @GET("opportunities/{opportunityId}.json")
+        Call<Opportunity> getOpportunity(@Path("opportunityId") Long opportunityId);
+
+        @POST("opportunities.json")
+        Call<Opportunity> createOpportunity(@Body Opportunity opportunity);
+
+        @PUT("opportunities/{opportunityId}.json")
+        Call<Opportunity> updateOpportunity(@Path("opportunityId") Long opportunityId, @Body Opportunity opportunity);
 
     }
 
