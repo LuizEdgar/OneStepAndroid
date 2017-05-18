@@ -25,13 +25,17 @@ public interface CreateOpportunityContract {
 
         void setSkills(List<? extends SelectableItem> skills);
 
+        void addCause(SelectableItem causes);
+
+        void addSkill(SelectableItem skills);
+
         void setOpportunity(Opportunity opportunity);
 
         void showCreateNewContact();
 
-        void showAddNewCause();
+        void showAddNewCause(List<Long> excludedCauses);
 
-        void showAddNewSkill();
+        void showAddNewSkill(List<Long> excludedCauses);
     }
 
     interface Presenter extends BasePresenter {
@@ -48,5 +52,7 @@ public interface CreateOpportunityContract {
         void addNewCause();
 
         void addNewSkill();
+
+        void onNewSelectableItemAdded(SelectableItem selectableItem);
     }
 }

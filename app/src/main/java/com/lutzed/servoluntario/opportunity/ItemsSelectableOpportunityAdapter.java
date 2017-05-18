@@ -59,6 +59,17 @@ public class ItemsSelectableOpportunityAdapter extends RecyclerView.Adapter<Item
         notifyItemRangeInserted(0, items.size());
     }
 
+    public void addSingleBeforeLast(SelectableItem item) {
+        if (item == null) {
+            return;
+        }
+        int position = Math.max(mValues.size() - 1, 0);
+
+        mValues.add(position, item);
+        notifyItemInserted(position);
+    }
+
+
     public void swapData(List<? extends SelectableItem> items) {
         clearData();
         addData(items);
@@ -80,7 +91,7 @@ public class ItemsSelectableOpportunityAdapter extends RecyclerView.Adapter<Item
     }
 
     @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
         holder.mIdView.setText(mValues.get(position).getId() + "");
         holder.mContentView.setText(mValues.get(position).getName());
@@ -89,7 +100,7 @@ public class ItemsSelectableOpportunityAdapter extends RecyclerView.Adapter<Item
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
-                    mListener.onListFragmentInteraction(holder.mItem, position);
+                    mListener.onListFragmentInteraction(holder.mItem, holder.getAdapterPosition());
                 }
             }
         });

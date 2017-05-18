@@ -82,10 +82,10 @@ public class Api {
         @GET("/me/locations.json")
         Call<List<Location>> getMeLocations();
 
-        @GET("/me/causes.json")
+        @GET("/me/skills.json")
         Call<List<Skill>> getMeSkills();
 
-        @GET("/me/skills.json")
+        @GET("/me/causes.json")
         Call<List<Cause>> getMeCauses();
 
         @POST("me/sign_in.json")

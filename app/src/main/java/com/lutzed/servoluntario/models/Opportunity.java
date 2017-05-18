@@ -3,6 +3,7 @@ package com.lutzed.servoluntario.models;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -297,5 +298,21 @@ public class Opportunity {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public void addCause(Cause cause){
+        if (causes == null) causes = new ArrayList<>();
+        causes.add(cause);
+
+        if (causeIds == null) causeIds = new ArrayList<>();
+        causeIds.add(cause.getId());
+    }
+
+    public void addSkill(Skill skill){
+        if (skills == null) skills = new ArrayList<>();
+        skills.add(skill);
+
+        if (skillIds == null) skillIds = new ArrayList<>();
+        skillIds.add(skill.getId());
     }
 }

@@ -3,6 +3,7 @@ package com.lutzed.servoluntario.opportunity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.models.Skill;
 import com.lutzed.servoluntario.selection.ItemsSelectionActivity;
 import com.lutzed.servoluntario.selection.ItemsSelectionFragment;
+import com.lutzed.servoluntario.util.Snippets;
 import com.satsuware.usefulviews.LabelledSpinner;
 
 import java.util.ArrayList;
@@ -58,8 +60,8 @@ public class CreateOpportunityFragment extends Fragment implements CreateOpportu
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         mPresenter.start();
     }
 
@@ -182,6 +184,16 @@ public class CreateOpportunityFragment extends Fragment implements CreateOpportu
     }
 
     @Override
+    public void addCause(SelectableItem cause) {
+        ((ItemsSelectableOpportunityAdapter) mCausesRecyclerView.getAdapter()).addSingleBeforeLast(cause);
+    }
+
+    @Override
+    public void addSkill(SelectableItem skill) {
+        ((ItemsSelectableOpportunityAdapter) mSkillsRecyclerView.getAdapter()).addSingleBeforeLast(skill);
+    }
+
+    @Override
     public void setOpportunity(Opportunity opportunity) {
 
     }
@@ -192,20 +204,33 @@ public class CreateOpportunityFragment extends Fragment implements CreateOpportu
     }
 
     @Override
-    public void showAddNewCause() {
+    public void showAddNewCause(List<Long> excludedCauses) {
         Intent intent = new Intent(getContext(), ItemsSelectionActivity.class);
         intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_KIND, ItemsSelectionActivity.Kind.CAUSE);
         intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_MODE, ItemsSelectionActivity.Mode.SINGLE);
-        startActivity(intent);
+        if (excludedCauses != null && !excludedCauses.isEmpty()){
+            intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_IDS_EXCLUDE, Snippets.toArray(excludedCauses));
+        }
+        startActivityForResult(intent, ItemsSelectionActivity.EXTRA_SINGLE_SELECTION_REQUEST_CODE);
     }
 
     @Override
-    public void showAddNewSkill() {
+    public void showAddNewSkill(List<Long> excludedCauses) {
         Intent intent = new Intent(getContext(), ItemsSelectionActivity.class);
         intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_KIND, ItemsSelectionActivity.Kind.SKILL);
         intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_MODE, ItemsSelectionActivity.Mode.SINGLE);
-        startActivity(intent);
+        if (excludedCauses != null && !excludedCauses.isEmpty()){
+            intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_IDS_EXCLUDE, Snippets.toArray(excludedCauses));
+        }
+        startActivityForResult(intent, ItemsSelectionActivity.EXTRA_SINGLE_SELECTION_REQUEST_CODE);
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK && requestCode == ItemsSelectionActivity.EXTRA_SINGLE_SELECTION_REQUEST_CODE){
+            mPresenter.onNewSelectableItemAdded((SelectableItem) data.getParcelableExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTED));
+        }
+    }
 }
 

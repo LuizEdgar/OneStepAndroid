@@ -4,6 +4,7 @@ import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.Cause;
 import com.lutzed.servoluntario.models.Contact;
 import com.lutzed.servoluntario.models.Opportunity;
+import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.models.Skill;
 import com.lutzed.servoluntario.util.AuthHelper;
 
@@ -32,15 +33,22 @@ public class CreateOpportunityPresenter implements CreateOpportunityContract.Pre
         mView = createOpportunityFragment;
         mApiClient = apiClient;
         mAuthHelper = authHelper;
-        mOpportunity = opportunity;
         mView.setPresenter(this);
+
+        if (opportunity == null) {
+            mOpportunity = new Opportunity();
+        } else {
+            mOpportunity = opportunity;
+        }
     }
 
     @Override
     public void start() {
         loadContacts();
-        loadCauses();
-        loadSkills();
+        if (mOpportunity.getId() != null) {
+            mView.setCauses(mOpportunity.getCauses());
+            mView.setSkills(mOpportunity.getSkills());
+        }
     }
 
     @Override
@@ -101,12 +109,22 @@ public class CreateOpportunityPresenter implements CreateOpportunityContract.Pre
 
     @Override
     public void addNewCause() {
-        mView.showAddNewCause();
+        mView.showAddNewCause(mOpportunity.getCauseIds());
     }
 
     @Override
     public void addNewSkill() {
-        mView.showAddNewSkill();
+        mView.showAddNewSkill(mOpportunity.getSkillIds());
     }
 
+    @Override
+    public void onNewSelectableItemAdded(SelectableItem selectableItem) {
+        if (selectableItem instanceof Skill) {
+            mView.addSkill(selectableItem);
+            mOpportunity.addSkill((Skill) selectableItem);
+        } else if (selectableItem instanceof Cause) {
+            mView.addCause(selectableItem);
+            mOpportunity.addCause((Cause) selectableItem);
+        }
+    }
 }

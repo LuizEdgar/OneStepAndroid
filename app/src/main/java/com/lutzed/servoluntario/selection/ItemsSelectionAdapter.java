@@ -84,12 +84,12 @@ public class ItemsSelectionAdapter extends RecyclerView.Adapter<ItemsSelectionAd
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mMode == ItemsSelectionActivity.Mode.MULTIPLE){
+                if (mMode == ItemsSelectionActivity.Mode.MULTIPLE) {
                     holder.mItem.setSelected(!holder.mItem.isSelected());
                     holder.mCheckMark.setVisibility(holder.mItem.isSelected() ? View.VISIBLE : View.INVISIBLE);
-                }else{
+                } else {
                     if (null != mListener) {
-                        mListener.onListFragmentInteraction(holder.mItem);
+                        mListener.onListFragmentInteraction(holder.mItem, holder.getAdapterPosition());
                     }
                 }
             }

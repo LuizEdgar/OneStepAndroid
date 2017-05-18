@@ -7,6 +7,7 @@ import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.AuthHelper;
 
+import java.util.Iterator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -22,18 +23,20 @@ public class SkillsSelectionPresenter implements ItemsSelectionContract.Presente
     private final ItemsSelectionContract.View mView;
     private final Api.ApiClient mApiClient;
     private final ItemsSelectionActivity.Mode mSelectionMode;
+    private final List<Long> mItemsToExclude;
     private final AuthHelper mAuthHelper;
     private int mPageToGet;
-    private List<Long> selectedSkills;
+    private List<Long> mSelectedSkills;
 
-    public SkillsSelectionPresenter(ItemsSelectionFragment loginFragment, Api.ApiClient apiClient, AuthHelper authHelper, ItemsSelectionActivity.Mode mode) {
+    public SkillsSelectionPresenter(ItemsSelectionFragment loginFragment, Api.ApiClient apiClient, AuthHelper authHelper, ItemsSelectionActivity.Mode mode, List<Long> itemsToExclude) {
         mView = loginFragment;
         mApiClient = apiClient;
         mSelectionMode = mode;
+        mItemsToExclude = itemsToExclude;
         mView.setPresenter(this);
         mPageToGet = 1;
         mAuthHelper = authHelper;
-        selectedSkills = mAuthHelper.getUser().getSkillsIds();
+        mSelectedSkills = mAuthHelper.getUser().getSkillsIds();
     }
 
     @Override
@@ -53,9 +56,18 @@ public class SkillsSelectionPresenter implements ItemsSelectionContract.Presente
         mApiClient.getSkills(mPageToGet).enqueue(new Callback<List<Skill>>() {
             @Override
             public void onResponse(Call<List<Skill>> call, Response<List<Skill>> response) {
-                for (Skill skill : response.body()) {
-                    skill.setSelected(selectedSkills.contains(skill.getId()));
+
+                boolean isMulti = mSelectionMode == ItemsSelectionActivity.Mode.MULTIPLE;
+                boolean hasItemsToExclude = !mItemsToExclude.isEmpty();
+
+                if (isMulti || hasItemsToExclude) {
+                    for (Iterator<Skill> iterator = response.body().iterator(); iterator.hasNext(); ) {
+                        Skill skill = iterator.next();
+                        if (isMulti) skill.setSelected(mSelectedSkills.contains(skill.getId()));
+                        if (hasItemsToExclude && mItemsToExclude.contains(skill.getId())) iterator.remove();
+                    }
                 }
+
                 if (isRefresh) {
                     mView.swapItems(response.body());
                 } else {
