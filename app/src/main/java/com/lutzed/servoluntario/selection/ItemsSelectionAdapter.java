@@ -66,6 +66,14 @@ public class ItemsSelectionAdapter extends RecyclerView.Adapter<ItemsSelectionAd
         return list;
     }
 
+    List<SelectableItem> getSelectedItems() {
+        List<SelectableItem> list = new ArrayList<>();
+        for (SelectableItem item : mValues) {
+            if (item.isSelected()) list.add(item);
+        }
+        return list;
+    }
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
@@ -84,13 +92,13 @@ public class ItemsSelectionAdapter extends RecyclerView.Adapter<ItemsSelectionAd
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mMode == ItemsSelectionActivity.Mode.MULTIPLE) {
+                if (mMode == ItemsSelectionActivity.Mode.SINGLE_SELECTION) {
+                    if (null != mListener) {
+                        mListener.onItemSelected(holder.mItem);
+                    }
+                } else {
                     holder.mItem.setSelected(!holder.mItem.isSelected());
                     holder.mCheckMark.setVisibility(holder.mItem.isSelected() ? View.VISIBLE : View.INVISIBLE);
-                } else {
-                    if (null != mListener) {
-                        mListener.onListFragmentInteraction(holder.mItem, holder.getAdapterPosition());
-                    }
                 }
             }
         });

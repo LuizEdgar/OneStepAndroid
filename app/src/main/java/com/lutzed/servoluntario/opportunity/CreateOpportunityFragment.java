@@ -24,7 +24,6 @@ import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.models.Skill;
 import com.lutzed.servoluntario.selection.ItemsSelectionActivity;
-import com.lutzed.servoluntario.selection.ItemsSelectionFragment;
 import com.lutzed.servoluntario.util.Snippets;
 import com.satsuware.usefulviews.LabelledSpinner;
 
@@ -100,18 +99,18 @@ public class CreateOpportunityFragment extends Fragment implements CreateOpportu
         SelectableItem item = new Skill();
         item.setName("Add");
         baseAddItem.add(item);
-        mCausesRecyclerView.setAdapter(new ItemsSelectableOpportunityAdapter(baseAddItem, new ItemsSelectionFragment.OnListFragmentInteractionListener() {
+        mCausesRecyclerView.setAdapter(new ItemsSelectableOpportunityAdapter(baseAddItem, new ItemsSelectableOpportunityAdapter.OnAdapterListener() {
             @Override
-            public void onListFragmentInteraction(SelectableItem item, int position) {
-                if (position == mCausesRecyclerView.getAdapter().getItemCount() - 1) {
+            public void onAdapterInteraction(SelectableItem mItem, int adapterPosition) {
+                if (adapterPosition == mCausesRecyclerView.getAdapter().getItemCount() - 1) {
                     mPresenter.addNewCause();
                 }
             }
         }));
-        mSkillsRecyclerView.setAdapter(new ItemsSelectableOpportunityAdapter(new ArrayList<>(baseAddItem), new ItemsSelectionFragment.OnListFragmentInteractionListener() {
+        mSkillsRecyclerView.setAdapter(new ItemsSelectableOpportunityAdapter(new ArrayList<>(baseAddItem), new ItemsSelectableOpportunityAdapter.OnAdapterListener() {
             @Override
-            public void onListFragmentInteraction(SelectableItem item, int position) {
-                if (position == mSkillsRecyclerView.getAdapter().getItemCount() - 1) {
+            public void onAdapterInteraction(SelectableItem mItem, int adapterPosition) {
+                if (adapterPosition == mSkillsRecyclerView.getAdapter().getItemCount() - 1) {
                     mPresenter.addNewSkill();
                 }
             }
@@ -174,23 +173,15 @@ public class CreateOpportunityFragment extends Fragment implements CreateOpportu
     }
 
     @Override
-    public void setCauses(List<? extends SelectableItem> causes) {
-        ((ItemsSelectableOpportunityAdapter) mCausesRecyclerView.getAdapter()).addDataAtStart(causes);
+    public void addCauses(List<? extends SelectableItem> causes) {
+        ItemsSelectableOpportunityAdapter adapter = (ItemsSelectableOpportunityAdapter) mCausesRecyclerView.getAdapter();
+        adapter.addDataAtEnd(causes, true, true);
     }
 
     @Override
-    public void setSkills(List<? extends SelectableItem> skills) {
-        ((ItemsSelectableOpportunityAdapter) mSkillsRecyclerView.getAdapter()).addDataAtStart(skills);
-    }
-
-    @Override
-    public void addCause(SelectableItem cause) {
-        ((ItemsSelectableOpportunityAdapter) mCausesRecyclerView.getAdapter()).addSingleBeforeLast(cause);
-    }
-
-    @Override
-    public void addSkill(SelectableItem skill) {
-        ((ItemsSelectableOpportunityAdapter) mSkillsRecyclerView.getAdapter()).addSingleBeforeLast(skill);
+    public void addSkills(List<? extends SelectableItem> skills) {
+        ItemsSelectableOpportunityAdapter adapter = (ItemsSelectableOpportunityAdapter) mSkillsRecyclerView.getAdapter();
+        adapter.addDataAtEnd(skills, true, true);
     }
 
     @Override
@@ -204,32 +195,36 @@ public class CreateOpportunityFragment extends Fragment implements CreateOpportu
     }
 
     @Override
-    public void showAddNewCause(List<Long> excludedCauses) {
+    public void showAddNewCause(List<Long> selectedCauses) {
         Intent intent = new Intent(getContext(), ItemsSelectionActivity.class);
         intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_KIND, ItemsSelectionActivity.Kind.CAUSE);
-        intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_MODE, ItemsSelectionActivity.Mode.SINGLE);
-        if (excludedCauses != null && !excludedCauses.isEmpty()){
-            intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_IDS_EXCLUDE, Snippets.toArray(excludedCauses));
+        intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_MODE, ItemsSelectionActivity.Mode.MULTIPLE_SELECTION);
+        intent.putExtra(ItemsSelectionActivity.EXTRA_SHOW_BACK, true);
+        if (selectedCauses != null && !selectedCauses.isEmpty()) {
+            intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_IDS_CHECK, Snippets.toArray(selectedCauses));
         }
-        startActivityForResult(intent, ItemsSelectionActivity.EXTRA_SINGLE_SELECTION_REQUEST_CODE);
+        startActivityForResult(intent, ItemsSelectionActivity.EXTRA_SELECTION_REQUEST_CODE);
     }
 
     @Override
-    public void showAddNewSkill(List<Long> excludedCauses) {
+    public void showAddNewSkill(List<Long> selectedSkills) {
         Intent intent = new Intent(getContext(), ItemsSelectionActivity.class);
         intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_KIND, ItemsSelectionActivity.Kind.SKILL);
-        intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_MODE, ItemsSelectionActivity.Mode.SINGLE);
-        if (excludedCauses != null && !excludedCauses.isEmpty()){
-            intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_IDS_EXCLUDE, Snippets.toArray(excludedCauses));
+        intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_MODE, ItemsSelectionActivity.Mode.MULTIPLE_SELECTION);
+        intent.putExtra(ItemsSelectionActivity.EXTRA_SHOW_BACK, true);
+        if (selectedSkills != null && !selectedSkills.isEmpty()) {
+            intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_IDS_CHECK, Snippets.toArray(selectedSkills));
         }
-        startActivityForResult(intent, ItemsSelectionActivity.EXTRA_SINGLE_SELECTION_REQUEST_CODE);
+        startActivityForResult(intent, ItemsSelectionActivity.EXTRA_SELECTION_REQUEST_CODE);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK && requestCode == ItemsSelectionActivity.EXTRA_SINGLE_SELECTION_REQUEST_CODE){
-            mPresenter.onNewSelectableItemAdded((SelectableItem) data.getParcelableExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTED));
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == ItemsSelectionActivity.EXTRA_SELECTION_REQUEST_CODE) {
+                mPresenter.onNewSelectableItemsAdded(data.<SelectableItem>getParcelableArrayListExtra(ItemsSelectionActivity.EXTRA_ITEMS_SELECTED));
+            }
         }
     }
 }

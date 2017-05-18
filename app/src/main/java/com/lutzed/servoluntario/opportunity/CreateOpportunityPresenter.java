@@ -46,8 +46,8 @@ public class CreateOpportunityPresenter implements CreateOpportunityContract.Pre
     public void start() {
         loadContacts();
         if (mOpportunity.getId() != null) {
-            mView.setCauses(mOpportunity.getCauses());
-            mView.setSkills(mOpportunity.getSkills());
+            mView.addCauses(mOpportunity.getCauses());
+            mView.addSkills(mOpportunity.getSkills());
         }
     }
 
@@ -77,7 +77,7 @@ public class CreateOpportunityPresenter implements CreateOpportunityContract.Pre
         mApiClient.getMeSkills().enqueue(new Callback<List<Skill>>() {
             @Override
             public void onResponse(Call<List<Skill>> call, Response<List<Skill>> response) {
-                mView.setSkills(response.body());
+                mView.addSkills(response.body());
             }
 
             @Override
@@ -92,7 +92,7 @@ public class CreateOpportunityPresenter implements CreateOpportunityContract.Pre
         mApiClient.getMeCauses().enqueue(new Callback<List<Cause>>() {
             @Override
             public void onResponse(Call<List<Cause>> call, Response<List<Cause>> response) {
-                mView.setCauses(response.body());
+                mView.addCauses(response.body());
             }
 
             @Override
@@ -118,13 +118,18 @@ public class CreateOpportunityPresenter implements CreateOpportunityContract.Pre
     }
 
     @Override
-    public void onNewSelectableItemAdded(SelectableItem selectableItem) {
-        if (selectableItem instanceof Skill) {
-            mView.addSkill(selectableItem);
-            mOpportunity.addSkill((Skill) selectableItem);
-        } else if (selectableItem instanceof Cause) {
-            mView.addCause(selectableItem);
-            mOpportunity.addCause((Cause) selectableItem);
+    public void onNewSelectableItemsAdded(List<? extends SelectableItem> selectableItems) {
+        if (selectableItems == null || selectableItems.isEmpty()) return;
+
+        SelectableItem typeTestItem = selectableItems.get(0);
+
+        if (typeTestItem instanceof Skill) {
+            mView.addSkills(selectableItems);
+            mOpportunity.addSkills((List<Skill>) selectableItems, true);
+        } else if (typeTestItem instanceof Cause) {
+            mView.addCauses(selectableItems);
+            mOpportunity.addCauses((List<Cause>) selectableItems, true);
         }
     }
+
 }

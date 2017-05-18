@@ -10,7 +10,6 @@ import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.selection.ItemsSelectionFragment.OnListFragmentInteractionListener;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -24,18 +23,36 @@ import butterknife.ButterKnife;
 public class ItemsSelectableOpportunityAdapter extends RecyclerView.Adapter<ItemsSelectableOpportunityAdapter.ViewHolder> {
 
     private final List<SelectableItem> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private final OnAdapterListener mListener;
 
-    public ItemsSelectableOpportunityAdapter(List<SelectableItem> items, OnListFragmentInteractionListener listener) {
+    public interface OnAdapterListener {
+        void onAdapterInteraction(SelectableItem mItem, int adapterPosition);
+    }
+
+    public ItemsSelectableOpportunityAdapter(List<SelectableItem> items, OnAdapterListener listener) {
         mValues = items;
         mListener = listener;
     }
 
-    public void clearData() {
+    public void clearData(boolean ignoreLast) {
         int size = getItemCount();
+
         if (size > 0) {
+
+            SelectableItem last = null;
+            if (ignoreLast){
+                last = mValues.get(size - 1);
+            }
+
             mValues.clear();
-            this.notifyItemRangeRemoved(0, size);
+
+            if (ignoreLast){
+                mValues.add(last);
+                this.notifyItemRangeRemoved(0, size -1);
+            }else{
+                this.notifyItemRangeRemoved(0, size);
+            }
+
         }
     }
 
@@ -59,28 +76,28 @@ public class ItemsSelectableOpportunityAdapter extends RecyclerView.Adapter<Item
         notifyItemRangeInserted(0, items.size());
     }
 
-    public void addSingleBeforeLast(SelectableItem item) {
-        if (item == null) {
+    public void addDataAtEnd(List<? extends SelectableItem> items, boolean ignoreLast, boolean swapData) {
+        if (swapData){
+            clearData(true);
+        }
+
+        if (items == null || items.isEmpty()) {
             return;
         }
-        int position = Math.max(mValues.size() - 1, 0);
 
-        mValues.add(position, item);
-        notifyItemInserted(position);
+        int startPosition = mValues.size();
+        if (ignoreLast){
+            startPosition = Math.max(startPosition - 1, 0);
+        }
+
+        mValues.addAll(startPosition, items);
+        notifyItemRangeInserted(startPosition, items.size());
     }
 
 
     public void swapData(List<? extends SelectableItem> items) {
-        clearData();
+        clearData(false);
         addData(items);
-    }
-
-    List<Long> getSelectedItemsIds() {
-        List<Long> list = new ArrayList<>();
-        for (SelectableItem item : mValues) {
-            if (item.isSelected()) list.add(item.getId());
-        }
-        return list;
     }
 
     @Override
@@ -100,7 +117,7 @@ public class ItemsSelectableOpportunityAdapter extends RecyclerView.Adapter<Item
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
-                    mListener.onListFragmentInteraction(holder.mItem, holder.getAdapterPosition());
+                    mListener.onAdapterInteraction(holder.mItem, holder.getAdapterPosition());
                 }
             }
         });

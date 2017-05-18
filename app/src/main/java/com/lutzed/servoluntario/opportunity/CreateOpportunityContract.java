@@ -21,13 +21,9 @@ public interface CreateOpportunityContract {
 
         void setContacts(List<Contact> contacts, List<Long> selectedContactsIds);
 
-        void setCauses(List<? extends SelectableItem> causes);
+        void addCauses(List<? extends SelectableItem> causes);
 
-        void setSkills(List<? extends SelectableItem> skills);
-
-        void addCause(SelectableItem causes);
-
-        void addSkill(SelectableItem skills);
+        void addSkills(List<? extends SelectableItem> skills);
 
         void setOpportunity(Opportunity opportunity);
 
@@ -53,6 +49,6 @@ public interface CreateOpportunityContract {
 
         void addNewSkill();
 
-        void onNewSelectableItemAdded(SelectableItem selectableItem);
+        void onNewSelectableItemsAdded(List<? extends SelectableItem> parcelableArrayListExtra);
     }
 }

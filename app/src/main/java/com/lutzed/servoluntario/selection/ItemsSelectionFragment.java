@@ -30,6 +30,7 @@ import butterknife.ButterKnife;
 public class ItemsSelectionFragment extends Fragment implements ItemsSelectionContract.View {
 
     private static final String BUNDLE_SELECTION_MODE = "bundle_selection_mode";
+    private static final String BUNDLE_SAVE_ACTION_NAME = "bundle_save_action_name";
 
     @BindView(R.id.list) RecyclerView mRecyclerView;
     @BindView(R.id.swipeRefreshLayout) SwipeRefreshLayout mSwipeRefreshLayout;
@@ -41,16 +42,18 @@ public class ItemsSelectionFragment extends Fragment implements ItemsSelectionCo
     private EndlessRecyclerViewScrollListener mScrollListener;
 
     private ItemsSelectionActivity.Mode mMode;
+    private String mSaveActionName;
 
     public ItemsSelectionFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static ItemsSelectionFragment newInstance(ItemsSelectionActivity.Mode mode) {
+    public static ItemsSelectionFragment newInstance(ItemsSelectionActivity.Mode mode, String saveActionName) {
         ItemsSelectionFragment fragment = new ItemsSelectionFragment();
         Bundle args = new Bundle();
         args.putSerializable(BUNDLE_SELECTION_MODE, mode);
+        args.putString(BUNDLE_SAVE_ACTION_NAME, saveActionName);
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,10 +64,11 @@ public class ItemsSelectionFragment extends Fragment implements ItemsSelectionCo
 
         if (getArguments() != null) {
             mMode = (ItemsSelectionActivity.Mode) getArguments().getSerializable(BUNDLE_SELECTION_MODE);
+            mSaveActionName = getArguments().getString(BUNDLE_SAVE_ACTION_NAME);
         }
 
-        //Show menu option "Save" only if multiple selection
-        if (mMode == ItemsSelectionActivity.Mode.MULTIPLE){
+        //Do not show menu option if single selection
+        if (mMode != ItemsSelectionActivity.Mode.SINGLE_SELECTION) {
             setHasOptionsMenu(true);
         }
 
@@ -118,14 +122,22 @@ public class ItemsSelectionFragment extends Fragment implements ItemsSelectionCo
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.next, menu);
+        inflater.inflate(R.menu.save, menu);
+
+        if (mSaveActionName != null) menu.findItem(R.id.action_save).setTitle(mSaveActionName);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_next) {
-            mPresenter.saveItems(((ItemsSelectionAdapter) mRecyclerView.getAdapter()).getSelectedItemsIds());
-            return true;
+        if (item.getItemId() == R.id.action_next || item.getItemId() == R.id.action_save) {
+            if (mMode == ItemsSelectionActivity.Mode.MULTIPLE_SAVE_TO_USER) {
+                mPresenter.saveItemsToUser(((ItemsSelectionAdapter) mRecyclerView.getAdapter()).getSelectedItemsIds());
+                return true;
+            } else if (mMode == ItemsSelectionActivity.Mode.MULTIPLE_SELECTION){
+                mListener.onItemsSelected(((ItemsSelectionAdapter) mRecyclerView.getAdapter()).getSelectedItems());
+                return true;
+            }
+            return false;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -178,7 +190,8 @@ public class ItemsSelectionFragment extends Fragment implements ItemsSelectionCo
         getActivity().finish();
         Intent intent = new Intent(getContext(), ItemsSelectionActivity.class);
         intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_KIND, ItemsSelectionActivity.Kind.SKILL);
-        intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_MODE, ItemsSelectionActivity.Mode.MULTIPLE);
+        intent.putExtra(ItemsSelectionActivity.EXTRA_SAVE_ACTION_NAME, getString(R.string.action_next));
+        intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_MODE, ItemsSelectionActivity.Mode.MULTIPLE_SAVE_TO_USER);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
@@ -188,7 +201,8 @@ public class ItemsSelectionFragment extends Fragment implements ItemsSelectionCo
         getActivity().finish();
         Intent intent = new Intent(getContext(), ItemsSelectionActivity.class);
         intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_KIND, ItemsSelectionActivity.Kind.CAUSE);
-        intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_MODE, ItemsSelectionActivity.Mode.MULTIPLE);
+        intent.putExtra(ItemsSelectionActivity.EXTRA_SAVE_ACTION_NAME, getString(R.string.action_next));
+        intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_MODE, ItemsSelectionActivity.Mode.MULTIPLE_SAVE_TO_USER);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
     }
@@ -207,7 +221,8 @@ public class ItemsSelectionFragment extends Fragment implements ItemsSelectionCo
     }
 
     public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(SelectableItem item, int position);
+        void onItemSelected(SelectableItem item);
+        void onItemsSelected(List<SelectableItem> items);
     }
 
     @Override

@@ -300,19 +300,41 @@ public class Opportunity {
         this.updatedAt = updatedAt;
     }
 
-    public void addCause(Cause cause){
-        if (causes == null) causes = new ArrayList<>();
-        causes.add(cause);
+    public void addCauses(List<Cause> causes, boolean clearBefore) {
+        if (this.causes == null) {
+            this.causes = new ArrayList<>();
+        } else {
+            if (clearBefore) this.causes.clear();
+        }
+        this.causes.addAll(causes);
 
-        if (causeIds == null) causeIds = new ArrayList<>();
-        causeIds.add(cause.getId());
+        if (causeIds == null) {
+            causeIds = new ArrayList<>();
+        } else {
+            if (clearBefore) this.causeIds.clear();
+        }
+
+        for (SelectableItem cause : causes) {
+            causeIds.add(cause.getId());
+        }
     }
 
-    public void addSkill(Skill skill){
-        if (skills == null) skills = new ArrayList<>();
-        skills.add(skill);
+    public void addSkills(List<Skill> skills, boolean clearBefore) {
+        if (this.skills == null) {
+            this.skills = new ArrayList<>();
+        } else {
+            if (clearBefore) this.skills.clear();
+        }
+        this.skills.addAll(skills);
 
-        if (skillIds == null) skillIds = new ArrayList<>();
-        skillIds.add(skill.getId());
+        if (skillIds == null) {
+            skillIds = new ArrayList<>();
+        } else {
+            if (clearBefore) this.skillIds.clear();
+        }
+
+        for (SelectableItem skill : skills) {
+            skillIds.add(skill.getId());
+        }
     }
 }
