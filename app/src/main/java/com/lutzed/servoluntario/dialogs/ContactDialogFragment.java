@@ -8,6 +8,7 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -23,8 +24,14 @@ public class ContactDialogFragment extends DialogFragment {
 
     private Listener mListener;
 
-    public ContactDialogFragment(Listener mListener) {
-        this.mListener = mListener;
+    public ContactDialogFragment() {
+
+    }
+
+    public static ContactDialogFragment newInstance(Listener mListener) {
+        ContactDialogFragment contactDialogFragment = new ContactDialogFragment();
+        contactDialogFragment.mListener = mListener;
+        return contactDialogFragment;
     }
 
     /**
@@ -38,38 +45,60 @@ public class ContactDialogFragment extends DialogFragment {
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        final View view = inflater.inflate(R.layout.fragment_dialog_create_contact, null);
+        View view = inflater.inflate(R.layout.fragment_dialog_create_contact, null);
         builder.setView(view)
                 // Add action buttons
                 .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        if (mListener != null){
+
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        if (mListener != null) {
+                            mListener.onCancel();
+                        }
+                        ContactDialogFragment.this.getDialog().cancel();
+                    }
+                });
+        AlertDialog alertDialog = builder.create();
+
+        alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+            @Override
+            public void onShow(final DialogInterface dialog) {
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View view) {
+                        if (mListener != null) {
                             TextView nameView = (TextView) view.findViewById(R.id.name);
                             TextView phoneView = (TextView) view.findViewById(R.id.phone);
                             TextView emailView = (TextView) view.findViewById(R.id.email);
                             String name = nameView.getText().toString().trim();
                             String phone = phoneView.getText().toString().trim();
                             String email = emailView.getText().toString().trim();
-                            if (name.isEmpty() && phone.isEmpty() && email.isEmpty()){
+                            if (name.isEmpty() && phone.isEmpty() && email.isEmpty()) {
                                 nameView.setError(getString(R.string.error_field_one_required));
                                 phoneView.setError(getString(R.string.error_field_one_required));
                                 emailView.setError(getString(R.string.error_field_one_required));
-                            }else{
+                            } else {
                                 mListener.onSave(name, phone, email);
+                                dialog.dismiss();
                             }
                         }
                     }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        ContactDialogFragment.this.getDialog().cancel();
-                    }
                 });
-        return builder.create();
+            }
+        });
+
+        return alertDialog;
     }
 
-    public interface Listener{
+    public interface Listener {
         void onSave(String name, String phone, String email);
+
+        void onCancel();
     }
 }

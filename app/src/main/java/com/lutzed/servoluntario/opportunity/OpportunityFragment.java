@@ -51,11 +51,12 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @BindView(R.id.contactSpinner) LabelledSpinner mContactSpinner;
     @BindView(R.id.causesRecyclerView) RecyclerView mCausesRecyclerView;
     @BindView(R.id.skillsRecyclerView) RecyclerView mSkillsRecyclerView;
-
     @BindView(R.id.progress) View mProgressView;
     @BindView(R.id.create_opportunity_form) View mLoginFormView;
 
     private OpportunityContract.Presenter mPresenter;
+
+    private int mCurrentContactSpinnerSelectedPosition;
 
     public static OpportunityFragment newInstance() {
         return new OpportunityFragment();
@@ -82,7 +83,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_save){
+        if (item.getItemId() == R.id.action_save) {
             onSaveClicked();
         }
         return super.onOptionsItemSelected(item);
@@ -104,6 +105,8 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
             public void onItemChosen(View labelledSpinner, AdapterView<?> adapterView, View itemView, int position, long id) {
                 if (position == adapterView.getAdapter().getCount() - 1) {
                     mPresenter.createNewContact();
+                }else{
+                    mCurrentContactSpinnerSelectedPosition = position;
                 }
             }
 
@@ -212,8 +215,9 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         viewContacts.add(new Contact("Create new…"));
 
         mContactSpinner.setItemsArray(viewContacts);
-        if (selectedContactId != null){
-            mContactSpinner.setSelection(viewContacts.indexOf(new Contact(selectedContactId)));
+        if (selectedContactId != null) {
+            mCurrentContactSpinnerSelectedPosition = viewContacts.indexOf(new Contact(selectedContactId));
+            mContactSpinner.setSelection(mCurrentContactSpinnerSelectedPosition);
         }
     }
 
@@ -240,10 +244,15 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         }
         ft.addToBackStack(null);
 
-        new ContactDialogFragment(new ContactDialogFragment.Listener() {
+        ContactDialogFragment.newInstance(new ContactDialogFragment.Listener() {
             @Override
             public void onSave(String name, String phone, String email) {
                 mPresenter.addNewContact(name, phone, email);
+            }
+
+            @Override
+            public void onCancel() {
+                mContactSpinner.setSelection(mCurrentContactSpinnerSelectedPosition);
             }
         }).show(ft, "contactDialog");
     }
