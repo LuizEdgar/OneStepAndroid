@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by luizfreitas on 02/05/2017.
  */
 
-public abstract class SelectableItem implements Parcelable{
+public abstract class SelectableItem implements Parcelable {
 
     @Expose protected Long id;
 
@@ -75,4 +75,8 @@ public abstract class SelectableItem implements Parcelable{
         isSelected = selected;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return obj != null && obj instanceof SelectableItem && this.getId() != null && this.getId().equals(((SelectableItem) obj).getId());
+    }
 }

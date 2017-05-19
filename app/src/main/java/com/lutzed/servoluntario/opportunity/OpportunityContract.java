@@ -6,6 +6,7 @@ import com.lutzed.servoluntario.models.Contact;
 import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.SelectableItem;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -21,9 +22,9 @@ public interface OpportunityContract {
 
         void setContacts(List<Contact> contacts, List<Long> selectedContactsIds);
 
-        void swapCauses(List<? extends SelectableItem> causes);
+        void addUniqueCauses(List<? extends SelectableItem> causes, List<? extends SelectableItem> toRemove);
 
-        void swapSkills(List<? extends SelectableItem> skills);
+        void addUniqueSkills(List<? extends SelectableItem> skills, List<? extends SelectableItem> toRemove);
 
         void setOpportunity(Opportunity opportunity);
 
@@ -53,10 +54,10 @@ public interface OpportunityContract {
 
         void createNewContact();
 
-        void addNewCause();
+        void addNewCause(List<Long> existingCauseIds);
 
-        void addNewSkill();
+        void addNewSkill(List<Long> existingSkillIds);
 
-        void onNewSelectableItemsAdded(List<? extends SelectableItem> parcelableArrayListExtra);
+        void onNewItemsSelection(ArrayList<SelectableItem> parcelableArrayListExtra, ArrayList<SelectableItem> parcelableArrayListExtra1);
     }
 }

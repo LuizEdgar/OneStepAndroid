@@ -58,12 +58,32 @@ public class ItemsSelectionAdapter extends RecyclerView.Adapter<ItemsSelectionAd
         addData(items);
     }
 
+
     List<Long> getSelectedItemsIds() {
         List<Long> list = new ArrayList<>();
         for (SelectableItem item : mValues) {
             if (item.isSelected()) list.add(item.getId());
         }
         return list;
+    }
+
+    public class ItemsReturn {
+        public List<SelectableItem> selected;
+        public List<SelectableItem> notSelected;
+
+        public ItemsReturn() {
+            selected = new ArrayList<>();
+            notSelected = new ArrayList<>();
+        }
+    }
+
+    ItemsReturn getItemsReturn() {
+        ItemsReturn itemsReturn = new ItemsReturn();
+        for (SelectableItem item : mValues) {
+            if (item.isSelected()) itemsReturn.selected.add(item);
+            else itemsReturn.notSelected.add(item);
+        }
+        return itemsReturn;
     }
 
     List<SelectableItem> getSelectedItems() {

@@ -11,6 +11,8 @@ import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.selection.ItemsSelectionFragment.OnListFragmentInteractionListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.BindView;
@@ -35,75 +37,42 @@ public class OpportunityItemsAdapter extends RecyclerView.Adapter<OpportunityIte
         mListener = listener;
     }
 
-    public void clearData(boolean ignoreLast) {
-        int size = getItemCount();
+    public void addAndRemoveItems(List<? extends SelectableItem> itemsToAdd, List<? extends SelectableItem> itemsToRemove) {
+        if (itemsToRemove != null && !itemsToRemove.isEmpty()) {
+            mValues.removeAll(itemsToRemove);
+        }
 
-        if (size > 0) {
-
-            SelectableItem last = null;
-            if (ignoreLast) {
-                last = mValues.get(size - 1);
+        int startPosition = Math.max(mValues.size() - 1, 0);
+        if (itemsToAdd != null && !itemsToAdd.isEmpty()) {
+            for (SelectableItem item : itemsToAdd) {
+                if (!mValues.contains(item)) mValues.add(startPosition, item);
             }
+        }
 
-            mValues.clear();
-
-            if (ignoreLast) {
-                mValues.add(last);
-                this.notifyItemRangeRemoved(0, size - 1);
-            } else {
-                this.notifyItemRangeRemoved(0, size);
+        Collections.sort(mValues, new Comparator<SelectableItem>() {
+            @Override
+            public int compare(SelectableItem o1, SelectableItem o2) {
+                if (o1.getId() == null) {
+                    return 1;
+                } else if (o2.getId() == null) {
+                    return -1;
+                } else if (o1.getId() > o2.getId()) {
+                    return 1;
+                } else if (o1.getId() < o2.getId()) {
+                    return -1;
+                } else {
+                    return 0;
+                }
             }
+        });
 
-        }
-    }
-
-    public void addData(List<? extends SelectableItem> items) {
-        if (items == null || items.isEmpty()) {
-            return;
-        }
-
-        int beforeSize = getItemCount();
-
-        mValues.addAll(items);
-        notifyItemRangeInserted(beforeSize, items.size());
-    }
-
-    public void addDataAtStart(List<? extends SelectableItem> items) {
-        if (items == null || items.isEmpty()) {
-            return;
-        }
-
-        mValues.addAll(0, items);
-        notifyItemRangeInserted(0, items.size());
-    }
-
-    public void addDataAtEnd(List<? extends SelectableItem> items, boolean ignoreLast, boolean swapData) {
-        if (swapData) {
-            clearData(true);
-        }
-
-        if (items == null || items.isEmpty()) {
-            return;
-        }
-
-        int startPosition = mValues.size();
-        if (ignoreLast) {
-            startPosition = Math.max(startPosition - 1, 0);
-        }
-
-        mValues.addAll(startPosition, items);
-        notifyItemRangeInserted(startPosition, items.size());
-    }
-
-
-    public void swapData(List<? extends SelectableItem> items) {
-        clearData(false);
-        addData(items);
+        notifyDataSetChanged();
     }
 
     List<Long> getItemsIds() {
         List<Long> list = new ArrayList<>();
-        for (SelectableItem item : mValues) {
+        for (int i = 0; i < mValues.size() - 1; i++) {
+            SelectableItem item = mValues.get(i);
             list.add(item.getId());
         }
         return list;

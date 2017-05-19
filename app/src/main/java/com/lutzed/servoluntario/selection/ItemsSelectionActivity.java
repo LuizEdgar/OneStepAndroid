@@ -30,6 +30,8 @@ public class ItemsSelectionActivity extends AppCompatActivity implements ItemsSe
 
     public static final int EXTRA_SELECTION_REQUEST_CODE = 860;
     public static final String EXTRA_ITEMS_SELECTED = "extra_items_selected";
+    public static final String EXTRA_ITEMS_NOT_SELECTED = "extra_items_not_selected";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,13 +121,14 @@ public class ItemsSelectionActivity extends AppCompatActivity implements ItemsSe
     public void onItemSelected(SelectableItem item) {
         ArrayList<SelectableItem> array = new ArrayList<>();
         array.add(item);
-        onItemsSelected(array);
+        onItemsSelected(array, null);
     }
 
     @Override
-    public void onItemsSelected(List<SelectableItem> items) {
+    public void onItemsSelected(List<SelectableItem> selectedItems, List<SelectableItem> notSelectedItems) {
         Intent resultIntent = new Intent();
-        resultIntent.putParcelableArrayListExtra(EXTRA_ITEMS_SELECTED, (ArrayList<? extends Parcelable>) items);
+        resultIntent.putParcelableArrayListExtra(EXTRA_ITEMS_SELECTED, (ArrayList<? extends Parcelable>) selectedItems);
+        resultIntent.putParcelableArrayListExtra(EXTRA_ITEMS_NOT_SELECTED, (ArrayList<? extends Parcelable>) notSelectedItems);
         setResult(RESULT_OK, resultIntent);
         finish();
     }

@@ -134,7 +134,8 @@ public class ItemsSelectionFragment extends Fragment implements ItemsSelectionCo
                 mPresenter.saveItemsToUser(((ItemsSelectionAdapter) mRecyclerView.getAdapter()).getSelectedItemsIds());
                 return true;
             } else if (mMode == ItemsSelectionActivity.Mode.MULTIPLE_SELECTION){
-                mListener.onItemsSelected(((ItemsSelectionAdapter) mRecyclerView.getAdapter()).getSelectedItems());
+                ItemsSelectionAdapter.ItemsReturn itemsReturn = ((ItemsSelectionAdapter) mRecyclerView.getAdapter()).getItemsReturn();
+                mListener.onItemsSelected(itemsReturn.selected, itemsReturn.notSelected);
                 return true;
             }
             return false;
@@ -222,7 +223,7 @@ public class ItemsSelectionFragment extends Fragment implements ItemsSelectionCo
 
     public interface OnListFragmentInteractionListener {
         void onItemSelected(SelectableItem item);
-        void onItemsSelected(List<SelectableItem> items);
+        void onItemsSelected(List<SelectableItem> selectedItems, List<SelectableItem> notSelectedItems);
     }
 
     @Override

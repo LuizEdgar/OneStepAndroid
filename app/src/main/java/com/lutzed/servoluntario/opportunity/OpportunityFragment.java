@@ -103,7 +103,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
             @Override
             public void onAdapterInteraction(SelectableItem mItem, int adapterPosition) {
                 if (adapterPosition == mCausesRecyclerView.getAdapter().getItemCount() - 1) {
-                    mPresenter.addNewCause();
+                    mPresenter.addNewCause(((OpportunityItemsAdapter) mCausesRecyclerView.getAdapter()).getItemsIds());
                 }
             }
         }));
@@ -111,7 +111,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
             @Override
             public void onAdapterInteraction(SelectableItem mItem, int adapterPosition) {
                 if (adapterPosition == mSkillsRecyclerView.getAdapter().getItemCount() - 1) {
-                    mPresenter.addNewSkill();
+                    mPresenter.addNewSkill(((OpportunityItemsAdapter) mSkillsRecyclerView.getAdapter()).getItemsIds());
                 }
             }
         }));
@@ -127,7 +127,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         int selectedItemPosition = mContactSpinner.getSpinner().getSelectedItemPosition();
         int spinnerCount = mContactSpinner.getSpinner().getCount();
         Contact contact = null;
-        if (selectedItemPosition > 0 && selectedItemPosition < spinnerCount - 1){
+        if (selectedItemPosition > 0 && selectedItemPosition < spinnerCount - 1) {
             contact = (Contact) mContactSpinner.getSpinner().getSelectedItem();
         }
 
@@ -190,15 +190,17 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     }
 
     @Override
-    public void swapCauses(List<? extends SelectableItem> causes) {
+    public void addUniqueCauses(List<? extends SelectableItem> causes, List<? extends SelectableItem> causesToRemove) {
         OpportunityItemsAdapter adapter = (OpportunityItemsAdapter) mCausesRecyclerView.getAdapter();
-        adapter.addDataAtEnd(causes, true, true);
+        adapter.addAndRemoveItems(causes, causesToRemove);
+        mCausesRecyclerView.scrollToPosition(adapter.getItemCount() - 1);
     }
 
     @Override
-    public void swapSkills(List<? extends SelectableItem> skills) {
+    public void addUniqueSkills(List<? extends SelectableItem> skills, List<? extends SelectableItem> skillsToRemove) {
         OpportunityItemsAdapter adapter = (OpportunityItemsAdapter) mSkillsRecyclerView.getAdapter();
-        adapter.addDataAtEnd(skills, true, true);
+        adapter.addAndRemoveItems(skills, skillsToRemove);
+        mSkillsRecyclerView.scrollToPosition(adapter.getItemCount() - 1);
     }
 
     @Override
@@ -240,7 +242,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == ItemsSelectionActivity.EXTRA_SELECTION_REQUEST_CODE) {
-                mPresenter.onNewSelectableItemsAdded(data.<SelectableItem>getParcelableArrayListExtra(ItemsSelectionActivity.EXTRA_ITEMS_SELECTED));
+                mPresenter.onNewItemsSelection(data.<SelectableItem>getParcelableArrayListExtra(ItemsSelectionActivity.EXTRA_ITEMS_SELECTED), data.<SelectableItem>getParcelableArrayListExtra(ItemsSelectionActivity.EXTRA_ITEMS_NOT_SELECTED));
             }
         }
     }

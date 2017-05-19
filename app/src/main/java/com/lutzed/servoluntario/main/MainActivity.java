@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     return true;
                 case R.id.navigation_dashboard:
-                    Api.getClient(AuthHelper.getInstance(MainActivity.this).getUser()).getOpportunity(12l).enqueue(new Callback<Opportunity>() {
+                    Api.getClient(AuthHelper.getInstance(MainActivity.this).getUser()).getOpportunity(13l).enqueue(new Callback<Opportunity>() {
                         @Override
                         public void onResponse(Call<Opportunity> call, Response<Opportunity> response) {
                             Intent intent = new Intent(MainActivity.this, OpportunityActivity.class);

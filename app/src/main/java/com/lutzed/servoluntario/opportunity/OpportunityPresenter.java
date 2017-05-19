@@ -25,43 +25,27 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
     private final Api.ApiClient mApiClient;
     private final AuthHelper mAuthHelper;
     private Opportunity mOpportunity;
-    private List<Cause> causes;
-    private List<Long> causeIds;
-    private List<Skill> skills;
-    private List<Long> skillIds;
 
     public OpportunityPresenter(OpportunityFragment opportunityFragment, Api.ApiClient apiClient, AuthHelper authHelper, Opportunity opportunity) {
         mView = opportunityFragment;
         mApiClient = apiClient;
         mAuthHelper = authHelper;
         mView.setPresenter(this);
-
-        if (opportunity == null) {
-            causes = new ArrayList<>();
-            causeIds = new ArrayList<>();
-            skills = new ArrayList<>();
-            skillIds = new ArrayList<>();
-        } else {
-            mOpportunity = opportunity;
-            causes = mOpportunity.getCauses();
-            causeIds = mOpportunity.getCauseIds();
-            skills = mOpportunity.getSkills();
-            skillIds = mOpportunity.getSkillIds();
-        }
+        mOpportunity = opportunity;
     }
 
     @Override
     public void start() {
         loadContacts();
-        if (mOpportunity != null){
+        if (mOpportunity != null) {
             mView.setTitle(mOpportunity.getTitle());
             mView.setDescription(mOpportunity.getDescription());
             mView.setVolunteersNumber(mOpportunity.getVolunteersNumber());
             mView.setTimeCommitment(mOpportunity.getTimeCommitment());
             mView.setOthersRequirements(mOpportunity.getOthersRequirements());
             mView.setTags(mOpportunity.getTags());
-            mView.swapCauses(mOpportunity.getCauses());
-            mView.swapSkills(mOpportunity.getSkills());
+            mView.addUniqueCauses(mOpportunity.getCauses(), null);
+            mView.addUniqueSkills(mOpportunity.getSkills(), null);
         }
 
     }
@@ -75,7 +59,7 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
         int volunteersNumberInt = 10;
 
         Opportunity opportunity = new Opportunity();
-        if (isUpdate){
+        if (isUpdate) {
             opportunity.setId(mOpportunity.getId());
         }
         opportunity.setTitle(title);
@@ -100,7 +84,8 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
             }
         };
 
-        if (isUpdate) mApiClient.updateOpportunity(opportunity.getId(), opportunity).enqueue(opportunityCallback);
+        if (isUpdate)
+            mApiClient.updateOpportunity(opportunity.getId(), opportunity).enqueue(opportunityCallback);
         else mApiClient.createOpportunity(opportunity).enqueue(opportunityCallback);
     }
 
@@ -125,47 +110,30 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
     }
 
     @Override
-    public void addNewCause() {
-        mView.showAddNewCause(causeIds);
+    public void addNewCause(List<Long> existingCauseIds) {
+        mView.showAddNewCause(existingCauseIds);
     }
 
     @Override
-    public void addNewSkill() {
-        mView.showAddNewSkill(skillIds);
+    public void addNewSkill(List<Long> existingSkillIds) {
+        mView.showAddNewSkill(existingSkillIds);
     }
 
     @Override
-    public void onNewSelectableItemsAdded(List<? extends SelectableItem> selectableItems) {
-        if (selectableItems == null || selectableItems.isEmpty()) return;
+    public void onNewItemsSelection(ArrayList<SelectableItem> selectedItems, ArrayList<SelectableItem> notSelectedItems) {
+        SelectableItem typeTestItem = null;
 
-        SelectableItem typeTestItem = selectableItems.get(0);
+        if (selectedItems != null && !selectedItems.isEmpty()){
+            typeTestItem = selectedItems.get(0);
+        }else{
+            if (notSelectedItems == null || notSelectedItems.isEmpty()) return;
+            typeTestItem = notSelectedItems.get(0);
+        }
 
         if (typeTestItem instanceof Skill) {
-            replaceSkills((List<Skill>) selectableItems);
-            mView.swapSkills(this.skills);
+            mView.addUniqueSkills(selectedItems, notSelectedItems);
         } else if (typeTestItem instanceof Cause) {
-            replaceCauses((List<Cause>) selectableItems);
-            mView.swapCauses(this.causes);
-        }
-    }
-
-    public void replaceCauses(List<Cause> causes) {
-        this.causes.clear();
-        this.causeIds.clear();
-
-        for (SelectableItem cause : causes) {
-            this.causes.add((Cause) cause);
-            this.causeIds.add(cause.getId());
-        }
-    }
-
-    public void replaceSkills(List<Skill> skills) {
-        this.skills.clear();
-        this.skillIds.clear();
-
-        for (SelectableItem skill : skills) {
-            this.skills.add((Skill) skill);
-            this.skillIds.add(skill.getId());
+            mView.addUniqueCauses(selectedItems, notSelectedItems);
         }
     }
 
