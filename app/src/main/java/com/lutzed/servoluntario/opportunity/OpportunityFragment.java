@@ -3,15 +3,16 @@ package com.lutzed.servoluntario.opportunity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,8 +21,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.dialogs.ContactDialogFragment;
 import com.lutzed.servoluntario.models.Contact;
@@ -36,12 +44,17 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+
+import static android.app.Activity.RESULT_CANCELED;
+import static android.app.Activity.RESULT_OK;
 
 /**
  * A login screen that offers login via email/password.
  */
 public class OpportunityFragment extends Fragment implements OpportunityContract.View {
 
+    private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 182;
     @BindView(R.id.title) EditText mTitleView;
     @BindView(R.id.description) EditText mDescriptionView;
     @BindView(R.id.volunteersNumber) EditText mVolunteersNumberView;
@@ -51,12 +64,17 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @BindView(R.id.contactSpinner) LabelledSpinner mContactSpinner;
     @BindView(R.id.causesRecyclerView) RecyclerView mCausesRecyclerView;
     @BindView(R.id.skillsRecyclerView) RecyclerView mSkillsRecyclerView;
+    @BindView(R.id.locationTypeGroup) RadioGroup mLocationTypeGroup;
+    @BindView(R.id.location) EditText mLocationView;
+    @BindView(R.id.locationInputLayout) View mLocationInputLayout;
     @BindView(R.id.progress) View mProgressView;
     @BindView(R.id.create_opportunity_form) View mLoginFormView;
+    @BindView(R.id.form) ScrollView mScrollView;
 
     private OpportunityContract.Presenter mPresenter;
 
     private int mCurrentContactSpinnerSelectedPosition;
+    private Place mCurrentLocationPlace;
 
     public static OpportunityFragment newInstance() {
         return new OpportunityFragment();
@@ -105,7 +123,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
             public void onItemChosen(View labelledSpinner, AdapterView<?> adapterView, View itemView, int position, long id) {
                 if (position == adapterView.getAdapter().getCount() - 1) {
                     mPresenter.createNewContact();
-                }else{
+                } else {
                     mCurrentContactSpinnerSelectedPosition = position;
                 }
             }
@@ -142,6 +160,29 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
                 }
             }
         }));
+
+        mLocationView.setFocusable(false);
+        mLocationView.setClickable(true);
+
+        mLocationTypeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                switch (checkedId) {
+                    case R.id.isLocation:
+                        mLocationInputLayout.setVisibility(View.VISIBLE);
+//                        mScrollView.post(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                mScrollView.scrollTo(0, mLocationView.getBottom());
+//                            }
+//                        });
+                        break;
+                    case R.id.isVirtual:
+                        mLocationInputLayout.setVisibility(View.GONE);
+                        break;
+                }
+            }
+        });
 
         return root;
     }
@@ -284,9 +325,20 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == ItemsSelectionActivity.EXTRA_SELECTION_REQUEST_CODE) {
+        if (requestCode == ItemsSelectionActivity.EXTRA_SELECTION_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
                 mPresenter.onNewItemsSelection(data.<SelectableItem>getParcelableArrayListExtra(ItemsSelectionActivity.EXTRA_ITEMS_SELECTED), data.<SelectableItem>getParcelableArrayListExtra(ItemsSelectionActivity.EXTRA_ITEMS_NOT_SELECTED));
+            }
+        } else if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                mCurrentLocationPlace = PlaceAutocomplete.getPlace(getContext(), data);
+                mLocationView.setText(mCurrentLocationPlace.getName());
+            } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
+                Status status = PlaceAutocomplete.getStatus(getContext(), data);
+                // TODO: Handle the error.
+                Log.i("Tag", status.getStatusMessage());
+            } else if (resultCode == RESULT_CANCELED) {
+
             }
         }
     }
@@ -330,5 +382,19 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     public void close() {
         getActivity().finish();
     }
+
+    @OnClick(R.id.location)
+    public void onLocationClicked() {
+        try {
+            Intent intent = new PlaceAutocomplete.IntentBuilder(PlaceAutocomplete.MODE_FULLSCREEN)
+                    .build(getActivity());
+            startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE);
+        } catch (GooglePlayServicesRepairableException e) {
+            // TODO: Handle the error.
+        } catch (GooglePlayServicesNotAvailableException e) {
+            // TODO: Handle the error.
+        }
+    }
+
 }
 

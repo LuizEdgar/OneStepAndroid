@@ -45,8 +45,8 @@ public class ContactDialogFragment extends DialogFragment {
 
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
-        View view = inflater.inflate(R.layout.fragment_dialog_create_contact, null);
-        builder.setView(view)
+        final View rootView = inflater.inflate(R.layout.fragment_dialog_create_contact, null);
+        builder.setView(rootView)
                 // Add action buttons
                 .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
                     @Override
@@ -73,9 +73,9 @@ public class ContactDialogFragment extends DialogFragment {
                     @Override
                     public void onClick(View view) {
                         if (mListener != null) {
-                            TextView nameView = (TextView) view.findViewById(R.id.name);
-                            TextView phoneView = (TextView) view.findViewById(R.id.phone);
-                            TextView emailView = (TextView) view.findViewById(R.id.email);
+                            TextView nameView = (TextView) rootView.findViewById(R.id.name);
+                            TextView phoneView = (TextView) rootView.findViewById(R.id.phone);
+                            TextView emailView = (TextView) rootView.findViewById(R.id.email);
                             String name = nameView.getText().toString().trim();
                             String phone = phoneView.getText().toString().trim();
                             String email = emailView.getText().toString().trim();

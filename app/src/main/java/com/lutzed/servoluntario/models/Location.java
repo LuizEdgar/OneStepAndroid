@@ -14,6 +14,12 @@ public class Location implements Parcelable {
 
     @Expose private Long id;
 
+    @Expose private String name;
+
+    @Expose
+    @SerializedName("google_places_id")
+    private String googlePlacesId;
+
     @Expose
     @SerializedName("address_1")
     private String address1;
@@ -110,6 +116,25 @@ public class Location implements Parcelable {
         this.updatedAt = updatedAt;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getGooglePlacesId() {
+        return googlePlacesId;
+    }
+
+    public void setGooglePlacesId(String googlePlacesId) {
+        this.googlePlacesId = googlePlacesId;
+    }
+
+    public Location() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -118,6 +143,8 @@ public class Location implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(this.id);
+        dest.writeString(this.name);
+        dest.writeString(this.googlePlacesId);
         dest.writeString(this.address1);
         dest.writeString(this.address2);
         dest.writeString(this.city);
@@ -128,11 +155,10 @@ public class Location implements Parcelable {
         dest.writeString(this.updatedAt);
     }
 
-    public Location() {
-    }
-
     protected Location(Parcel in) {
         this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.name = in.readString();
+        this.googlePlacesId = in.readString();
         this.address1 = in.readString();
         this.address2 = in.readString();
         this.city = in.readString();
@@ -143,7 +169,7 @@ public class Location implements Parcelable {
         this.updatedAt = in.readString();
     }
 
-    public static final Parcelable.Creator<Location> CREATOR = new Parcelable.Creator<Location>() {
+    public static final Creator<Location> CREATOR = new Creator<Location>() {
         @Override
         public Location createFromParcel(Parcel source) {
             return new Location(source);
