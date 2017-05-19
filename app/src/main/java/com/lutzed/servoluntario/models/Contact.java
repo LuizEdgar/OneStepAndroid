@@ -161,4 +161,11 @@ public class Contact implements Parcelable {
 
         return -1;
     }
+
+    public static boolean isIndentiq(Contact contacta, Contact contactb) {
+        return TextUtils.equals(contacta.getName(), contactb.getName())
+                && TextUtils.equals(contacta.getPhone(), contactb.getPhone())
+                && TextUtils.equals(contacta.getEmail(), contactb.getEmail());
+
+    }
 }

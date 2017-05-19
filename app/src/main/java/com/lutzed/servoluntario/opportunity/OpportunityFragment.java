@@ -13,10 +13,14 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.dialogs.ContactDialogFragment;
@@ -32,7 +36,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * A login screen that offers login via email/password.
@@ -59,9 +62,30 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mPresenter.start();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.save, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_save){
+            onSaveClicked();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -119,8 +143,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         return root;
     }
 
-    @OnClick(R.id.save_button)
-    void onSignUpClicked() {
+    void onSaveClicked() {
         String title = mTitleView.getText().toString().trim();
         String description = mDescriptionView.getText().toString().trim();
 
@@ -287,6 +310,16 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @Override
     public void setTags(String tags) {
         mTagsView.setText(tags);
+    }
+
+    @Override
+    public void setSavingIndicator(boolean active) {
+        if (active) Toast.makeText(getContext(), "Saving...", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void close() {
+        getActivity().finish();
     }
 }
 

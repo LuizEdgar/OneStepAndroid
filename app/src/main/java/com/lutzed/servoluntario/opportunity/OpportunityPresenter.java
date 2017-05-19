@@ -49,7 +49,7 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
             mView.addUniqueCauses(mOpportunity.getCauses(), null);
             mView.addUniqueSkills(mOpportunity.getSkills(), null);
             Contact contact = mOpportunity.getContact();
-            if (contact != null){
+            if (contact != null) {
                 ArrayList<Contact> contacts = new ArrayList<>();
                 contacts.add(contact);
                 mView.setContacts(contacts, contact.getId());
@@ -61,6 +61,7 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
     @Override
     public void attemptCreateOpportunity(String title, String description, Contact contact, List<Long> skillIds, List<Long> causeIds, String volunteersNumber, String timeCommitment, String othersRequirements, String tags) {
         mView.resetErrors();
+        mView.setSavingIndicator(true);
 
         boolean isUpdate = mOpportunity != null;
 
@@ -83,11 +84,13 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
         Callback<Opportunity> opportunityCallback = new Callback<Opportunity>() {
             @Override
             public void onResponse(Call<Opportunity> call, Response<Opportunity> response) {
-
+                mView.setSavingIndicator(false);
+                mView.close();
             }
 
             @Override
             public void onFailure(Call<Opportunity> call, Throwable t) {
+                mView.setSavingIndicator(false);
                 t.printStackTrace();
             }
         };
@@ -107,9 +110,9 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
                     Contact contact = mOpportunity.getContact();
                     if (contact != null) {
                         int index = Contact.containsIndentiq(mContacts, contact);
-                        if (index < 0){
+                        if (index < 0) {
                             mContacts.add(contact);
-                        }else{
+                        } else {
                             contact = mContacts.get(index);
                         }
                         mView.setContacts(mContacts, contact.getId());

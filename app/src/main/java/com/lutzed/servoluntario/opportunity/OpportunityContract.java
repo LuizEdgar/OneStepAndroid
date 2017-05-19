@@ -42,6 +42,10 @@ public interface OpportunityContract {
         void setOthersRequirements(String othersRequirements);
 
         void setTags(String tags);
+
+        void setSavingIndicator(boolean active);
+
+        void close();
     }
 
     interface Presenter extends BasePresenter {
