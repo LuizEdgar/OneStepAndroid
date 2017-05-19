@@ -7,6 +7,8 @@ import android.text.TextUtils;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.List;
+
 /**
  * Created by luizfreitas on 25/07/2016.
  */
@@ -32,8 +34,18 @@ public class Contact implements Parcelable {
     public Contact() {
     }
 
+    public Contact(Long id) {
+        this.id = id;
+    }
+
     public Contact(String name) {
         this.name = name;
+    }
+
+    public Contact(String name, String phone, String email) {
+        this.name = name;
+        this.phone = phone;
+        this.email = email;
     }
 
     public Long getId() {
@@ -127,4 +139,26 @@ public class Contact implements Parcelable {
             return new Contact[size];
         }
     };
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj != null && obj instanceof Contact && this.getId() != null && this.getId().equals(((Contact) obj).getId());
+    }
+
+    public static int containsIndentiq(List<Contact> contactList, Contact contact) {
+        if (contact == null) return -1;
+
+        for (int i = 0; i < contactList.size(); i++) {
+            Contact contactItem = contactList.get(i);
+            boolean identiq = TextUtils.equals(contactItem.getName(), contact.getName())
+                    && TextUtils.equals(contactItem.getPhone(), contact.getPhone())
+                    && TextUtils.equals(contactItem.getEmail(), contact.getEmail());
+
+            if (identiq) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
 }

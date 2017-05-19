@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,11 +17,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.lutzed.servoluntario.R;
+import com.lutzed.servoluntario.dialogs.ContactDialogFragment;
 import com.lutzed.servoluntario.models.Contact;
-import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.models.Skill;
 import com.lutzed.servoluntario.selection.ItemsSelectionActivity;
@@ -129,6 +129,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         Contact contact = null;
         if (selectedItemPosition > 0 && selectedItemPosition < spinnerCount - 1) {
             contact = (Contact) mContactSpinner.getSpinner().getSelectedItem();
+            contact.setId(null);
         }
 
         List<Long> skillIds = ((OpportunityItemsAdapter) mSkillsRecyclerView.getAdapter()).getItemsIds();
@@ -180,13 +181,17 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     }
 
     @Override
-    public void setContacts(List<Contact> contacts, List<Long> selectedContactsIds) {
-        if (contacts == null) contacts = new ArrayList<>();
+    public void setContacts(List<Contact> contacts, Long selectedContactId) {
+        ArrayList<Contact> viewContacts = new ArrayList<>();
+        if (contacts != null) viewContacts.addAll(contacts);
 
-        contacts.add(0, new Contact("Select…"));
-        contacts.add(new Contact("Create new…"));
+        viewContacts.add(0, new Contact("Select…"));
+        viewContacts.add(new Contact("Create new…"));
 
-        mContactSpinner.setItemsArray(contacts);
+        mContactSpinner.setItemsArray(viewContacts);
+        if (selectedContactId != null){
+            mContactSpinner.setSelection(viewContacts.indexOf(new Contact(selectedContactId)));
+        }
     }
 
     @Override
@@ -204,13 +209,20 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     }
 
     @Override
-    public void setOpportunity(Opportunity opportunity) {
-
-    }
-
-    @Override
     public void showCreateNewContact() {
-        Toast.makeText(getContext(), "Create new contact", Toast.LENGTH_SHORT).show();
+        FragmentTransaction ft = getChildFragmentManager().beginTransaction();
+        Fragment prev = getFragmentManager().findFragmentByTag("contactDialog");
+        if (prev != null) {
+            ft.remove(prev);
+        }
+        ft.addToBackStack(null);
+
+        new ContactDialogFragment(new ContactDialogFragment.Listener() {
+            @Override
+            public void onSave(String name, String phone, String email) {
+                mPresenter.addNewContact(name, phone, email);
+            }
+        }).show(ft, "contactDialog");
     }
 
     @Override

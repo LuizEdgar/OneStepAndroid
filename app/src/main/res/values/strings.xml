@@ -16,6 +16,7 @@
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
+    <string name="error_field_one_required">At least one field is required</string>
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
@@ -54,5 +55,7 @@
     <string name="prompt_others_requirements">Others Requirements</string>
     <string name="prompt_tags">Tags</string>
     <string name="prompt_contact">Contact</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
 
 </resources>

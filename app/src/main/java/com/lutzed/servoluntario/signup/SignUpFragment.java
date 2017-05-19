@@ -27,14 +27,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.lutzed.servoluntario.R.id.email;
-
 /**
  * A login screen that offers login via email/password.
  */
 public class SignUpFragment extends Fragment implements SignUpContract.View {
 
-    @BindView(email) AutoCompleteTextView mEmailView;
+    @BindView(R.id.email) AutoCompleteTextView mEmailView;
     @BindView(R.id.name) EditText mNameView;
     @BindView(R.id.name_input_layout) TextInputLayout mNameInputLayout;
     @BindView(R.id.username) EditText mUsernameView;

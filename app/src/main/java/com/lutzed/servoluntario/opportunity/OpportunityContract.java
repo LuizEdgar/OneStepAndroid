@@ -3,7 +3,6 @@ package com.lutzed.servoluntario.opportunity;
 import com.lutzed.servoluntario.interfaces.BasePresenter;
 import com.lutzed.servoluntario.interfaces.BaseView;
 import com.lutzed.servoluntario.models.Contact;
-import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.SelectableItem;
 
 import java.util.ArrayList;
@@ -20,13 +19,11 @@ public interface OpportunityContract {
 
         void resetErrors();
 
-        void setContacts(List<Contact> contacts, List<Long> selectedContactsIds);
+        void setContacts(List<Contact> contacts, Long selectedContactId);
 
         void addUniqueCauses(List<? extends SelectableItem> causes, List<? extends SelectableItem> toRemove);
 
         void addUniqueSkills(List<? extends SelectableItem> skills, List<? extends SelectableItem> toRemove);
-
-        void setOpportunity(Opportunity opportunity);
 
         void showCreateNewContact();
 
@@ -59,5 +56,7 @@ public interface OpportunityContract {
         void addNewSkill(List<Long> existingSkillIds);
 
         void onNewItemsSelection(ArrayList<SelectableItem> parcelableArrayListExtra, ArrayList<SelectableItem> parcelableArrayListExtra1);
+
+        void addNewContact(String name, String phone, String email);
     }
 }

@@ -10,6 +10,7 @@ import com.lutzed.servoluntario.util.AuthHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -25,6 +26,7 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
     private final Api.ApiClient mApiClient;
     private final AuthHelper mAuthHelper;
     private Opportunity mOpportunity;
+    private List<Contact> mContacts;
 
     public OpportunityPresenter(OpportunityFragment opportunityFragment, Api.ApiClient apiClient, AuthHelper authHelper, Opportunity opportunity) {
         mView = opportunityFragment;
@@ -32,11 +34,11 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
         mAuthHelper = authHelper;
         mView.setPresenter(this);
         mOpportunity = opportunity;
+        mContacts = new ArrayList<>();
     }
 
     @Override
     public void start() {
-        loadContacts();
         if (mOpportunity != null) {
             mView.setTitle(mOpportunity.getTitle());
             mView.setDescription(mOpportunity.getDescription());
@@ -46,8 +48,14 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
             mView.setTags(mOpportunity.getTags());
             mView.addUniqueCauses(mOpportunity.getCauses(), null);
             mView.addUniqueSkills(mOpportunity.getSkills(), null);
+            Contact contact = mOpportunity.getContact();
+            if (contact != null){
+                ArrayList<Contact> contacts = new ArrayList<>();
+                contacts.add(contact);
+                mView.setContacts(contacts, contact.getId());
+            }
         }
-
+        loadContacts();
     }
 
     @Override
@@ -94,7 +102,23 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
         mApiClient.getMeContacts().enqueue(new Callback<List<Contact>>() {
             @Override
             public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
-                mView.setContacts(response.body(), null);
+                mContacts = response.body();
+                if (mOpportunity != null) {
+                    Contact contact = mOpportunity.getContact();
+                    if (contact != null) {
+                        int index = Contact.containsIndentiq(mContacts, contact);
+                        if (index < 0){
+                            mContacts.add(contact);
+                        }else{
+                            contact = mContacts.get(index);
+                        }
+                        mView.setContacts(mContacts, contact.getId());
+                    } else {
+                        mView.setContacts(mContacts, null);
+                    }
+                } else {
+                    mView.setContacts(mContacts, null);
+                }
             }
 
             @Override
@@ -102,6 +126,14 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
 
             }
         });
+    }
+
+    @Override
+    public void addNewContact(String name, String phone, String email) {
+        Contact contact = new Contact(name, phone, email);
+        contact.setId(new Random().nextLong());
+        mContacts.add(contact);
+        mView.setContacts(mContacts, contact.getId());
     }
 
     @Override
@@ -123,9 +155,9 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
     public void onNewItemsSelection(ArrayList<SelectableItem> selectedItems, ArrayList<SelectableItem> notSelectedItems) {
         SelectableItem typeTestItem = null;
 
-        if (selectedItems != null && !selectedItems.isEmpty()){
+        if (selectedItems != null && !selectedItems.isEmpty()) {
             typeTestItem = selectedItems.get(0);
-        }else{
+        } else {
             if (notSelectedItems == null || notSelectedItems.isEmpty()) return;
             typeTestItem = notSelectedItems.get(0);
         }
