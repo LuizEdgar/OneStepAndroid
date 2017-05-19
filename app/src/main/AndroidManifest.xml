@@ -46,6 +46,11 @@
             android:label="@string/title_activity_items_selection"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
+        <activity
+            android:name=".opportunity.OpportunityActivity"
+            android:label="@string/title_activity_create_opportunity"
+            android:theme="@style/AppTheme.NoActionBar">
+        </activity>
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -63,6 +68,10 @@
                 <data android:scheme="@string/fb_login_protocol_scheme"/>
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBehR1IArkVcjN9kYItMzGi9cUshP-R3aI"/>
 
     </application>
 

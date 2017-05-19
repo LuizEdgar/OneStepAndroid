@@ -8,6 +8,7 @@ import android.util.Base64;
 import android.util.Patterns;
 
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -82,4 +83,13 @@ public class Snippets {
     public static boolean isPhoneValid(String phone) {
         return !TextUtils.isEmpty(phone) && Patterns.PHONE.matcher(phone).matches();
     }
+
+    public static long[] toArray(List<Long> values) {
+        long[] result = new long[values.size()];
+        int i = 0;
+        for (Long l : values)
+            result[i++] = l;
+        return result;
+    }
+
 }

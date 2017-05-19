@@ -1,12 +1,15 @@
 package com.lutzed.servoluntario.selection;
 
 import com.lutzed.servoluntario.api.Api;
-import com.lutzed.servoluntario.models.Organization;
 import com.lutzed.servoluntario.models.Cause;
+import com.lutzed.servoluntario.models.Organization;
 import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.AuthHelper;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -21,18 +24,27 @@ public class CauseSelectionPresenter implements ItemsSelectionContract.Presenter
 
     private final ItemsSelectionContract.View mView;
     private final Api.ApiClient mApiClient;
+    private final ItemsSelectionActivity.Mode mSelectionMode;
     private final AuthHelper mAuthHelper;
     private int mPageToGet;
+    private final List<Long> mItemsToExclude;
+    private HashSet<Long> mSelectedCausesIds;
 
-    private List<Long> selectedCauses;
-
-    public CauseSelectionPresenter(ItemsSelectionFragment loginFragment, Api.ApiClient apiClient, AuthHelper authHelper) {
+    public CauseSelectionPresenter(ItemsSelectionFragment loginFragment, Api.ApiClient apiClient, AuthHelper authHelper, ItemsSelectionActivity.Mode mode, List<Long> itemsToExclude, ArrayList<Long> itensToCheck) {
         mView = loginFragment;
         mApiClient = apiClient;
+        mSelectionMode = mode;
+        mItemsToExclude = itemsToExclude;
         mView.setPresenter(this);
         mPageToGet = 1;
         mAuthHelper = authHelper;
-        selectedCauses = mAuthHelper.getUser().getCauseIds();
+        mSelectedCausesIds = new HashSet<>();
+        if (itensToCheck != null) {
+            mSelectedCausesIds.addAll(itensToCheck);
+        }
+        if (mode == ItemsSelectionActivity.Mode.MULTIPLE_SAVE_TO_USER){
+            mSelectedCausesIds.addAll(mAuthHelper.getUser().getCauseIds());
+        }
     }
 
     @Override
@@ -52,9 +64,19 @@ public class CauseSelectionPresenter implements ItemsSelectionContract.Presenter
         mApiClient.getCauses(mPageToGet).enqueue(new Callback<List<Cause>>() {
             @Override
             public void onResponse(Call<List<Cause>> call, Response<List<Cause>> response) {
-                for (Cause cause : response.body()) {
-                    cause.setSelected(selectedCauses.contains(cause.getId()));
+
+                boolean isMulti = mSelectionMode != ItemsSelectionActivity.Mode.SINGLE_SELECTION;
+                boolean hasItemsToExclude = !mItemsToExclude.isEmpty();
+
+                if (isMulti || hasItemsToExclude) {
+                    for (Iterator<Cause> iterator = response.body().iterator(); iterator.hasNext(); ) {
+                        Cause cause = iterator.next();
+                        if (isMulti) cause.setSelected(mSelectedCausesIds.contains(cause.getId()));
+                        if (hasItemsToExclude && mItemsToExclude.contains(cause.getId()))
+                            iterator.remove();
+                    }
                 }
+
                 if (isRefresh) {
                     mView.swapItems(response.body());
                 } else {
@@ -73,7 +95,7 @@ public class CauseSelectionPresenter implements ItemsSelectionContract.Presenter
     }
 
     @Override
-    public void saveItems(List<Long> selectedIds) {
+    public void saveItemsToUser(List<Long> selectedIds) {
 
         User user = new User();
         user.setId(mAuthHelper.getUser().getId());

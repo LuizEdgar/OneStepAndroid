@@ -26,10 +26,12 @@ public class ItemsSelectionAdapter extends RecyclerView.Adapter<ItemsSelectionAd
 
     private final List<SelectableItem> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private final ItemsSelectionActivity.Mode mMode;
 
-    public ItemsSelectionAdapter(List<SelectableItem> items, OnListFragmentInteractionListener listener) {
+    public ItemsSelectionAdapter(List<SelectableItem> items, OnListFragmentInteractionListener listener, ItemsSelectionActivity.Mode mode) {
         mValues = items;
         mListener = listener;
+        mMode = mode;
     }
 
     public void clearData() {
@@ -56,10 +58,38 @@ public class ItemsSelectionAdapter extends RecyclerView.Adapter<ItemsSelectionAd
         addData(items);
     }
 
+
     List<Long> getSelectedItemsIds() {
         List<Long> list = new ArrayList<>();
         for (SelectableItem item : mValues) {
             if (item.isSelected()) list.add(item.getId());
+        }
+        return list;
+    }
+
+    public class ItemsReturn {
+        public List<SelectableItem> selected;
+        public List<SelectableItem> notSelected;
+
+        public ItemsReturn() {
+            selected = new ArrayList<>();
+            notSelected = new ArrayList<>();
+        }
+    }
+
+    ItemsReturn getItemsReturn() {
+        ItemsReturn itemsReturn = new ItemsReturn();
+        for (SelectableItem item : mValues) {
+            if (item.isSelected()) itemsReturn.selected.add(item);
+            else itemsReturn.notSelected.add(item);
+        }
+        return itemsReturn;
+    }
+
+    List<SelectableItem> getSelectedItems() {
+        List<SelectableItem> list = new ArrayList<>();
+        for (SelectableItem item : mValues) {
+            if (item.isSelected()) list.add(item);
         }
         return list;
     }
@@ -82,11 +112,14 @@ public class ItemsSelectionAdapter extends RecyclerView.Adapter<ItemsSelectionAd
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (null != mListener) {
-                    mListener.onListFragmentInteraction(holder.mItem);
+                if (mMode == ItemsSelectionActivity.Mode.SINGLE_SELECTION) {
+                    if (null != mListener) {
+                        mListener.onItemSelected(holder.mItem);
+                    }
+                } else {
+                    holder.mItem.setSelected(!holder.mItem.isSelected());
+                    holder.mCheckMark.setVisibility(holder.mItem.isSelected() ? View.VISIBLE : View.INVISIBLE);
                 }
-                holder.mItem.setSelected(!holder.mItem.isSelected());
-                holder.mCheckMark.setVisibility(holder.mItem.isSelected() ? View.VISIBLE : View.INVISIBLE);
             }
         });
     }

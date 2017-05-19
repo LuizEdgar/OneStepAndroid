@@ -1,5 +1,7 @@
 package com.lutzed.servoluntario.models;
 
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -7,23 +9,23 @@ import com.google.gson.annotations.SerializedName;
  * Created by luizfreitas on 02/05/2017.
  */
 
-public abstract class SelectableItem {
+public abstract class SelectableItem implements Parcelable {
 
-    @Expose private Long id;
+    @Expose protected Long id;
 
-    @Expose private String name;
+    @Expose protected String name;
 
-    @Expose private String description;
+    @Expose protected String description;
 
     @Expose
     @SerializedName("created_at")
-    private String createdAt;
+    protected String createdAt;
 
     @Expose
     @SerializedName("updated_at")
-    private String updatedAt;
+    protected String updatedAt;
 
-    private boolean isSelected;
+    protected boolean isSelected;
 
     public Long getId() {
         return id;
@@ -71,5 +73,10 @@ public abstract class SelectableItem {
 
     public void setSelected(boolean selected) {
         isSelected = selected;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj != null && obj instanceof SelectableItem && this.getId() != null && this.getId().equals(((SelectableItem) obj).getId());
     }
 }

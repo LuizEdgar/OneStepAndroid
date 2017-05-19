@@ -41,7 +41,7 @@ public interface ItemsSelectionContract {
     interface Presenter extends BasePresenter {
         void loadItems(boolean isRefresh);
 
-        void saveItems(List<Long> selectedIds);
+        void saveItemsToUser(List<Long> selectedIds);
 
         void refreshItems();
     }

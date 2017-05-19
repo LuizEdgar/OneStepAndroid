@@ -7,6 +7,9 @@ import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.AuthHelper;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -21,18 +24,27 @@ public class SkillsSelectionPresenter implements ItemsSelectionContract.Presente
 
     private final ItemsSelectionContract.View mView;
     private final Api.ApiClient mApiClient;
+    private final ItemsSelectionActivity.Mode mSelectionMode;
+    private final List<Long> mItemsToExclude;
     private final AuthHelper mAuthHelper;
     private int mPageToGet;
+    private HashSet<Long> mSelectedSkillsIds;
 
-    private List<Long> selectedSkills;
-
-    public SkillsSelectionPresenter(ItemsSelectionFragment loginFragment, Api.ApiClient apiClient, AuthHelper authHelper) {
+    public SkillsSelectionPresenter(ItemsSelectionFragment loginFragment, Api.ApiClient apiClient, AuthHelper authHelper, ItemsSelectionActivity.Mode mode, List<Long> itemsToExclude, ArrayList<Long> itensToCheck) {
         mView = loginFragment;
         mApiClient = apiClient;
+        mSelectionMode = mode;
+        mItemsToExclude = itemsToExclude;
         mView.setPresenter(this);
         mPageToGet = 1;
         mAuthHelper = authHelper;
-        selectedSkills = mAuthHelper.getUser().getSkillsIds();
+        mSelectedSkillsIds = new HashSet<>();
+        if (itensToCheck != null) {
+            mSelectedSkillsIds.addAll(itensToCheck);
+        }
+        if (mode == ItemsSelectionActivity.Mode.MULTIPLE_SAVE_TO_USER){
+            mSelectedSkillsIds.addAll(mAuthHelper.getUser().getCauseIds());
+        }
     }
 
     @Override
@@ -52,9 +64,18 @@ public class SkillsSelectionPresenter implements ItemsSelectionContract.Presente
         mApiClient.getSkills(mPageToGet).enqueue(new Callback<List<Skill>>() {
             @Override
             public void onResponse(Call<List<Skill>> call, Response<List<Skill>> response) {
-                for (Skill skill : response.body()) {
-                    skill.setSelected(selectedSkills.contains(skill.getId()));
+
+                boolean isMulti = mSelectionMode != ItemsSelectionActivity.Mode.SINGLE_SELECTION;
+                boolean hasItemsToExclude = !mItemsToExclude.isEmpty();
+
+                if (isMulti || hasItemsToExclude) {
+                    for (Iterator<Skill> iterator = response.body().iterator(); iterator.hasNext(); ) {
+                        Skill skill = iterator.next();
+                        if (isMulti) skill.setSelected(mSelectedSkillsIds.contains(skill.getId()));
+                        if (hasItemsToExclude && mItemsToExclude.contains(skill.getId())) iterator.remove();
+                    }
                 }
+
                 if (isRefresh) {
                     mView.swapItems(response.body());
                 } else {
@@ -73,7 +94,7 @@ public class SkillsSelectionPresenter implements ItemsSelectionContract.Presente
     }
 
     @Override
-    public void saveItems(List<Long> selectedIds) {
+    public void saveItemsToUser(List<Long> selectedIds) {
 
         User user = new User();
         user.setId(mAuthHelper.getUser().getId());

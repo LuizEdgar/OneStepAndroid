@@ -112,12 +112,21 @@ public class SignUpPresenter implements SignUpContract.Presenter {
 
             User user = new User();
             user.setKind(mCurrentSignUpUserKind.toString());
+
+            List<Contact> contacts = new ArrayList<>();
+            Contact contact = new Contact();
+            contact.setName(name);
+            contact.setEmail(email);
+            contact.setPhone(phoneNumber);
+            contacts.add(contact);
+
             switch (mCurrentSignUpUserKind) {
                 case VOLUNTEER:
                     Volunteer volunteer = new Volunteer();
 
                     volunteer.setName(name);
                     volunteer.setGender(mGender);
+                    volunteer.setContactsAttributes(contacts);
 
                     user.setVolunteerAttributes(volunteer);
 
@@ -129,11 +138,6 @@ public class SignUpPresenter implements SignUpContract.Presenter {
                     Organization organization = new Organization();
 
                     organization.setName(name);
-
-                    List<Contact> contacts = new ArrayList<>();
-                    Contact contact = new Contact();
-                    contact.setPhone(phoneNumber);
-                    contacts.add(contact);
                     organization.setContactsAttributes(contacts);
 
                     user.setOrganizationAttributes(organization);
