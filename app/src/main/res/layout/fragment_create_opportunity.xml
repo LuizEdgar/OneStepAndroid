@@ -197,31 +197,96 @@
 
             </RadioGroup>
 
-            <android.support.design.widget.TextInputLayout
+            <LinearLayout
+                android:id="@+id/dateWrapper"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                <EditText
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_location"
-                    android:inputType="text"
-                    android:maxLines="1"/>
+                    android:orientation="horizontal">
 
-            </android.support.design.widget.TextInputLayout>
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2">
 
-            <android.support.design.widget.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                        <EditText
+                            android:id="@+id/startDateAt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
+                            android:hint="@string/from"
+                            android:inputType="date"
+                            android:maxLines="1"
+                            android:text="@string/date"
+                            android:textColor="@color/disabledText"/>
 
-                <EditText
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <EditText
+                            android:id="@+id/startTimeAt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:text="@string/time"
+                            android:textColor="@color/disabledText"/>
+
+                    </android.support.design.widget.TextInputLayout>
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_location"
-                    android:inputType="text"
-                    android:maxLines="1"/>
+                    android:orientation="horizontal">
 
-            </android.support.design.widget.TextInputLayout>
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2">
+
+                        <EditText
+                            android:id="@+id/endDateAt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
+                            android:hint="@string/to"
+                            android:inputType="date"
+                            android:maxLines="1"
+                            android:text="@string/date"
+                            android:textColor="@color/disabledText"/>
+
+                    </android.support.design.widget.TextInputLayout>
+
+                    <android.support.design.widget.TextInputLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
+
+                        <EditText
+                            android:id="@+id/endTimeAt"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:text="@string/time"
+                            android:textColor="@color/disabledText"/>
+
+                    </android.support.design.widget.TextInputLayout>
+
+                </LinearLayout>
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

@@ -1,5 +1,6 @@
 package com.lutzed.servoluntario.opportunity;
 
+import com.google.android.gms.location.places.Place;
 import com.lutzed.servoluntario.interfaces.BasePresenter;
 import com.lutzed.servoluntario.interfaces.BaseView;
 import com.lutzed.servoluntario.models.Contact;
@@ -46,6 +47,28 @@ public interface OpportunityContract {
         void setSavingIndicator(boolean active);
 
         void close();
+
+        void setLocation(String location);
+
+        void showStartDatePicker(int year, int month, int dayOfMonth);
+
+        void showEndDatePicker(int year, int month, int dayOfMonth);
+
+        void showStartTimePicker(int hourOfDay, int minute, boolean is24HourView);
+
+        void showEndTimePicker(int hourOfDay, int minute, boolean is24HourView);
+
+        void setShowTimeGroup(boolean visible);
+
+        void setShowLocationGroup(boolean visible);
+
+        void setStartDate(String startDate);
+
+        void setEndDate(String endDate);
+
+        void setStartTime(String startTime);
+
+        void setEndTime(String endTime);
     }
 
     interface Presenter extends BasePresenter {
@@ -62,5 +85,27 @@ public interface OpportunityContract {
         void onNewItemsSelection(ArrayList<SelectableItem> parcelableArrayListExtra, ArrayList<SelectableItem> parcelableArrayListExtra1);
 
         void addNewContact(String name, String phone, String email);
+
+        void onNewPlaceSelected(Place place);
+
+        void onLocationTypeChanged(OpportunityFragment.LocationType locationType);
+
+        void onTimeTypeChanged(OpportunityFragment.TimeType timeType);
+
+        void startDateClicked();
+
+        void endDateClicked();
+
+        void startTimeClicked();
+
+        void endTimeClicked();
+
+        void onStartDateSelected(int year, int month, int dayOfMonth);
+
+        void onEndDateSelected(int year, int month, int dayOfMonth);
+
+        void onStartTimeSelected(int hourOfDay, int minute);
+
+        void onEndTimeSelected(int hourOfDay, int minute);
     }
 }

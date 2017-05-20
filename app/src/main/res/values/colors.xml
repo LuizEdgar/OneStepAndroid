@@ -4,5 +4,8 @@
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
 
-    <color name="placeHolderColor">#85ff40f2</color>
+    <color name="placeHolder">#85ff40f2</color>
+
+    <color name="defaultText">#000000</color>
+    <color name="disabledText">#9e9e9e</color>
 </resources>

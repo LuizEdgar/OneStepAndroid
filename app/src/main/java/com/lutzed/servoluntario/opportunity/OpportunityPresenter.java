@@ -1,5 +1,6 @@
 package com.lutzed.servoluntario.opportunity;
 
+import com.google.android.gms.location.places.Place;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.Cause;
 import com.lutzed.servoluntario.models.Contact;
@@ -9,6 +10,7 @@ import com.lutzed.servoluntario.models.Skill;
 import com.lutzed.servoluntario.util.AuthHelper;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
@@ -27,6 +29,11 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
     private final AuthHelper mAuthHelper;
     private Opportunity mOpportunity;
     private List<Contact> mContacts;
+    private Place mCurrentPlace;
+    private DateHolder mStartDateHolder;
+    private DateHolder mEndDateHolder;
+    private TimeHolder mStartTimeHolder;
+    private TimeHolder mEndTimeHolder;
 
     public OpportunityPresenter(OpportunityFragment opportunityFragment, Api.ApiClient apiClient, AuthHelper authHelper, Opportunity opportunity) {
         mView = opportunityFragment;
@@ -35,6 +42,12 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
         mView.setPresenter(this);
         mOpportunity = opportunity;
         mContacts = new ArrayList<>();
+
+        Calendar calendar = Calendar.getInstance();
+        mStartDateHolder = new DateHolder(calendar);
+        mEndDateHolder = new DateHolder(calendar);
+        mStartTimeHolder = new TimeHolder(calendar);
+        mEndTimeHolder = new TimeHolder(calendar);
     }
 
     @Override
@@ -172,4 +185,93 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
         }
     }
 
+    @Override
+    public void onNewPlaceSelected(Place place) {
+        mCurrentPlace = place;
+        mView.setLocation(place.getName().toString());
+    }
+
+    @Override
+    public void onLocationTypeChanged(OpportunityFragment.LocationType locationType) {
+        mView.setShowLocationGroup(locationType == OpportunityFragment.LocationType.LOCATION);
+    }
+
+    @Override
+    public void onTimeTypeChanged(OpportunityFragment.TimeType timeType) {
+        mView.setShowTimeGroup(timeType == OpportunityFragment.TimeType.DATED);
+    }
+
+    @Override
+    public void startDateClicked() {
+        mView.showStartDatePicker(mStartDateHolder.year, mStartDateHolder.month, mStartDateHolder.dayOfMonth);
+    }
+
+    @Override
+    public void endDateClicked() {
+        mView.showEndDatePicker(mEndDateHolder.year, mEndDateHolder.month, mEndDateHolder.dayOfMonth);
+    }
+
+    @Override
+    public void startTimeClicked() {
+        mView.showStartTimePicker(mStartTimeHolder.hourOfDay, mStartTimeHolder.minute, true);
+    }
+
+    @Override
+    public void endTimeClicked() {
+        mView.showEndTimePicker(mEndTimeHolder.hourOfDay, mEndTimeHolder.minute, true);
+    }
+
+    @Override
+    public void onStartDateSelected(int year, int month, int dayOfMonth) {
+        mStartDateHolder.update(year, month, dayOfMonth);
+        mView.setStartDate(year+"/"+month+"/"+dayOfMonth);
+    }
+
+    @Override
+    public void onEndDateSelected(int year, int month, int dayOfMonth) {
+        mEndDateHolder.update(year, month, dayOfMonth);
+        mView.setEndDate(year+"/"+month+"/"+dayOfMonth);
+    }
+
+    @Override
+    public void onStartTimeSelected(int hourOfDay, int minute) {
+        mStartTimeHolder.update(hourOfDay, minute);
+        mView.setStartTime(hourOfDay+":"+minute+"/");
+    }
+
+    @Override
+    public void onEndTimeSelected(int hourOfDay, int minute) {
+        mEndTimeHolder.update(hourOfDay, minute);
+        mView.setEndTime(hourOfDay+":"+minute+"/");
+    }
+
+    private class DateHolder {
+        int year, month, dayOfMonth;
+
+        DateHolder(Calendar calendar) {
+            year = calendar.get(Calendar.YEAR);
+            month = calendar.get(Calendar.MONTH);
+            dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+        }
+
+        void update(int year, int month, int dayOfMonth) {
+            this.year = year;
+            this.month = month;
+            this.dayOfMonth = dayOfMonth;
+        }
+    }
+
+    private class TimeHolder {
+        int hourOfDay, minute;
+
+        TimeHolder(Calendar calendar) {
+            hourOfDay = calendar.get(Calendar.HOUR_OF_DAY);
+            minute = calendar.get(Calendar.MINUTE);
+        }
+
+        void update(int hourOfDay, int minute) {
+            this.hourOfDay = hourOfDay;
+            this.minute = minute;
+        }
+    }
 }
