@@ -6,6 +6,7 @@ import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -25,6 +26,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TimePicker;
@@ -52,6 +54,8 @@ import butterknife.OnClick;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
+import static com.lutzed.servoluntario.opportunity.OpportunityFragment.TimeType.DATED;
+import static com.lutzed.servoluntario.opportunity.OpportunityFragment.TimeType.ONGOING;
 
 /**
  * A login screen that offers login via email/password.
@@ -69,12 +73,16 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @BindView(R.id.causesRecyclerView) RecyclerView mCausesRecyclerView;
     @BindView(R.id.skillsRecyclerView) RecyclerView mSkillsRecyclerView;
     @BindView(R.id.locationTypeGroup) RadioGroup mLocationTypeGroup;
+    @BindView(R.id.isLocation) RadioButton mIsLocationRadioButton;
+    @BindView(R.id.isOngoing) RadioButton mIsOngoingRadioButton;
     @BindView(R.id.location) EditText mLocationView;
     @BindView(R.id.locationInputLayout) View mLocationInputLayout;
     @BindView(R.id.progress) View mProgressView;
     @BindView(R.id.create_opportunity_form) View mLoginFormView;
     @BindView(R.id.form) ScrollView mScrollView;
     @BindView(R.id.timeTypeGroup) RadioGroup mTimeTypeGroup;
+    @BindView(R.id.isDated) RadioButton mIsDatedRadioButton;
+    @BindView(R.id.isVirtual) RadioButton mIsVirtualRadioButton;
     @BindView(R.id.dateWrapper) View mTimeWrapperView;
     @BindView(R.id.startDateAt) EditText mStartDateAtView;
     @BindView(R.id.startTimeAt) EditText mStartTimeAtView;
@@ -83,6 +91,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
 
     private OpportunityContract.Presenter mPresenter;
     private int mCurrentContactSpinnerSelectedPosition;
+    private ColorStateList mDefaultEditTextColor;
 
     public enum LocationType {
         LOCATION, VIRTUAL;
@@ -225,10 +234,10 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
                 switch (checkedId) {
                     case R.id.isDated:
-                        mPresenter.onTimeTypeChanged(TimeType.DATED);
+                        mPresenter.onTimeTypeChanged(DATED);
                         break;
                     case R.id.isOngoing:
-                        mPresenter.onTimeTypeChanged(TimeType.ONGOING);
+                        mPresenter.onTimeTypeChanged(ONGOING);
                         break;
                 }
             }
@@ -240,6 +249,9 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        mDefaultEditTextColor = mTitleView.getTextColors(); //save original colors
+
         mPresenter.start();
     }
 
@@ -529,22 +541,37 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @Override
     public void setStartDate(String startDate) {
         mStartDateAtView.setText(startDate);
+        mStartDateAtView.setTextColor(mDefaultEditTextColor);
     }
 
     @Override
     public void setEndDate(String endDate) {
         mEndDateAtView.setText(endDate);
+        mEndDateAtView.setTextColor(mDefaultEditTextColor);
     }
 
     @Override
     public void setStartTime(String startTime) {
         mStartTimeAtView.setText(startTime);
+        mStartTimeAtView.setTextColor(mDefaultEditTextColor);
     }
 
     @Override
     public void setEndTime(String endTime) {
         mEndTimeAtView.setText(endTime);
+        mEndTimeAtView.setTextColor(mDefaultEditTextColor);
     }
 
+    @Override
+    public void setTimeGroupType(TimeType timeType) {
+        mIsDatedRadioButton.setChecked(timeType == DATED);
+        mIsOngoingRadioButton.setChecked(timeType == ONGOING);
+    }
+
+    @Override
+    public void setLocationGroupType(LocationType locationType) {
+        mIsLocationRadioButton.setChecked(locationType == LocationType.LOCATION);
+        mIsVirtualRadioButton.setChecked(locationType == LocationType.VIRTUAL);
+    }
 }
 

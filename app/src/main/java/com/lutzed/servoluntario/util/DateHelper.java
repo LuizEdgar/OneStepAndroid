@@ -27,14 +27,17 @@ public class DateHelper {
     private static final long DAY_MILI = HOUR_MILI * 24;
     private static final long WEEK_MILI = DAY_MILI * 7;
     private static final long YEAR_MILI = DAY_MILI * 365;
+
     private static DateFormat buildIso8601Format() {
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US);
+        DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.UK);
         format.setTimeZone(TimeZone.getTimeZone("UTC"));
         return format;
     }
 
     private static DateFormat buildIsoDayFormat() {
-        return new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.UK);
+        format.setTimeZone(TimeZone.getTimeZone("UTC"));
+        return format;
     }
 
     private static DateFormat buildPostDatetimeFormat() {
@@ -47,7 +50,7 @@ public class DateHelper {
     private static DateFormat buildDateFormat() {
         DateFormat dayFormat = null;
 
-        dayFormat = new SimpleDateFormat("dd MMMM", Locale.getDefault());
+        dayFormat = new SimpleDateFormat("dd MMMM yyyy", Locale.getDefault());
         return dayFormat;
     }
 
@@ -100,7 +103,6 @@ public class DateHelper {
         return format(formatOut, c.getTime());
     }
 
-
     public static String format(DateFormat formatOut, Date date) {
         if (date == null) return null;
 
@@ -121,6 +123,12 @@ public class DateHelper {
         }
 
         return null;
+    }
+
+    public static Calendar deserializeToCalendar(String dateString) throws NullPointerException {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(deserialize(dateString));
+        return calendar;
     }
 
     public static String getFuzzyTime(String date, boolean completeName) {

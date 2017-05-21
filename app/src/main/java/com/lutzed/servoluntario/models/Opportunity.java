@@ -72,20 +72,28 @@ public class Opportunity implements Parcelable {
     private List<Long> skillIds;
 
     @Expose
-    @SerializedName("start_date_at")
-    private String startDateAt;
+    @SerializedName("start_at")
+    private String startAt;
 
     @Expose
-    @SerializedName("end_date_at")
-    private String endDateAt;
+    @SerializedName("end_at")
+    private String endAt;
 
     @Expose
-    @SerializedName("start_time_at")
-    private String startTimeAt;
+    @SerializedName("start_date_set")
+    private Boolean startDateSet;
 
     @Expose
-    @SerializedName("end_time_at")
-    private String endTimeAt;
+    @SerializedName("end_date_set")
+    private Boolean endDateSet;
+
+    @Expose
+    @SerializedName("start_time_set")
+    private Boolean startTimeSet;
+
+    @Expose
+    @SerializedName("end_time_set")
+    private Boolean endTimeSet;
 
     @Expose
     @SerializedName("opportunitable_id")
@@ -223,38 +231,6 @@ public class Opportunity implements Parcelable {
         this.skillIds = skillIds;
     }
 
-    public String getStartDateAt() {
-        return startDateAt;
-    }
-
-    public void setStartDateAt(String startDateAt) {
-        this.startDateAt = startDateAt;
-    }
-
-    public String getEndDateAt() {
-        return endDateAt;
-    }
-
-    public void setEndDateAt(String endDateAt) {
-        this.endDateAt = endDateAt;
-    }
-
-    public String getStartTimeAt() {
-        return startTimeAt;
-    }
-
-    public void setStartTimeAt(String startTimeAt) {
-        this.startTimeAt = startTimeAt;
-    }
-
-    public String getEndTimeAt() {
-        return endTimeAt;
-    }
-
-    public void setEndTimeAt(String endTimeAt) {
-        this.endTimeAt = endTimeAt;
-    }
-
     public Long getOpportunitableId() {
         return opportunitableId;
     }
@@ -303,6 +279,57 @@ public class Opportunity implements Parcelable {
         this.othersRequirements = othersRequirements;
     }
 
+    public String getStartAt() {
+        return startAt;
+    }
+
+    public void setStartAt(String startAt) {
+        this.startAt = startAt;
+    }
+
+    public String getEndAt() {
+        return endAt;
+    }
+
+    public void setEndAt(String endAt) {
+        this.endAt = endAt;
+    }
+
+    public Boolean getStartDateSet() {
+        return startDateSet;
+    }
+
+    public void setStartDateSet(Boolean startDateSet) {
+        this.startDateSet = startDateSet;
+    }
+
+    public Boolean getEndDateSet() {
+        return endDateSet;
+    }
+
+    public void setEndDateSet(Boolean endDateSet) {
+        this.endDateSet = endDateSet;
+    }
+
+    public Boolean getStartTimeSet() {
+        return startTimeSet;
+    }
+
+    public void setStartTimeSet(Boolean startTimeSet) {
+        this.startTimeSet = startTimeSet;
+    }
+
+    public Boolean getEndTimeSet() {
+        return endTimeSet;
+    }
+
+    public void setEndTimeSet(Boolean endTimeSet) {
+        this.endTimeSet = endTimeSet;
+    }
+
+    public Opportunity() {
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -327,17 +354,16 @@ public class Opportunity implements Parcelable {
         dest.writeList(this.causeIds);
         dest.writeTypedList(this.skills);
         dest.writeList(this.skillIds);
-        dest.writeString(this.startDateAt);
-        dest.writeString(this.endDateAt);
-        dest.writeString(this.startTimeAt);
-        dest.writeString(this.endTimeAt);
+        dest.writeString(this.startAt);
+        dest.writeString(this.endAt);
+        dest.writeValue(this.startDateSet);
+        dest.writeValue(this.endDateSet);
+        dest.writeValue(this.startTimeSet);
+        dest.writeValue(this.endTimeSet);
         dest.writeValue(this.opportunitableId);
         dest.writeString(this.opportunitableType);
         dest.writeString(this.createdAt);
         dest.writeString(this.updatedAt);
-    }
-
-    public Opportunity() {
     }
 
     protected Opportunity(Parcel in) {
@@ -360,17 +386,19 @@ public class Opportunity implements Parcelable {
         this.skills = in.createTypedArrayList(Skill.CREATOR);
         this.skillIds = new ArrayList<Long>();
         in.readList(this.skillIds, Long.class.getClassLoader());
-        this.startDateAt = in.readString();
-        this.endDateAt = in.readString();
-        this.startTimeAt = in.readString();
-        this.endTimeAt = in.readString();
+        this.startAt = in.readString();
+        this.endAt = in.readString();
+        this.startDateSet = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.endDateSet = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.startTimeSet = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.endTimeSet = (Boolean) in.readValue(Boolean.class.getClassLoader());
         this.opportunitableId = (Long) in.readValue(Long.class.getClassLoader());
         this.opportunitableType = in.readString();
         this.createdAt = in.readString();
         this.updatedAt = in.readString();
     }
 
-    public static final Parcelable.Creator<Opportunity> CREATOR = new Parcelable.Creator<Opportunity>() {
+    public static final Creator<Opportunity> CREATOR = new Creator<Opportunity>() {
         @Override
         public Opportunity createFromParcel(Parcel source) {
             return new Opportunity(source);

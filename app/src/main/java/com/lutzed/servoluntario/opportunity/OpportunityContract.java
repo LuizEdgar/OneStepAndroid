@@ -69,6 +69,10 @@ public interface OpportunityContract {
         void setStartTime(String startTime);
 
         void setEndTime(String endTime);
+
+        void setTimeGroupType(OpportunityFragment.TimeType timeType);
+
+        void setLocationGroupType(OpportunityFragment.LocationType locationType);
     }
 
     interface Presenter extends BasePresenter {
