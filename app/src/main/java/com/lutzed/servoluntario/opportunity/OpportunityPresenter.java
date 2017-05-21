@@ -1,5 +1,6 @@
 package com.lutzed.servoluntario.opportunity;
 
+import com.google.android.gms.location.places.Place;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.Cause;
 import com.lutzed.servoluntario.models.Contact;
@@ -7,8 +8,10 @@ import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.models.Skill;
 import com.lutzed.servoluntario.util.AuthHelper;
+import com.lutzed.servoluntario.util.DateHelper;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
@@ -27,6 +30,19 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
     private final AuthHelper mAuthHelper;
     private Opportunity mOpportunity;
     private List<Contact> mContacts;
+    private Place mCurrentPlace;
+    private Calendar mStartAt;
+    private Calendar mEndAt;
+    private boolean mStartDateSet;
+    private boolean mEndDateSet;
+    private boolean mStartTimeSet;
+    private boolean mEndTimeSet;
+    private boolean mIsOngoing;
+    private boolean mIsVirtual;
+//    private DateHolder mStartDateHolder;
+//    private DateHolder mEndDateHolder;
+//    private TimeHolder mStartTimeHolder;
+//    private TimeHolder mEndTimeHolder;
 
     public OpportunityPresenter(OpportunityFragment opportunityFragment, Api.ApiClient apiClient, AuthHelper authHelper, Opportunity opportunity) {
         mView = opportunityFragment;
@@ -39,6 +55,8 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
 
     @Override
     public void start() {
+        Calendar now = Calendar.getInstance();
+
         if (mOpportunity != null) {
             mView.setTitle(mOpportunity.getTitle());
             mView.setDescription(mOpportunity.getDescription());
@@ -54,7 +72,46 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
                 contacts.add(contact);
                 mView.setContacts(contacts, contact.getId());
             }
+
+            if (mOpportunity.getStartAt() != null && !mOpportunity.getOngoing()) {
+                mStartAt = DateHelper.deserializeToCalendar(mOpportunity.getStartAt());
+            } else {
+                mStartAt = Calendar.getInstance();
+            }
+            if (mOpportunity.getEndAt() != null && !mOpportunity.getOngoing()) {
+                mEndAt = DateHelper.deserializeToCalendar(mOpportunity.getEndAt());
+            } else {
+                mEndAt = Calendar.getInstance();
+            }
+
+            mIsOngoing = mOpportunity.getOngoing();
+            if (!mOpportunity.getOngoing()) {
+                mView.setTimeGroupType(OpportunityFragment.TimeType.DATED);
+                mStartDateSet = mOpportunity.getStartDateSet();
+                if (mOpportunity.getStartDateSet()) {
+                    mView.setStartDate(DateHelper.format(DateHelper.dateFormat, mOpportunity.getStartAt()));
+                }
+                mEndDateSet = mOpportunity.getEndDateSet();
+                if (mOpportunity.getEndDateSet()) {
+                    mView.setEndDate(DateHelper.format(DateHelper.dateFormat, mOpportunity.getEndAt()));
+                }
+                mStartTimeSet = mOpportunity.getStartTimeSet();
+                if (mOpportunity.getStartTimeSet()) {
+                    mView.setStartTime(DateHelper.format(DateHelper.timeFormat, mOpportunity.getStartAt()));
+                }
+                mEndTimeSet = mOpportunity.getEndTimeSet();
+                if (mOpportunity.getEndTimeSet()) {
+                    mView.setEndTime(DateHelper.format(DateHelper.timeFormat, mOpportunity.getEndAt()));
+                }
+            } else {
+                mView.setTimeGroupType(OpportunityFragment.TimeType.ONGOING);
+            }
+
+        } else {
+            mStartAt = Calendar.getInstance();
+            mEndAt = Calendar.getInstance();
         }
+
         loadContacts();
     }
 
@@ -80,6 +137,21 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
         opportunity.setCauseIds(causeIds);
         opportunity.setSkillIds(skillIds);
         opportunity.setTags(tags);
+
+        opportunity.setOngoing(mIsOngoing);
+        if (!mIsOngoing) {
+            if (mStartDateSet || mStartTimeSet)
+                opportunity.setStartAt(DateHelper.format(DateHelper.iso8601Format, mStartAt.getTime()));
+            opportunity.setOngoing(false);
+            if (mEndDateSet || mEndTimeSet)
+                opportunity.setEndAt(DateHelper.format(DateHelper.iso8601Format, mEndAt.getTime()));
+            opportunity.setOngoing(false);
+
+            opportunity.setStartDateSet(mStartDateSet);
+            opportunity.setEndDateSet(mEndDateSet);
+            opportunity.setStartTimeSet(mStartTimeSet);
+            opportunity.setEndTimeSet(mEndTimeSet);
+        }
 
         Callback<Opportunity> opportunityCallback = new Callback<Opportunity>() {
             @Override
@@ -170,6 +242,78 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
         } else if (typeTestItem instanceof Cause) {
             mView.addUniqueCauses(selectedItems, notSelectedItems);
         }
+    }
+
+    @Override
+    public void onNewPlaceSelected(Place place) {
+        mCurrentPlace = place;
+        mView.setLocation(place.getName().toString());
+    }
+
+    @Override
+    public void onLocationTypeChanged(OpportunityFragment.LocationType locationType) {
+        mIsVirtual = locationType == OpportunityFragment.LocationType.VIRTUAL;
+        mView.setShowLocationGroup(locationType == OpportunityFragment.LocationType.LOCATION);
+    }
+
+    @Override
+    public void onTimeTypeChanged(OpportunityFragment.TimeType timeType) {
+        mIsOngoing = timeType == OpportunityFragment.TimeType.ONGOING;
+        mView.setShowTimeGroup(timeType == OpportunityFragment.TimeType.DATED);
+    }
+
+    @Override
+    public void startDateClicked() {
+        mView.showStartDatePicker(mStartAt.get(Calendar.YEAR), mStartAt.get(Calendar.MONTH), mStartAt.get(Calendar.DAY_OF_MONTH));
+    }
+
+    @Override
+    public void startTimeClicked() {
+        mView.showStartTimePicker(mStartAt.get(Calendar.HOUR_OF_DAY), mStartAt.get(Calendar.MINUTE), true);
+    }
+
+    @Override
+    public void endDateClicked() {
+        mView.showEndDatePicker(mEndAt.get(Calendar.YEAR), mEndAt.get(Calendar.MONTH), mEndAt.get(Calendar.DAY_OF_MONTH));
+    }
+
+    @Override
+    public void endTimeClicked() {
+        mView.showEndTimePicker(mEndAt.get(Calendar.HOUR_OF_DAY), mEndAt.get(Calendar.MINUTE), true);
+    }
+
+    @Override
+    public void onStartDateSelected(int year, int month, int dayOfMonth) {
+        mStartDateSet = true;
+        mStartAt.set(Calendar.YEAR, year);
+        mStartAt.set(Calendar.MONTH, month);
+        mStartAt.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        mView.setStartDate(DateHelper.format(DateHelper.dateFormat, year, month, dayOfMonth));
+    }
+
+    @Override
+    public void onStartTimeSelected(int hourOfDay, int minute) {
+        mStartTimeSet = true;
+        mStartAt.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        mStartAt.set(Calendar.MINUTE, minute);
+        mView.setStartTime(DateHelper.format(DateHelper.timeFormat, mStartAt.get(Calendar.YEAR), mStartAt.get(Calendar.MONTH), mStartAt.get(Calendar.DAY_OF_MONTH), hourOfDay, minute));
+    }
+
+    @Override
+    public void onEndDateSelected(int year, int month, int dayOfMonth) {
+        mEndDateSet = true;
+        mEndAt.set(Calendar.YEAR, year);
+        mEndAt.set(Calendar.MONTH, month);
+        mEndAt.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        mView.setEndDate(DateHelper.format(DateHelper.dateFormat, year, month, dayOfMonth));
+    }
+
+    @Override
+    public void onEndTimeSelected(int hourOfDay, int minute) {
+        mEndTimeSet = true;
+        mEndAt.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        mEndAt.set(Calendar.MINUTE, minute);
+        mView.setEndTime(DateHelper.format(DateHelper.timeFormat, mEndAt.get(Calendar.YEAR), mEndAt.get(Calendar.MONTH), mEndAt.get(Calendar.DAY_OF_MONTH), hourOfDay, minute));
     }
 
 }

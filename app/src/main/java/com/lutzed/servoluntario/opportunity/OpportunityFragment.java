@@ -3,7 +3,10 @@ package com.lutzed.servoluntario.opportunity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
@@ -13,6 +16,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -20,15 +24,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.dialogs.ContactDialogFragment;
@@ -48,6 +54,8 @@ import butterknife.OnClick;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
+import static com.lutzed.servoluntario.opportunity.OpportunityFragment.TimeType.DATED;
+import static com.lutzed.servoluntario.opportunity.OpportunityFragment.TimeType.ONGOING;
 
 /**
  * A login screen that offers login via email/password.
@@ -65,16 +73,33 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @BindView(R.id.causesRecyclerView) RecyclerView mCausesRecyclerView;
     @BindView(R.id.skillsRecyclerView) RecyclerView mSkillsRecyclerView;
     @BindView(R.id.locationTypeGroup) RadioGroup mLocationTypeGroup;
+    @BindView(R.id.isLocation) RadioButton mIsLocationRadioButton;
+    @BindView(R.id.isOngoing) RadioButton mIsOngoingRadioButton;
     @BindView(R.id.location) EditText mLocationView;
     @BindView(R.id.locationInputLayout) View mLocationInputLayout;
     @BindView(R.id.progress) View mProgressView;
     @BindView(R.id.create_opportunity_form) View mLoginFormView;
     @BindView(R.id.form) ScrollView mScrollView;
+    @BindView(R.id.timeTypeGroup) RadioGroup mTimeTypeGroup;
+    @BindView(R.id.isDated) RadioButton mIsDatedRadioButton;
+    @BindView(R.id.isVirtual) RadioButton mIsVirtualRadioButton;
+    @BindView(R.id.dateWrapper) View mTimeWrapperView;
+    @BindView(R.id.startDateAt) EditText mStartDateAtView;
+    @BindView(R.id.startTimeAt) EditText mStartTimeAtView;
+    @BindView(R.id.endDateAt) EditText mEndDateAtView;
+    @BindView(R.id.endTimeAt) EditText mEndTimeAtView;
 
     private OpportunityContract.Presenter mPresenter;
-
     private int mCurrentContactSpinnerSelectedPosition;
-    private Place mCurrentLocationPlace;
+    private ColorStateList mDefaultEditTextColor;
+
+    public enum LocationType {
+        LOCATION, VIRTUAL;
+    }
+
+    public enum TimeType {
+        DATED, ONGOING;
+    }
 
     public static OpportunityFragment newInstance() {
         return new OpportunityFragment();
@@ -85,12 +110,6 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         super.onCreate(savedInstanceState);
 
         setHasOptionsMenu(true);
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mPresenter.start();
     }
 
     @Override
@@ -161,7 +180,26 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
             }
         }));
 
+        ActionMode.Callback noCopyPasteCallback = new ActionMode.Callback() {
+
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            public void onDestroyActionMode(ActionMode mode) {
+            }
+
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                return false;
+            }
+        };
+
         mLocationView.setFocusable(false);
+        mLocationView.setCustomSelectionActionModeCallback(noCopyPasteCallback);
         mLocationView.setClickable(true);
 
         mLocationTypeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -169,22 +207,52 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
                 switch (checkedId) {
                     case R.id.isLocation:
-                        mLocationInputLayout.setVisibility(View.VISIBLE);
-//                        mScrollView.post(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                mScrollView.scrollTo(0, mLocationView.getBottom());
-//                            }
-//                        });
+                        mPresenter.onLocationTypeChanged(LocationType.LOCATION);
                         break;
                     case R.id.isVirtual:
-                        mLocationInputLayout.setVisibility(View.GONE);
+                        mPresenter.onLocationTypeChanged(LocationType.VIRTUAL);
+                        break;
+                }
+            }
+        });
+
+        mStartDateAtView.setFocusable(false);
+        mStartDateAtView.setCustomSelectionActionModeCallback(noCopyPasteCallback);
+        mStartDateAtView.setClickable(true);
+        mStartTimeAtView.setFocusable(false);
+        mStartTimeAtView.setCustomSelectionActionModeCallback(noCopyPasteCallback);
+        mStartTimeAtView.setClickable(true);
+        mEndDateAtView.setFocusable(false);
+        mEndDateAtView.setCustomSelectionActionModeCallback(noCopyPasteCallback);
+        mEndDateAtView.setClickable(true);
+        mEndTimeAtView.setFocusable(false);
+        mEndTimeAtView.setCustomSelectionActionModeCallback(noCopyPasteCallback);
+        mEndTimeAtView.setClickable(true);
+
+        mTimeTypeGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
+                switch (checkedId) {
+                    case R.id.isDated:
+                        mPresenter.onTimeTypeChanged(DATED);
+                        break;
+                    case R.id.isOngoing:
+                        mPresenter.onTimeTypeChanged(ONGOING);
                         break;
                 }
             }
         });
 
         return root;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mDefaultEditTextColor = mTitleView.getTextColors(); //save original colors
+
+        mPresenter.start();
     }
 
     void onSaveClicked() {
@@ -331,8 +399,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
             }
         } else if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
-                mCurrentLocationPlace = PlaceAutocomplete.getPlace(getContext(), data);
-                mLocationView.setText(mCurrentLocationPlace.getName());
+                mPresenter.onNewPlaceSelected(PlaceAutocomplete.getPlace(getContext(), data));
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(getContext(), data);
                 // TODO: Handle the error.
@@ -396,5 +463,115 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         }
     }
 
+    @Override
+    public void setLocation(String location) {
+        mLocationView.setText(location);
+    }
+
+    @OnClick(R.id.startDateAt)
+    public void onStartDateAtClicked() {
+        mPresenter.startDateClicked();
+    }
+
+    @Override
+    public void showStartDatePicker(int year, int month, int dayOfMonth) {
+        new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                mPresenter.onStartDateSelected(year, month, dayOfMonth);
+            }
+        }, year, month, dayOfMonth).show();
+    }
+
+    @Override
+    public void showEndDatePicker(int year, int month, int dayOfMonth) {
+        new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                mPresenter.onEndDateSelected(year, month, dayOfMonth);
+            }
+        }, year, month, dayOfMonth).show();
+    }
+
+    @Override
+    public void showStartTimePicker(int hourOfDay, int minute, boolean is24HourView) {
+        new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                mPresenter.onStartTimeSelected(hourOfDay, minute);
+            }
+        }, hourOfDay, minute, is24HourView).show();
+    }
+
+    @Override
+    public void showEndTimePicker(int hourOfDay, int minute, boolean is24HourView) {
+        new TimePickerDialog(getContext(), new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+                mPresenter.onEndTimeSelected(hourOfDay, minute);
+            }
+        }, hourOfDay, minute, is24HourView).show();
+    }
+
+    @OnClick(R.id.endDateAt)
+    public void onEndDateAtClicked() {
+        mPresenter.endDateClicked();
+    }
+
+    @OnClick(R.id.startTimeAt)
+    public void onStartTimeAtClicked() {
+        mPresenter.startTimeClicked();
+    }
+
+    @OnClick(R.id.endTimeAt)
+    public void onEndTimeAtClicked() {
+        mPresenter.endTimeClicked();
+    }
+
+    @Override
+    public void setShowTimeGroup(boolean visible) {
+        mTimeWrapperView.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void setShowLocationGroup(boolean visible) {
+        mLocationView.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void setStartDate(String startDate) {
+        mStartDateAtView.setText(startDate);
+        mStartDateAtView.setTextColor(mDefaultEditTextColor);
+    }
+
+    @Override
+    public void setEndDate(String endDate) {
+        mEndDateAtView.setText(endDate);
+        mEndDateAtView.setTextColor(mDefaultEditTextColor);
+    }
+
+    @Override
+    public void setStartTime(String startTime) {
+        mStartTimeAtView.setText(startTime);
+        mStartTimeAtView.setTextColor(mDefaultEditTextColor);
+    }
+
+    @Override
+    public void setEndTime(String endTime) {
+        mEndTimeAtView.setText(endTime);
+        mEndTimeAtView.setTextColor(mDefaultEditTextColor);
+    }
+
+    @Override
+    public void setTimeGroupType(TimeType timeType) {
+        mIsDatedRadioButton.setChecked(timeType == DATED);
+        mIsOngoingRadioButton.setChecked(timeType == ONGOING);
+    }
+
+    @Override
+    public void setLocationGroupType(LocationType locationType) {
+        mIsLocationRadioButton.setChecked(locationType == LocationType.LOCATION);
+        mIsVirtualRadioButton.setChecked(locationType == LocationType.VIRTUAL);
+    }
 }
 

@@ -64,5 +64,9 @@
     <string name="virtual">Virtual</string>
     <string name="dated">Dated</string>
     <string name="ongoing">Ongoing</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="date">Date</string>
+    <string name="time">Time</string>
 
 </resources>
