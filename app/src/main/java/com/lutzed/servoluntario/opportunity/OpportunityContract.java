@@ -73,6 +73,34 @@ public interface OpportunityContract {
         void setTimeGroupType(OpportunityFragment.TimeType timeType);
 
         void setLocationGroupType(OpportunityFragment.LocationType locationType);
+
+        void showTitleRequiredError();
+
+        void setTitleFocus();
+
+        void showContactRequiredError();
+
+        void setFocusContactField();
+
+        void showSkillsMinimumRequiredError(int minSkillsRequired);
+
+        void setFocusSkills();
+
+        void showCausesMinimumRequiredError(int minCausesRequired);
+
+        void setFocusCauses();
+
+        void showLocationRequiredError();
+
+        void setFocusLocation();
+
+        void setFocusTime();
+
+        void showEndBeforeStartError();
+
+        void showStartDateRequiredError();
+
+        void showEndDateRequiredError();
     }
 
     interface Presenter extends BasePresenter {

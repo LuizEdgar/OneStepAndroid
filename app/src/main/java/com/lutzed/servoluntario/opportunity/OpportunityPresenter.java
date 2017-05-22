@@ -1,13 +1,17 @@
 package com.lutzed.servoluntario.opportunity;
 
+import android.text.TextUtils;
+
 import com.google.android.gms.location.places.Place;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.Cause;
 import com.lutzed.servoluntario.models.Contact;
+import com.lutzed.servoluntario.models.Location;
 import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.models.Skill;
 import com.lutzed.servoluntario.util.AuthHelper;
+import com.lutzed.servoluntario.util.Constants;
 import com.lutzed.servoluntario.util.DateHelper;
 
 import java.util.ArrayList;
@@ -39,10 +43,6 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
     private boolean mEndTimeSet;
     private boolean mIsOngoing;
     private boolean mIsVirtual;
-//    private DateHolder mStartDateHolder;
-//    private DateHolder mEndDateHolder;
-//    private TimeHolder mStartTimeHolder;
-//    private TimeHolder mEndTimeHolder;
 
     public OpportunityPresenter(OpportunityFragment opportunityFragment, Api.ApiClient apiClient, AuthHelper authHelper, Opportunity opportunity) {
         mView = opportunityFragment;
@@ -55,8 +55,6 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
 
     @Override
     public void start() {
-        Calendar now = Calendar.getInstance();
-
         if (mOpportunity != null) {
             mView.setTitle(mOpportunity.getTitle());
             mView.setDescription(mOpportunity.getDescription());
@@ -73,6 +71,16 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
                 mView.setContacts(contacts, contact.getId());
             }
 
+            mIsVirtual = mOpportunity.getVirtual();
+            if (!mOpportunity.getVirtual()) {
+                mView.setLocationGroupType(OpportunityFragment.LocationType.LOCATION);
+                if (mOpportunity.getLocation() != null)
+                    mView.setLocation(mOpportunity.getLocation().getName());
+            } else {
+                mView.setLocationGroupType(OpportunityFragment.LocationType.VIRTUAL);
+            }
+
+            mIsOngoing = mOpportunity.getOngoing();
             if (mOpportunity.getStartAt() != null && !mOpportunity.getOngoing()) {
                 mStartAt = DateHelper.deserializeToCalendar(mOpportunity.getStartAt());
             } else {
@@ -83,8 +91,6 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
             } else {
                 mEndAt = Calendar.getInstance();
             }
-
-            mIsOngoing = mOpportunity.getOngoing();
             if (!mOpportunity.getOngoing()) {
                 mView.setTimeGroupType(OpportunityFragment.TimeType.DATED);
                 mStartDateSet = mOpportunity.getStartDateSet();
@@ -118,58 +124,127 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
     @Override
     public void attemptCreateOpportunity(String title, String description, Contact contact, List<Long> skillIds, List<Long> causeIds, String volunteersNumber, String timeCommitment, String othersRequirements, String tags) {
         mView.resetErrors();
-        mView.setSavingIndicator(true);
 
-        boolean isUpdate = mOpportunity != null;
+        boolean cancel = false;
 
-        int volunteersNumberInt = 10;
-
-        Opportunity opportunity = new Opportunity();
-        if (isUpdate) {
-            opportunity.setId(mOpportunity.getId());
+        // Check for a valid name
+        if (TextUtils.isEmpty(title)) {
+            mView.showTitleRequiredError();
+            mView.setTitleFocus();
+            cancel = true;
         }
-        opportunity.setTitle(title);
-        opportunity.setDescription(description);
-        opportunity.setContactAttributes(contact);
-        opportunity.setVolunteersNumber(volunteersNumberInt);
-        opportunity.setTimeCommitment(timeCommitment);
-        opportunity.setOthersRequirements(othersRequirements);
-        opportunity.setCauseIds(causeIds);
-        opportunity.setSkillIds(skillIds);
-        opportunity.setTags(tags);
 
-        opportunity.setOngoing(mIsOngoing);
+        if (contact == null) {
+            mView.showContactRequiredError();
+            if (!cancel) mView.setFocusContactField();
+            cancel = true;
+        }
+
+        int minCausesRequired = Constants.MIN_OPPORTUNITY_CAUSES_REQUIRED;
+        if (minCausesRequired > 0 && causeIds.isEmpty()) {
+            mView.showCausesMinimumRequiredError(minCausesRequired);
+            if (!cancel) mView.setFocusCauses();
+            cancel = true;
+        }
+
+        int minSkillsRequired = Constants.MIN_OPPORTUNITY_SKILLS_REQUIRED;
+        if (minSkillsRequired > 0 && skillIds.isEmpty()) {
+            mView.showSkillsMinimumRequiredError(minSkillsRequired);
+            if (!cancel) mView.setFocusSkills();
+            cancel = true;
+        }
+
+        if (!mIsVirtual && mCurrentPlace == null) {
+            mView.showLocationRequiredError();
+            if (!cancel) mView.setFocusLocation();
+            cancel = true;
+        }
+
         if (!mIsOngoing) {
-            if (mStartDateSet || mStartTimeSet)
-                opportunity.setStartAt(DateHelper.format(DateHelper.iso8601Format, mStartAt.getTime()));
-            opportunity.setOngoing(false);
-            if (mEndDateSet || mEndTimeSet)
-                opportunity.setEndAt(DateHelper.format(DateHelper.iso8601Format, mEndAt.getTime()));
-            opportunity.setOngoing(false);
+            if (!mStartDateSet) {
+                mView.showStartDateRequiredError();
+                if (!cancel) mView.setFocusTime();
+                cancel = true;
+            }
 
-            opportunity.setStartDateSet(mStartDateSet);
-            opportunity.setEndDateSet(mEndDateSet);
-            opportunity.setStartTimeSet(mStartTimeSet);
-            opportunity.setEndTimeSet(mEndTimeSet);
+            if (!mEndDateSet) {
+                mView.showEndDateRequiredError();
+                if (!cancel) mView.setFocusTime();
+                cancel = true;
+            }
+
+            if (mStartDateSet && mEndDateSet && mEndAt.before(mStartAt)) {
+                mView.showEndBeforeStartError();
+                if (!cancel) mView.setFocusTime();
+                cancel = true;
+            }
         }
 
-        Callback<Opportunity> opportunityCallback = new Callback<Opportunity>() {
-            @Override
-            public void onResponse(Call<Opportunity> call, Response<Opportunity> response) {
-                mView.setSavingIndicator(false);
-                mView.close();
+        if (!cancel) {
+            mView.setSavingIndicator(true);
+
+            boolean isUpdate = mOpportunity != null;
+
+            int volunteersNumberInt = 10;
+
+            Opportunity opportunity = new Opportunity();
+            if (isUpdate) {
+                opportunity.setId(mOpportunity.getId());
+            }
+            opportunity.setTitle(title);
+            opportunity.setDescription(description);
+            if (isUpdate && mOpportunity.getContact() != null)
+                contact.setId(mOpportunity.getContact().getId());
+            opportunity.setContactAttributes(contact);
+            opportunity.setVolunteersNumber(volunteersNumberInt);
+            opportunity.setTimeCommitment(timeCommitment);
+            opportunity.setOthersRequirements(othersRequirements);
+            opportunity.setCauseIds(causeIds);
+            opportunity.setSkillIds(skillIds);
+            opportunity.setTags(tags);
+
+            opportunity.setVirtual(mIsVirtual);
+            if (!mIsVirtual) {
+                Location location = new Location();
+                location.setName(mCurrentPlace.getName().toString());
+                location.setAddress1(mCurrentPlace.getAddress().toString());
+                location.setGooglePlacesId(mCurrentPlace.getId());
+                opportunity.setLocationAttributes(location);
             }
 
-            @Override
-            public void onFailure(Call<Opportunity> call, Throwable t) {
-                mView.setSavingIndicator(false);
-                t.printStackTrace();
-            }
-        };
+            opportunity.setOngoing(mIsOngoing);
+            if (!mIsOngoing) {
+                if (mStartDateSet || mStartTimeSet)
+                    opportunity.setStartAt(DateHelper.format(DateHelper.iso8601Format, mStartAt.getTime()));
+                opportunity.setOngoing(false);
+                if (mEndDateSet || mEndTimeSet)
+                    opportunity.setEndAt(DateHelper.format(DateHelper.iso8601Format, mEndAt.getTime()));
+                opportunity.setOngoing(false);
 
-        if (isUpdate)
-            mApiClient.updateOpportunity(opportunity.getId(), opportunity).enqueue(opportunityCallback);
-        else mApiClient.createOpportunity(opportunity).enqueue(opportunityCallback);
+                opportunity.setStartDateSet(mStartDateSet);
+                opportunity.setEndDateSet(mEndDateSet);
+                opportunity.setStartTimeSet(mStartTimeSet);
+                opportunity.setEndTimeSet(mEndTimeSet);
+            }
+
+            Callback<Opportunity> opportunityCallback = new Callback<Opportunity>() {
+                @Override
+                public void onResponse(Call<Opportunity> call, Response<Opportunity> response) {
+                    mView.setSavingIndicator(false);
+                    mView.close();
+                }
+
+                @Override
+                public void onFailure(Call<Opportunity> call, Throwable t) {
+                    mView.setSavingIndicator(false);
+                    t.printStackTrace();
+                }
+            };
+
+            if (isUpdate)
+                mApiClient.updateOpportunity(opportunity.getId(), opportunity).enqueue(opportunityCallback);
+            else mApiClient.createOpportunity(opportunity).enqueue(opportunityCallback);
+        }
     }
 
     @Override

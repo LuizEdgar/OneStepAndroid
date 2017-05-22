@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
@@ -29,6 +30,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -43,6 +45,7 @@ import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.models.Skill;
 import com.lutzed.servoluntario.selection.ItemsSelectionActivity;
 import com.lutzed.servoluntario.util.Snippets;
+import com.lutzed.servoluntario.util.TextInputLayoutTextWatcher;
 import com.satsuware.usefulviews.LabelledSpinner;
 
 import java.util.ArrayList;
@@ -76,7 +79,6 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @BindView(R.id.isLocation) RadioButton mIsLocationRadioButton;
     @BindView(R.id.isOngoing) RadioButton mIsOngoingRadioButton;
     @BindView(R.id.location) EditText mLocationView;
-    @BindView(R.id.locationInputLayout) View mLocationInputLayout;
     @BindView(R.id.progress) View mProgressView;
     @BindView(R.id.create_opportunity_form) View mLoginFormView;
     @BindView(R.id.form) ScrollView mScrollView;
@@ -88,6 +90,21 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @BindView(R.id.startTimeAt) EditText mStartTimeAtView;
     @BindView(R.id.endDateAt) EditText mEndDateAtView;
     @BindView(R.id.endTimeAt) EditText mEndTimeAtView;
+    @BindView(R.id.startDateAtInputLayout) TextInputLayout mStartDateAtInputLayout;
+    @BindView(R.id.startTimeAtInputLayout) TextInputLayout mStartTimeAtInputLayout;
+    @BindView(R.id.endDateAtInputLayout) TextInputLayout mEndDateAtInputLayout;
+    @BindView(R.id.endTimeAtInputLayout) TextInputLayout mEndTimeAtInputLayout;
+    @BindView(R.id.titleInputLayout) TextInputLayout mTitleInputLayout;
+    @BindView(R.id.descriptionInputLayout) TextInputLayout mDescriptionInputLayout;
+    @BindView(R.id.volunteersNumberInputLayout) TextInputLayout mVolunteersNumberInputLayout;
+    @BindView(R.id.timeCommitmentInputLayout) TextInputLayout mTimeCommitmentInputLayout;
+    @BindView(R.id.othersRequirementsInputLayout) TextInputLayout mOthersRequirementsInputLayout;
+    @BindView(R.id.tagsInputLayout) TextInputLayout mTagsInputLayout;
+    @BindView(R.id.locationInputLayout) TextInputLayout mLocationInputLayout;
+    @BindView(R.id.causesWrapper) View mCausesWrapper;
+    @BindView(R.id.skillsWrapper) View mSkillsWrapper;
+    @BindView(R.id.causesError) TextView mCausesErrorView;
+    @BindView(R.id.skillsError) TextView mSkillsErrorView;
 
     private OpportunityContract.Presenter mPresenter;
     private int mCurrentContactSpinnerSelectedPosition;
@@ -243,6 +260,16 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
             }
         });
 
+        mTitleView.addTextChangedListener(new TextInputLayoutTextWatcher(mTitleView, mTitleInputLayout));
+        mDescriptionView.addTextChangedListener(new TextInputLayoutTextWatcher(mDescriptionView, mDescriptionInputLayout));
+        mVolunteersNumberView.addTextChangedListener(new TextInputLayoutTextWatcher(mVolunteersNumberView, mVolunteersNumberInputLayout));
+        mTimeCommitmentView.addTextChangedListener(new TextInputLayoutTextWatcher(mTimeCommitmentView, mTimeCommitmentInputLayout));
+        mOthersRequirementsView.addTextChangedListener(new TextInputLayoutTextWatcher(mOthersRequirementsView, mTitleInputLayout));
+        mTagsView.addTextChangedListener(new TextInputLayoutTextWatcher(mTagsView, mTagsInputLayout));
+        mStartDateAtView.addTextChangedListener(new TextInputLayoutTextWatcher(mStartDateAtView, mStartDateAtInputLayout));
+        mEndDateAtView.addTextChangedListener(new TextInputLayoutTextWatcher(mEndDateAtView, mEndDateAtInputLayout));
+        mLocationView.addTextChangedListener(new TextInputLayoutTextWatcher(mLocationView, mLocationInputLayout));
+
         return root;
     }
 
@@ -278,7 +305,10 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     }
 
     public void resetErrors() {
-        mTitleView.setError(null);
+//        mTitleView.setError(null);
+//        mContactSpinner.setDefaultErrorText("");
+//        mContactSpinner.getErrorLabel().setError("");
+//        mContactSpinner.setDefaultErrorEnabled(false);
     }
 
     @Override
@@ -335,6 +365,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         OpportunityItemsAdapter adapter = (OpportunityItemsAdapter) mCausesRecyclerView.getAdapter();
         adapter.addAndRemoveItems(causes, causesToRemove);
         mCausesRecyclerView.scrollToPosition(adapter.getItemCount() - 1);
+        mCausesErrorView.setVisibility(View.GONE);
     }
 
     @Override
@@ -342,6 +373,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         OpportunityItemsAdapter adapter = (OpportunityItemsAdapter) mSkillsRecyclerView.getAdapter();
         adapter.addAndRemoveItems(skills, skillsToRemove);
         mSkillsRecyclerView.scrollToPosition(adapter.getItemCount() - 1);
+        mSkillsErrorView.setVisibility(View.GONE);
     }
 
     @Override
@@ -394,11 +426,13 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == ItemsSelectionActivity.EXTRA_SELECTION_REQUEST_CODE) {
+            clearAllFocus();
             if (resultCode == RESULT_OK) {
                 mPresenter.onNewItemsSelection(data.<SelectableItem>getParcelableArrayListExtra(ItemsSelectionActivity.EXTRA_ITEMS_SELECTED), data.<SelectableItem>getParcelableArrayListExtra(ItemsSelectionActivity.EXTRA_ITEMS_NOT_SELECTED));
             }
         } else if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
+                clearAllFocus();
                 mPresenter.onNewPlaceSelected(PlaceAutocomplete.getPlace(getContext(), data));
             } else if (resultCode == PlaceAutocomplete.RESULT_ERROR) {
                 Status status = PlaceAutocomplete.getStatus(getContext(), data);
@@ -573,5 +607,95 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         mIsLocationRadioButton.setChecked(locationType == LocationType.LOCATION);
         mIsVirtualRadioButton.setChecked(locationType == LocationType.VIRTUAL);
     }
+
+    @Override
+    public void showTitleRequiredError() {
+        mTitleInputLayout.setError(getString(R.string.error_field_required));
+    }
+
+    @Override
+    public void setTitleFocus() {
+        mTitleView.requestFocus();
+    }
+
+    @Override
+    public void showContactRequiredError() {
+//        mContactSpinner.setDefaultErrorText(getString(R.string.error_field_required));
+        mContactSpinner.getErrorLabel().setText(getString(R.string.error_field_required));
+        mContactSpinner.setDefaultErrorEnabled(true);
+    }
+
+    @Override
+    public void setFocusContactField() {
+        mScrollView.smoothScrollTo(0, mContactSpinner.getTop());
+    }
+
+    @Override
+    public void showSkillsMinimumRequiredError(int minSkillsRequired) {
+        mSkillsErrorView.setText("Você deve escolher pelo menos " + minSkillsRequired + " habilidades");
+        mSkillsErrorView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void setFocusSkills() {
+        mScrollView.smoothScrollTo(0, mSkillsWrapper.getTop());
+    }
+
+    @Override
+    public void showCausesMinimumRequiredError(int minCausesRequired) {
+        mCausesErrorView.setText("Você deve escolher pelo menos " + minCausesRequired + " causas");
+        mCausesErrorView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void setFocusCauses() {
+        mScrollView.smoothScrollTo(0, mCausesWrapper.getTop());
+    }
+
+    @Override
+    public void showLocationRequiredError() {
+        clearAllFocus();
+        mLocationInputLayout.setError(getString(R.string.error_field_required));
+    }
+
+    @Override
+    public void setFocusLocation() {
+        mScrollView.smoothScrollTo(0, mLocationTypeGroup.getTop());
+    }
+
+    @Override
+    public void showEndBeforeStartError() {
+        mEndDateAtInputLayout.setError(getString(R.string.error_end_before_start));
+    }
+
+    @Override
+    public void showStartDateRequiredError() {
+        mStartDateAtInputLayout.setError(getString(R.string.error_field_required));
+    }
+
+    @Override
+    public void showEndDateRequiredError() {
+        mEndDateAtInputLayout.setError(getString(R.string.error_field_required));
+    }
+
+    @Override
+    public void setFocusTime() {
+        mScrollView.smoothScrollTo(0, mTimeTypeGroup.getTop());
+    }
+
+    private void clearAllFocus() {
+        mTitleView.clearFocus();
+        mDescriptionView.clearFocus();
+        mVolunteersNumberView.clearFocus();
+        mTimeCommitmentView.clearFocus();
+        mOthersRequirementsView.clearFocus();
+        mTagsView.clearFocus();
+        mLocationView.clearFocus();
+        mStartDateAtView.clearFocus();
+        mStartTimeAtView.clearFocus();
+        mEndDateAtView.clearFocus();
+        mEndTimeAtView.clearFocus();
+    }
+
 }
 
