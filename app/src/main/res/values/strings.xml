@@ -68,5 +68,8 @@
     <string name="to">To</string>
     <string name="date">Date</string>
     <string name="time">Time</string>
+    <string name="causes">Causes</string>
+    <string name="skills">Skills</string>
+    <string name="error_end_before_start">End date must be after the start</string>
 
 </resources>

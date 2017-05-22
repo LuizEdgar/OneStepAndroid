@@ -32,7 +32,7 @@
             android:paddingTop="@dimen/activity_vertical_margin">
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/name_input_layout"
+                android:id="@+id/titleInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -47,6 +47,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/descriptionInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -68,19 +69,64 @@
                 android:layout_height="wrap_content"
                 ls:labelText="@string/prompt_contact"/>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/causesRecyclerView"
+            <LinearLayout
+                android:id="@+id/causesWrapper"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:orientation="horizontal"/>
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/skillsRecyclerView"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/causes"/>
+
+                <TextView
+                    android:id="@+id/causesError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/skills"
+                    android:textColor="@color/red"
+                    android:textSize="12sp"
+                    android:visibility="gone"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/causesRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:orientation="horizontal"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/skillsWrapper"
                 android:layout_width="match_parent"
-                android:layout_height="120dp"
-                android:orientation="horizontal"/>
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/skills"/>
+
+                <TextView
+                    android:id="@+id/skillsError"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/skills"
+                    android:textColor="@color/red"
+                    android:textSize="12sp"
+                    android:visibility="gone"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/skillsRecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:orientation="horizontal"/>
+
+            </LinearLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/volunteersNumberInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -95,6 +141,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/timeCommitmentInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -109,6 +156,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/othersRequirementsInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -123,6 +171,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/tagsInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -209,6 +258,7 @@
                     android:orientation="horizontal">
 
                     <android.support.design.widget.TextInputLayout
+                        android:id="@+id/startDateAtInputLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2">
@@ -217,7 +267,6 @@
                             android:id="@+id/startDateAt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
                             android:hint="@string/from"
                             android:inputType="date"
                             android:maxLines="1"
@@ -227,6 +276,7 @@
                     </android.support.design.widget.TextInputLayout>
 
                     <android.support.design.widget.TextInputLayout
+                        android:id="@+id/startTimeAtInputLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1">
@@ -235,7 +285,6 @@
                             android:id="@+id/startTimeAt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
                             android:inputType="text"
                             android:maxLines="1"
                             android:text="@string/time"
@@ -251,6 +300,7 @@
                     android:orientation="horizontal">
 
                     <android.support.design.widget.TextInputLayout
+                        android:id="@+id/endDateAtInputLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="2">
@@ -259,7 +309,6 @@
                             android:id="@+id/endDateAt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
                             android:hint="@string/to"
                             android:inputType="date"
                             android:maxLines="1"
@@ -269,6 +318,7 @@
                     </android.support.design.widget.TextInputLayout>
 
                     <android.support.design.widget.TextInputLayout
+                        android:id="@+id/endTimeAtInputLayout"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1">
@@ -277,7 +327,6 @@
                             android:id="@+id/endTimeAt"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:drawableRight="@drawable/ic_arrow_drop_down_black_24dp"
                             android:inputType="text"
                             android:maxLines="1"
                             android:text="@string/time"
