@@ -15,6 +15,7 @@ import com.lutzed.servoluntario.models.Skill;
 import com.lutzed.servoluntario.util.AuthHelper;
 import com.lutzed.servoluntario.util.Constants;
 import com.lutzed.servoluntario.util.DateHelper;
+import com.lutzed.servoluntario.util.Snippets;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -45,6 +46,8 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
     private boolean mEndTimeSet;
     private boolean mIsOngoing;
     private boolean mIsVirtual;
+    private List<Image> mLocalImages;
+    private List<Image> mImagesToDestroy;
 
     public OpportunityPresenter(OpportunityFragment opportunityFragment, Api.ApiClient apiClient, AuthHelper authHelper, Opportunity opportunity) {
         mView = opportunityFragment;
@@ -53,6 +56,8 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
         mView.setPresenter(this);
         mOpportunity = opportunity;
         mContacts = new ArrayList<>();
+        mLocalImages = new ArrayList<>();
+        mImagesToDestroy = new ArrayList<>();
     }
 
     @Override
@@ -77,8 +82,9 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
             mIsVirtual = mOpportunity.getVirtual();
             if (!mOpportunity.getVirtual()) {
                 mView.setLocationGroupType(OpportunityFragment.LocationType.LOCATION);
-                if (mOpportunity.getLocation() != null)
+                if (mOpportunity.getLocation() != null) {
                     mView.setLocation(mOpportunity.getLocation().getName());
+                }
             } else {
                 mView.setLocationGroupType(OpportunityFragment.LocationType.VIRTUAL);
             }
@@ -130,6 +136,8 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
 
         boolean cancel = false;
 
+        boolean isUpdate = mOpportunity != null;
+
         // Check for a valid name
         if (TextUtils.isEmpty(title)) {
             mView.showTitleRequiredError();
@@ -157,7 +165,7 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
             cancel = true;
         }
 
-        if (!mIsVirtual && mCurrentPlace == null) {
+        if (!mIsVirtual && mCurrentPlace == null && isUpdate && mOpportunity.getLocation() == null) {
             mView.showLocationRequiredError();
             if (!cancel) mView.setFocusLocation();
             cancel = true;
@@ -186,13 +194,12 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
         if (!cancel) {
             mView.setSavingIndicator(true);
 
-            boolean isUpdate = mOpportunity != null;
-
             int volunteersNumberInt = 10;
 
             Opportunity opportunity = new Opportunity();
             if (isUpdate) {
                 opportunity.setId(mOpportunity.getId());
+                opportunity.setImagesAttributes(mImagesToDestroy);
             }
             opportunity.setTitle(title);
             opportunity.setDescription(description);
@@ -207,8 +214,10 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
             opportunity.setTags(tags);
 
             opportunity.setVirtual(mIsVirtual);
-            if (!mIsVirtual) {
+            if (!mIsVirtual && mCurrentPlace != null) {
                 Location location = new Location();
+                if (isUpdate && mOpportunity.getLocation() != null)
+                    location.setId(mOpportunity.getLocation().getId());
                 location.setName(mCurrentPlace.getName().toString());
                 location.setAddress1(mCurrentPlace.getAddress().toString());
                 location.setGooglePlacesId(mCurrentPlace.getId());
@@ -228,6 +237,14 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
                 opportunity.setEndDateSet(mEndDateSet);
                 opportunity.setStartTimeSet(mStartTimeSet);
                 opportunity.setEndTimeSet(mEndTimeSet);
+            }
+
+            if (!mLocalImages.isEmpty()) {
+                List<String> base64Images = new ArrayList<>();
+                for (Image mLocalImage : mLocalImages) {
+                    base64Images.add(Snippets.encodeToBase64(mLocalImage.getBitmap(), true));
+                }
+                opportunity.setImagesAttributes64(base64Images);
             }
 
             Callback<Opportunity> opportunityCallback = new Callback<Opportunity>() {
@@ -322,6 +339,8 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
     @Override
     public void onNewImageAdded(Bitmap bitmap) {
         Image image = new Image(bitmap);
+        image.setId(new Random().nextLong());
+        mLocalImages.add(image);
         ArrayList<Image> images = new ArrayList<>();
         images.add(image);
         mView.addImages(images);
@@ -417,4 +436,13 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
         mView.setEndTime(DateHelper.format(DateHelper.timeFormat, mEndAt.get(Calendar.YEAR), mEndAt.get(Calendar.MONTH), mEndAt.get(Calendar.DAY_OF_MONTH), hourOfDay, minute));
     }
 
+    @Override
+    public void removeImage(Image image, int position) {
+        boolean removed = mLocalImages.remove(image);
+        if (!removed) {
+            image.setDestroy(true);
+            mImagesToDestroy.add(image);
+        }
+        mView.removeImageItem(image, position);
+    }
 }

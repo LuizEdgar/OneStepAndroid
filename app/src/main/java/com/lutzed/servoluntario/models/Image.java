@@ -146,4 +146,10 @@ public class Image implements Parcelable {
     public void setDestroy(Boolean destroy) {
         this.destroy = destroy;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj != null && obj instanceof Image && this.getId() != null && this.getId().equals(((Image) obj).getId());
+    }
+
 }

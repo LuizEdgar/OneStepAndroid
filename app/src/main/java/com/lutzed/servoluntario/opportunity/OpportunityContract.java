@@ -112,6 +112,8 @@ public interface OpportunityContract {
         void showAddNewImageFromGallery();
 
         void showAddNewImageFromCamera();
+
+        void removeImageItem(Image imagem, int position);
     }
 
     interface Presenter extends BasePresenter {
@@ -158,5 +160,7 @@ public interface OpportunityContract {
         void addNewImageFromGallery();
 
         void onNewImageAdded(Bitmap bitmap);
+
+        void removeImage(Image image, int position);
     }
 }

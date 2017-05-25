@@ -96,16 +96,16 @@ public class GalleryViewAdapter extends RecyclerView.Adapter<GalleryViewAdapter.
                     }
                 }
             });
-            holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    if (null != mListener) {
-                        mListener.onPromptDeleteImage(holder.mItem, holder.getAdapterPosition());
-                        return true;
-                    }
-                    return false;
-                }
-            });
+//            holder.mView.setOnLongClickListener(new View.OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View view) {
+//                    if (null != mListener) {
+//                        mListener.onPromptDeleteImage(holder.mItem, holder.getAdapterPosition());
+//                        return true;
+//                    }
+//                    return false;
+//                }
+//            });
         } else
 
         {

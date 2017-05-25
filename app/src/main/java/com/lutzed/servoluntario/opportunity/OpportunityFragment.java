@@ -237,8 +237,8 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
             }
 
             @Override
-            public void onPromptDeleteImage(Image item, int position) {
-
+            public void onPromptDeleteImage(Image image, int position) {
+                mPresenter.removeImage(image, position);
             }
         }));
 
@@ -519,7 +519,13 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
             }
         } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
             if (resultCode == RESULT_OK) {
-                mPresenter.onNewImageAdded(Snippets.bitmapFromPath(mCurrentPath, Constants.MAX_IMAGE_SIZE, true));
+                int rotation;
+                try {
+                    rotation = Snippets.fixCameraRotation(mCurrentPath);
+                } catch (IOException e) {
+                    rotation = 0;
+                }
+                mPresenter.onNewImageAdded(Snippets.bitmapFromPath(mCurrentPath, Constants.MAX_IMAGE_SIZE, true, rotation));
             } else if (resultCode == RESULT_CANCELED) {
                 mCurrentPath = null;
             }
@@ -855,6 +861,11 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
                 }
             }
         }
+    }
+
+    @Override
+    public void removeImageItem(Image image, int position) {
+        ((GalleryViewAdapter) mGalleryRecyclerView.getAdapter()).removeItem(position);
     }
 
     private void clearAllFocus() {
