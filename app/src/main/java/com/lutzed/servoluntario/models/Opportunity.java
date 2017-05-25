@@ -95,6 +95,17 @@ public class Opportunity implements Parcelable {
     @SerializedName("end_time_set")
     private Boolean endTimeSet;
 
+    @Expose(serialize = false, deserialize = true)
+    private List<Image> images;
+
+    @Expose(serialize = true, deserialize = false)
+    @SerializedName("images_attributes")
+    private List<Image> imagesAttributes;
+
+    @Expose(serialize = true, deserialize = false)
+    @SerializedName("images_attributes_64")
+    private List<String> imagesAttributes64;
+
     @Expose
     @SerializedName("opportunitable_id")
     private Long opportunitableId;
@@ -327,8 +338,33 @@ public class Opportunity implements Parcelable {
         this.endTimeSet = endTimeSet;
     }
 
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
+
+    public List<Image> getImagesAttributes() {
+        return imagesAttributes;
+    }
+
+    public void setImagesAttributes(List<Image> imagesAttributes) {
+        this.imagesAttributes = imagesAttributes;
+    }
+
+    public List<String> getImagesAttributes64() {
+        return imagesAttributes64;
+    }
+
+    public void setImagesAttributes64(List<String> imagesAttributes64) {
+        this.imagesAttributes64 = imagesAttributes64;
+    }
+
     public Opportunity() {
     }
+
 
     @Override
     public int describeContents() {
@@ -360,6 +396,9 @@ public class Opportunity implements Parcelable {
         dest.writeValue(this.endDateSet);
         dest.writeValue(this.startTimeSet);
         dest.writeValue(this.endTimeSet);
+        dest.writeTypedList(this.images);
+        dest.writeTypedList(this.imagesAttributes);
+        dest.writeStringList(this.imagesAttributes64);
         dest.writeValue(this.opportunitableId);
         dest.writeString(this.opportunitableType);
         dest.writeString(this.createdAt);
@@ -392,6 +431,9 @@ public class Opportunity implements Parcelable {
         this.endDateSet = (Boolean) in.readValue(Boolean.class.getClassLoader());
         this.startTimeSet = (Boolean) in.readValue(Boolean.class.getClassLoader());
         this.endTimeSet = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.images = in.createTypedArrayList(Image.CREATOR);
+        this.imagesAttributes = in.createTypedArrayList(Image.CREATOR);
+        this.imagesAttributes64 = in.createStringArrayList();
         this.opportunitableId = (Long) in.readValue(Long.class.getClassLoader());
         this.opportunitableType = in.readString();
         this.createdAt = in.readString();

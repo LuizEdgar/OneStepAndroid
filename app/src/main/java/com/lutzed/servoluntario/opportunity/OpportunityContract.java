@@ -1,9 +1,12 @@
 package com.lutzed.servoluntario.opportunity;
 
+import android.graphics.Bitmap;
+
 import com.google.android.gms.location.places.Place;
 import com.lutzed.servoluntario.interfaces.BasePresenter;
 import com.lutzed.servoluntario.interfaces.BaseView;
 import com.lutzed.servoluntario.models.Contact;
+import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.SelectableItem;
 
 import java.util.ArrayList;
@@ -101,6 +104,14 @@ public interface OpportunityContract {
         void showStartDateRequiredError();
 
         void showEndDateRequiredError();
+
+        void addImages(List<Image> images);
+
+        void showImageTypePicker();
+
+        void showAddNewImageFromGallery();
+
+        void showAddNewImageFromCamera();
     }
 
     interface Presenter extends BasePresenter {
@@ -139,5 +150,13 @@ public interface OpportunityContract {
         void onStartTimeSelected(int hourOfDay, int minute);
 
         void onEndTimeSelected(int hourOfDay, int minute);
+
+        void addNewImage();
+
+        void addNewImageFromCamera();
+
+        void addNewImageFromGallery();
+
+        void onNewImageAdded(Bitmap bitmap);
     }
 }

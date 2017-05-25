@@ -1,11 +1,13 @@
 package com.lutzed.servoluntario.opportunity;
 
+import android.graphics.Bitmap;
 import android.text.TextUtils;
 
 import com.google.android.gms.location.places.Place;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.Cause;
 import com.lutzed.servoluntario.models.Contact;
+import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.Location;
 import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.SelectableItem;
@@ -64,6 +66,7 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
             mView.setTags(mOpportunity.getTags());
             mView.addUniqueCauses(mOpportunity.getCauses(), null);
             mView.addUniqueSkills(mOpportunity.getSkills(), null);
+            mView.addImages(mOpportunity.getImages());
             Contact contact = mOpportunity.getContact();
             if (contact != null) {
                 ArrayList<Contact> contacts = new ArrayList<>();
@@ -299,6 +302,29 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
     @Override
     public void addNewSkill(List<Long> existingSkillIds) {
         mView.showAddNewSkill(existingSkillIds);
+    }
+
+    @Override
+    public void addNewImage() {
+        mView.showImageTypePicker();
+    }
+
+    @Override
+    public void addNewImageFromCamera() {
+        mView.showAddNewImageFromCamera();
+    }
+
+    @Override
+    public void addNewImageFromGallery() {
+        mView.showAddNewImageFromGallery();
+    }
+
+    @Override
+    public void onNewImageAdded(Bitmap bitmap) {
+        Image image = new Image(bitmap);
+        ArrayList<Image> images = new ArrayList<>();
+        images.add(image);
+        mView.addImages(images);
     }
 
     @Override
