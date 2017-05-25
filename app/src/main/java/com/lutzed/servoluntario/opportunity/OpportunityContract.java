@@ -114,6 +114,8 @@ public interface OpportunityContract {
         void showAddNewImageFromCamera();
 
         void removeImageItem(Image imagem, int position);
+
+        void onRequestPermissionsResultFromPresenter(int requestCode, String[] permissions, int[] grantResults);
     }
 
     interface Presenter extends BasePresenter {
@@ -162,5 +164,7 @@ public interface OpportunityContract {
         void onNewImageAdded(Bitmap bitmap);
 
         void removeImage(Image image, int position);
+
+        void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults);
     }
 }

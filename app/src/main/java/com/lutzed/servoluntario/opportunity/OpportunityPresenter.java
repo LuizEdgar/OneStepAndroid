@@ -445,4 +445,9 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
         }
         mView.removeImageItem(image, position);
     }
+
+    @Override
+    public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) {
+        mView.onRequestPermissionsResultFromPresenter(requestCode, permissions, grantResults);
+    }
 }
