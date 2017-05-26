@@ -221,6 +221,8 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
                 location.setName(mCurrentPlace.getName().toString());
                 location.setAddress1(mCurrentPlace.getAddress().toString());
                 location.setGooglePlacesId(mCurrentPlace.getId());
+                location.setLatitude(mCurrentPlace.getLatLng().latitude);
+                location.setLongitude(mCurrentPlace.getLatLng().longitude);
                 opportunity.setLocationAttributes(location);
             }
 

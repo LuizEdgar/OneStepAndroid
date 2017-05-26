@@ -13,11 +13,15 @@ import java.util.List;
  * Created by luizfreitas on 25/07/2016.
  */
 
-public class Opportunity implements Parcelable {
+public class Opportunity implements Parcelable, FeedItem {
 
     @Expose private Long id;
 
     @Expose private String title;
+
+    @Expose
+    @SerializedName("feedable_type")
+    private String feedableType;
 
     @Expose
     @SerializedName("is_ongoing")
@@ -362,9 +366,21 @@ public class Opportunity implements Parcelable {
         this.imagesAttributes64 = imagesAttributes64;
     }
 
-    public Opportunity() {
+    @Override
+    public Type getFeedableTypeAsEnum(){
+        return Type.fromString(this.feedableType);
     }
 
+    public String getFeedableType() {
+        return feedableType;
+    }
+
+    public void setFeedableType(String feedableType) {
+        this.feedableType = feedableType;
+    }
+
+    public Opportunity() {
+    }
 
     @Override
     public int describeContents() {

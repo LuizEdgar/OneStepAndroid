@@ -9,11 +9,11 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list"
-        android:name="com.lutzed.servoluntario.selection.ItemsSelectionFragment"
+        android:name="com.lutzed.servoluntario.main.FeedFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.lutzed.servoluntario.selection.ItemsSelectionFragment"
+        tools:context="com.lutzed.servoluntario.main.FeedFragment"
         tools:listitem="@layout/item_selection"/>
 
 </android.support.v4.widget.SwipeRefreshLayout>

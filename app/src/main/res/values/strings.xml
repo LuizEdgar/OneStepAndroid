@@ -71,5 +71,10 @@
     <string name="causes">Causes</string>
     <string name="skills">Skills</string>
     <string name="error_end_before_start">End date must be after the start</string>
+    <string name="title_search">Search</string>
+    <string name="title_do">Do</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
