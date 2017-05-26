@@ -6,4 +6,9 @@
         <item>Item 3</item>
         <item>Item 4</item>
     </string-array>
+
+    <string-array name="imagePickerOptions">
+        <item>Take a Picture</item>
+        <item>Get from Gallery</item>
+    </string-array>
 </resources>

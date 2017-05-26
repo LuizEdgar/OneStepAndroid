@@ -9,7 +9,7 @@ import java.util.List;
  * Created by luizfreitas on 25/07/2016.
  */
 
-public class Organization {
+public class Organization implements FeedItem {
 
     @Expose private Long id;
 
@@ -24,6 +24,10 @@ public class Organization {
     @Expose private String mission;
 
     @Expose private Integer size;
+
+    @Expose
+    @SerializedName("feedable_type")
+    private String feedableType;
 
     @Expose(serialize = false, deserialize = true)
     private List<Location> locations;
@@ -219,5 +223,18 @@ public class Organization {
 
     public void setContactsAttributes(List<Contact> contactsAttributes) {
         this.contactsAttributes = contactsAttributes;
+    }
+
+    public String getFeedableType() {
+        return feedableType;
+    }
+
+    public void setFeedableType(String feedableType) {
+        this.feedableType = feedableType;
+    }
+
+    @Override
+    public Type getFeedableTypeAsEnum(){
+        return Type.fromString(this.feedableType);
     }
 }

@@ -1,19 +1,31 @@
 package com.lutzed.servoluntario.opportunity;
 
+import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.IdRes;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -39,15 +51,23 @@ import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.lutzed.servoluntario.R;
+import com.lutzed.servoluntario.adapters.GalleryViewAdapter;
 import com.lutzed.servoluntario.dialogs.ContactDialogFragment;
 import com.lutzed.servoluntario.models.Contact;
+import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.models.Skill;
 import com.lutzed.servoluntario.selection.ItemsSelectionActivity;
+import com.lutzed.servoluntario.util.Constants;
+import com.lutzed.servoluntario.util.FileAndPathHolder;
 import com.lutzed.servoluntario.util.Snippets;
 import com.lutzed.servoluntario.util.TextInputLayoutTextWatcher;
 import com.satsuware.usefulviews.LabelledSpinner;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -66,6 +86,9 @@ import static com.lutzed.servoluntario.opportunity.OpportunityFragment.TimeType.
 public class OpportunityFragment extends Fragment implements OpportunityContract.View {
 
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 182;
+    private static final int REQUEST_IMAGE_PICK = 126;
+    private static final int REQUEST_IMAGE_CAPTURE = 862;
+    private static final int REQUEST_STORAGE_PERMISSION = 545;
     @BindView(R.id.title) EditText mTitleView;
     @BindView(R.id.description) EditText mDescriptionView;
     @BindView(R.id.volunteersNumber) EditText mVolunteersNumberView;
@@ -105,10 +128,12 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @BindView(R.id.skillsWrapper) View mSkillsWrapper;
     @BindView(R.id.causesError) TextView mCausesErrorView;
     @BindView(R.id.skillsError) TextView mSkillsErrorView;
+    @BindView(R.id.imagesRecyclerView) RecyclerView mGalleryRecyclerView;
 
     private OpportunityContract.Presenter mPresenter;
     private int mCurrentContactSpinnerSelectedPosition;
     private ColorStateList mDefaultEditTextColor;
+    private String mCurrentPath;
 
     public enum LocationType {
         LOCATION, VIRTUAL;
@@ -151,7 +176,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_create_opportunity, container, false);
+        View root = inflater.inflate(R.layout.fragment_opportunity, container, false);
         ButterKnife.bind(this, root);
 
         mContactSpinner.setOnItemChosenListener(new LabelledSpinner.OnItemChosenListener() {
@@ -176,6 +201,9 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         LinearLayoutManager skillsLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
         mSkillsRecyclerView.setLayoutManager(skillsLayoutManager);
 
+        LinearLayoutManager imagesLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
+        mGalleryRecyclerView.setLayoutManager(imagesLayoutManager);
+
         ArrayList<SelectableItem> baseAddItem = new ArrayList<>();
         SelectableItem item = new Skill();
         item.setName("Add");
@@ -194,6 +222,23 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
                 if (adapterPosition == mSkillsRecyclerView.getAdapter().getItemCount() - 1) {
                     mPresenter.addNewSkill(((OpportunityItemsAdapter) mSkillsRecyclerView.getAdapter()).getItemsIds());
                 }
+            }
+        }));
+        ArrayList<Image> baseImageAddItem = new ArrayList<>();
+        Image image = new Image();
+        image.setAddPlaceholder(true);
+        baseImageAddItem.add(image);
+        mGalleryRecyclerView.setAdapter(new GalleryViewAdapter(baseImageAddItem, true, new GalleryViewAdapter.OnGalleryInteractionListener() {
+            @Override
+            public void onImageClicked(ArrayList<Image> values, Image item, int position) {
+                if (position == mGalleryRecyclerView.getAdapter().getItemCount() - 1) {
+                    mPresenter.addNewImage();
+                }
+            }
+
+            @Override
+            public void onPromptDeleteImage(Image image, int position) {
+                mPresenter.removeImage(image, position);
             }
         }));
 
@@ -377,6 +422,13 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     }
 
     @Override
+    public void addImages(List<Image> images) {
+        GalleryViewAdapter adapter = (GalleryViewAdapter) mGalleryRecyclerView.getAdapter();
+        adapter.addItemBeforeLast(images);
+        mGalleryRecyclerView.scrollToPosition(adapter.getItemCount() - 1);
+    }
+
+    @Override
     public void showCreateNewContact() {
         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
         Fragment prev = getFragmentManager().findFragmentByTag("contactDialog");
@@ -429,6 +481,8 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
             clearAllFocus();
             if (resultCode == RESULT_OK) {
                 mPresenter.onNewItemsSelection(data.<SelectableItem>getParcelableArrayListExtra(ItemsSelectionActivity.EXTRA_ITEMS_SELECTED), data.<SelectableItem>getParcelableArrayListExtra(ItemsSelectionActivity.EXTRA_ITEMS_NOT_SELECTED));
+            } else if (resultCode == RESULT_CANCELED) {
+
             }
         } else if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
@@ -440,6 +494,40 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
                 Log.i("Tag", status.getStatusMessage());
             } else if (resultCode == RESULT_CANCELED) {
 
+            }
+        } else if (requestCode == REQUEST_IMAGE_PICK) {
+            if (resultCode == RESULT_OK) {
+                if (data == null) {
+                    final Bundle extras = data.getExtras();
+                    if (extras != null) {
+                        //Get image
+                        Bitmap bitmap = extras.getParcelable("data");
+                        mPresenter.onNewImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.MAX_IMAGE_SIZE));
+                    }
+                } else {
+                    InputStream inputStream = null;
+                    try {
+                        inputStream = getContext().getContentResolver().openInputStream(data.getData());
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+                    mPresenter.onNewImageAdded(bitmap);
+                }
+            } else if (resultCode == RESULT_CANCELED) {
+
+            }
+        } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
+            if (resultCode == RESULT_OK) {
+                int rotation;
+                try {
+                    rotation = Snippets.fixCameraRotation(mCurrentPath);
+                } catch (IOException e) {
+                    rotation = 0;
+                }
+                mPresenter.onNewImageAdded(Snippets.bitmapFromPath(mCurrentPath, Constants.MAX_IMAGE_SIZE, true, rotation));
+            } else if (resultCode == RESULT_CANCELED) {
+                mCurrentPath = null;
             }
         }
     }
@@ -569,7 +657,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
 
     @Override
     public void setShowLocationGroup(boolean visible) {
-        mLocationView.setVisibility(visible ? View.VISIBLE : View.GONE);
+        mLocationInputLayout.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
     @Override
@@ -681,6 +769,103 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @Override
     public void setFocusTime() {
         mScrollView.smoothScrollTo(0, mTimeTypeGroup.getTop());
+    }
+
+    @Override
+    public void showImageTypePicker() {
+        new AlertDialog.Builder(getContext()).setItems(R.array.imagePickerOptions, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 0) {
+                    mPresenter.addNewImageFromCamera();
+                } else {
+                    mPresenter.addNewImageFromGallery();
+                }
+            }
+        }).show();
+    }
+
+    @Override
+    public void showAddNewImageFromGallery() {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, REQUEST_IMAGE_PICK);
+    }
+
+    @Override
+    public void showAddNewImageFromCamera() {
+        boolean hasPermissions = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+
+        if (!hasPermissions) {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(getActivity(),
+                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        REQUEST_STORAGE_PERMISSION);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+
+        } else {
+
+            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            // Ensure that there's a camera activity to handle the intent
+            if (takePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
+                // Create the File where the photo should go
+                File photoFile = null;
+                try {
+                    FileAndPathHolder fileAndPathHolder = Snippets.createImageFile(getContext());
+                    photoFile = fileAndPathHolder.file;
+                    mCurrentPath = fileAndPathHolder.path;
+                } catch (IOException ex) {
+                    // Error occurred while creating the File
+                }
+                // Continue only if the File was successfully created
+                if (photoFile != null) {
+                    Uri photoURI = FileProvider.getUriForFile(getContext(), "com.lutzed.servoluntario.fileprovider", photoFile);
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResultFromPresenter(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch (requestCode) {
+            case REQUEST_STORAGE_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    mPresenter.addNewImageFromCamera();
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+            }
+        }
+    }
+
+    @Override
+    public void removeImageItem(Image image, int position) {
+        ((GalleryViewAdapter) mGalleryRecyclerView.getAdapter()).removeItem(position);
     }
 
     private void clearAllFocus() {

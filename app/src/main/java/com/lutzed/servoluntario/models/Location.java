@@ -36,6 +36,10 @@ public class Location implements Parcelable {
 
     @Expose private String postcode;
 
+    @Expose private Double latitude;
+
+    @Expose private Double longitude;
+
     @Expose
     @SerializedName("created_at")
     private String createdAt;
@@ -132,6 +136,22 @@ public class Location implements Parcelable {
         this.googlePlacesId = googlePlacesId;
     }
 
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
     public Location() {
     }
 
@@ -151,6 +171,8 @@ public class Location implements Parcelable {
         dest.writeString(this.state);
         dest.writeString(this.country);
         dest.writeString(this.postcode);
+        dest.writeValue(this.latitude);
+        dest.writeValue(this.longitude);
         dest.writeString(this.createdAt);
         dest.writeString(this.updatedAt);
     }
@@ -165,6 +187,8 @@ public class Location implements Parcelable {
         this.state = in.readString();
         this.country = in.readString();
         this.postcode = in.readString();
+        this.latitude = (Double) in.readValue(Double.class.getClassLoader());
+        this.longitude = (Double) in.readValue(Double.class.getClassLoader());
         this.createdAt = in.readString();
         this.updatedAt = in.readString();
     }

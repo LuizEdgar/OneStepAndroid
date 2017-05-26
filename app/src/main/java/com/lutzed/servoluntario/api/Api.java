@@ -7,6 +7,7 @@ import com.lutzed.servoluntario.api.requests.FacebookSignInRequest;
 import com.lutzed.servoluntario.api.requests.SignInRequest;
 import com.lutzed.servoluntario.models.Cause;
 import com.lutzed.servoluntario.models.Contact;
+import com.lutzed.servoluntario.models.FeedItem;
 import com.lutzed.servoluntario.models.Location;
 import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.Skill;
@@ -61,7 +62,7 @@ public class Api {
             }
         }).addNetworkInterceptor(new StethoInterceptor()).addInterceptor(logging).build();
 
-        Gson gson = new GsonBuilder().create();
+        Gson gson = new GsonBuilder().registerTypeAdapter(FeedItem.class, new FeedItemTypeAdapter()).create();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Constants.API_URL)
@@ -124,6 +125,9 @@ public class Api {
 
         @PUT("opportunities/{opportunityId}.json")
         Call<Opportunity> updateOpportunity(@Path("opportunityId") Long opportunityId, @Body Opportunity opportunity);
+
+        @GET("me/feed.json")
+        Call<List<FeedItem>> getMeFeed(@Query("page") int page);
 
     }
 
