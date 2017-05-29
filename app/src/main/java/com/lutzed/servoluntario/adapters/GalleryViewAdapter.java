@@ -19,7 +19,7 @@ import butterknife.ButterKnife;
 
 public class GalleryViewAdapter extends RecyclerView.Adapter<GalleryViewAdapter.ViewHolder> {
 
-    private final ArrayList<Image> mValues;
+    private List<Image> mValues;
     private final OnGalleryInteractionListener mListener;
     private final boolean showDelete;
 
@@ -30,7 +30,7 @@ public class GalleryViewAdapter extends RecyclerView.Adapter<GalleryViewAdapter.
     }
 
     public interface OnGalleryInteractionListener {
-        void onImageClicked(ArrayList<Image> values, Image item, int position);
+        void onImageClicked(List<Image> values, Image item, int position);
 
         void onPromptDeleteImage(Image item, int position);
     }
@@ -42,7 +42,24 @@ public class GalleryViewAdapter extends RecyclerView.Adapter<GalleryViewAdapter.
         return new ViewHolder(view);
     }
 
-    public void addItemBeforeLast(List<Image> items) {
+    public void setItems(List<Image> items) {
+        if (mValues != items) {
+            mValues = items;
+            notifyDataSetChanged();
+        }
+        notifyDataSetChanged();
+    }
+
+    public void addItems(List<Image> items) {
+        if (items == null || items.isEmpty()) {
+            return;
+        }
+        int startPosition = 0;
+        mValues.addAll(startPosition, items);
+        notifyItemRangeInserted(startPosition, items.size());
+    }
+
+    public void addItemsBeforeLast(List<Image> items) {
         if (items == null || items.isEmpty()) {
             return;
         }

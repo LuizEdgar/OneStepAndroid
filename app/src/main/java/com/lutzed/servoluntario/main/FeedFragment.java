@@ -14,6 +14,7 @@ import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.dummy.DummyContent.DummyItem;
 import com.lutzed.servoluntario.models.FeedItem;
 import com.lutzed.servoluntario.util.EndlessRecyclerViewScrollListener;
+import com.lutzed.servoluntario.util.VerticalSpaceItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -71,6 +72,7 @@ public class FeedFragment extends Fragment implements FeedContract.View, MainFra
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
         mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerView.addItemDecoration(new VerticalSpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.recicler_view_vertical_spacing)));
 
         mRecyclerView.setAdapter(new FeedItemViewAdapter(new ArrayList<FeedItem>(), mListener));
 

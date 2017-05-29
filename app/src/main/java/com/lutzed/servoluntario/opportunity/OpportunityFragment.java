@@ -230,7 +230,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         baseImageAddItem.add(image);
         mGalleryRecyclerView.setAdapter(new GalleryViewAdapter(baseImageAddItem, true, new GalleryViewAdapter.OnGalleryInteractionListener() {
             @Override
-            public void onImageClicked(ArrayList<Image> values, Image item, int position) {
+            public void onImageClicked(List<Image> values, Image item, int position) {
                 if (position == mGalleryRecyclerView.getAdapter().getItemCount() - 1) {
                     mPresenter.addNewImage();
                 }
@@ -424,7 +424,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @Override
     public void addImages(List<Image> images) {
         GalleryViewAdapter adapter = (GalleryViewAdapter) mGalleryRecyclerView.getAdapter();
-        adapter.addItemBeforeLast(images);
+        adapter.addItemsBeforeLast(images);
         mGalleryRecyclerView.scrollToPosition(adapter.getItemCount() - 1);
     }
 

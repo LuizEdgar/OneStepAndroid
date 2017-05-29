@@ -111,8 +111,7 @@ public class Opportunity implements Parcelable, FeedItem {
     private List<String> imagesAttributes64;
 
     @Expose
-    @SerializedName("opportunitable_id")
-    private Long opportunitableId;
+    private Opportunitable opportunitable;
 
     @Expose
     @SerializedName("opportunitable_type")
@@ -246,14 +245,6 @@ public class Opportunity implements Parcelable, FeedItem {
         this.skillIds = skillIds;
     }
 
-    public Long getOpportunitableId() {
-        return opportunitableId;
-    }
-
-    public void setOpportunitableId(Long opportunitableId) {
-        this.opportunitableId = opportunitableId;
-    }
-
     public String getOpportunitableType() {
         return opportunitableType;
     }
@@ -382,6 +373,14 @@ public class Opportunity implements Parcelable, FeedItem {
     public Opportunity() {
     }
 
+    public Opportunitable getOpportunitable() {
+        return opportunitable;
+    }
+
+    public void setOpportunitable(Opportunitable opportunitable) {
+        this.opportunitable = opportunitable;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -391,6 +390,7 @@ public class Opportunity implements Parcelable, FeedItem {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(this.id);
         dest.writeString(this.title);
+        dest.writeString(this.feedableType);
         dest.writeValue(this.isOngoing);
         dest.writeValue(this.isVirtual);
         dest.writeValue(this.volunteersNumber);
@@ -415,7 +415,7 @@ public class Opportunity implements Parcelable, FeedItem {
         dest.writeTypedList(this.images);
         dest.writeTypedList(this.imagesAttributes);
         dest.writeStringList(this.imagesAttributes64);
-        dest.writeValue(this.opportunitableId);
+        dest.writeParcelable(this.opportunitable, flags);
         dest.writeString(this.opportunitableType);
         dest.writeString(this.createdAt);
         dest.writeString(this.updatedAt);
@@ -424,6 +424,7 @@ public class Opportunity implements Parcelable, FeedItem {
     protected Opportunity(Parcel in) {
         this.id = (Long) in.readValue(Long.class.getClassLoader());
         this.title = in.readString();
+        this.feedableType = in.readString();
         this.isOngoing = (Boolean) in.readValue(Boolean.class.getClassLoader());
         this.isVirtual = (Boolean) in.readValue(Boolean.class.getClassLoader());
         this.volunteersNumber = (Integer) in.readValue(Integer.class.getClassLoader());
@@ -450,7 +451,7 @@ public class Opportunity implements Parcelable, FeedItem {
         this.images = in.createTypedArrayList(Image.CREATOR);
         this.imagesAttributes = in.createTypedArrayList(Image.CREATOR);
         this.imagesAttributes64 = in.createStringArrayList();
-        this.opportunitableId = (Long) in.readValue(Long.class.getClassLoader());
+        this.opportunitable = in.readParcelable(Opportunitable.class.getClassLoader());
         this.opportunitableType = in.readString();
         this.createdAt = in.readString();
         this.updatedAt = in.readString();

@@ -299,7 +299,7 @@
                             android:inputType="date"
                             android:maxLines="1"
                             android:text="@string/date"
-                            android:textColor="@color/disabledText"/>
+                            android:textColor="@color/tertiaryText"/>
 
                     </android.support.design.widget.TextInputLayout>
 
@@ -316,7 +316,7 @@
                             android:inputType="text"
                             android:maxLines="1"
                             android:text="@string/time"
-                            android:textColor="@color/disabledText"/>
+                            android:textColor="@color/tertiaryText"/>
 
                     </android.support.design.widget.TextInputLayout>
 
@@ -341,7 +341,7 @@
                             android:inputType="date"
                             android:maxLines="1"
                             android:text="@string/date"
-                            android:textColor="@color/disabledText"/>
+                            android:textColor="@color/tertiaryText"/>
 
                     </android.support.design.widget.TextInputLayout>
 
@@ -358,7 +358,7 @@
                             android:inputType="text"
                             android:maxLines="1"
                             android:text="@string/time"
-                            android:textColor="@color/disabledText"/>
+                            android:textColor="@color/tertiaryText"/>
 
                     </android.support.design.widget.TextInputLayout>
 

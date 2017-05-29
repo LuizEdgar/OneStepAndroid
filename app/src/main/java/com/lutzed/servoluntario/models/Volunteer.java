@@ -70,6 +70,10 @@ public class Volunteer {
     private Long userId;
 
     @Expose
+    @SerializedName("profile_image")
+    private Image profileImage;
+
+    @Expose
     @SerializedName("created_at")
     private String createdAt;
 

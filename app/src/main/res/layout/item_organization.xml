@@ -1,21 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="wrap_content"
-              android:layout_height="wrap_content"
-              android:orientation="horizontal">
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/card_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    card_view:cardCornerRadius="4dp"
+    card_view:cardPreventCornerOverlap="false">
 
-    <TextView
-        android:id="@+id/id"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:textAppearance="?attr/textAppearanceListItem"/>
+        android:orientation="vertical"
+        android:paddingBottom="16dp">
 
-    <TextView
-        android:id="@+id/content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
-        android:textAppearance="?attr/textAppearanceListItem"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingBottom="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="16dp">
 
-</LinearLayout>
+            <ImageView
+                android:id="@+id/profile_picture"
+                android:layout_width="50dp"
+                android:layout_height="50dp"/>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:minHeight="50dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/infos"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/tertiaryText"/>
+
+            </LinearLayout>
+
+            <!--<ImageButton-->
+            <!--android:id="@+id/share_button"-->
+            <!--style="?buttonBarButtonStyle"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:tint="@color/iconsDark"-->
+            <!--app:srcCompat="@drawable/ic_share_black_24dp"/>-->
+
+            <ImageButton
+                android:id="@+id/optionsButton"
+                style="?buttonBarButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top"
+                android:tint="@color/iconsDark"
+                app:srcCompat="@drawable/ic_more_vert_black_24dp"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:ellipsize="end"
+            android:maxLines="3"
+            android:textSize="14sp"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/imagesRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_marginTop="16dp"
+            android:layout_height="220dp"
+            android:orientation="horizontal"/>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
