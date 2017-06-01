@@ -1,4 +1,4 @@
-package com.lutzed.servoluntario.opportunity;
+package com.lutzed.servoluntario.opportunities;
 
 import android.Manifest;
 import android.animation.Animator;
@@ -52,9 +52,11 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.adapters.GalleryViewAdapter;
+import com.lutzed.servoluntario.adapters.OpportunitiesItemsAdapter;
 import com.lutzed.servoluntario.dialogs.ContactDialogFragment;
 import com.lutzed.servoluntario.models.Contact;
 import com.lutzed.servoluntario.models.Image;
+import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.models.Skill;
 import com.lutzed.servoluntario.selection.ItemsSelectionActivity;
@@ -77,13 +79,13 @@ import butterknife.OnClick;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
-import static com.lutzed.servoluntario.opportunity.OpportunityFragment.TimeType.DATED;
-import static com.lutzed.servoluntario.opportunity.OpportunityFragment.TimeType.ONGOING;
+import static com.lutzed.servoluntario.models.Opportunity.TimeType.DATED;
+import static com.lutzed.servoluntario.models.Opportunity.TimeType.ONGOING;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class OpportunityFragment extends Fragment implements OpportunityContract.View {
+public class EditOpportunityFragment extends Fragment implements EditOpportunityContract.View {
 
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 182;
     private static final int REQUEST_IMAGE_PICK = 126;
@@ -130,21 +132,13 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @BindView(R.id.skillsError) TextView mSkillsErrorView;
     @BindView(R.id.imagesRecyclerView) RecyclerView mGalleryRecyclerView;
 
-    private OpportunityContract.Presenter mPresenter;
+    private EditOpportunityContract.Presenter mPresenter;
     private int mCurrentContactSpinnerSelectedPosition;
     private ColorStateList mDefaultEditTextColor;
     private String mCurrentPath;
 
-    public enum LocationType {
-        LOCATION, VIRTUAL;
-    }
-
-    public enum TimeType {
-        DATED, ONGOING;
-    }
-
-    public static OpportunityFragment newInstance() {
-        return new OpportunityFragment();
+    public static EditOpportunityFragment newInstance() {
+        return new EditOpportunityFragment();
     }
 
     @Override
@@ -169,14 +163,14 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     }
 
     @Override
-    public void setPresenter(OpportunityContract.Presenter presenter) {
+    public void setPresenter(EditOpportunityContract.Presenter presenter) {
         mPresenter = presenter;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_opportunity, container, false);
+        View root = inflater.inflate(R.layout.fragment_edit_opportunity, container, false);
         ButterKnife.bind(this, root);
 
         mContactSpinner.setOnItemChosenListener(new LabelledSpinner.OnItemChosenListener() {
@@ -208,19 +202,19 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         SelectableItem item = new Skill();
         item.setName("Add");
         baseAddItem.add(item);
-        mCausesRecyclerView.setAdapter(new OpportunityItemsAdapter(baseAddItem, new OpportunityItemsAdapter.OnAdapterListener() {
+        mCausesRecyclerView.setAdapter(new OpportunitiesItemsAdapter(baseAddItem, new OpportunitiesItemsAdapter.OnAdapterListener() {
             @Override
             public void onAdapterInteraction(SelectableItem mItem, int adapterPosition) {
                 if (adapterPosition == mCausesRecyclerView.getAdapter().getItemCount() - 1) {
-                    mPresenter.addNewCause(((OpportunityItemsAdapter) mCausesRecyclerView.getAdapter()).getItemsIds());
+                    mPresenter.addNewCause(((OpportunitiesItemsAdapter) mCausesRecyclerView.getAdapter()).getItemsIds());
                 }
             }
         }));
-        mSkillsRecyclerView.setAdapter(new OpportunityItemsAdapter(new ArrayList<>(baseAddItem), new OpportunityItemsAdapter.OnAdapterListener() {
+        mSkillsRecyclerView.setAdapter(new OpportunitiesItemsAdapter(new ArrayList<>(baseAddItem), new OpportunitiesItemsAdapter.OnAdapterListener() {
             @Override
             public void onAdapterInteraction(SelectableItem mItem, int adapterPosition) {
                 if (adapterPosition == mSkillsRecyclerView.getAdapter().getItemCount() - 1) {
-                    mPresenter.addNewSkill(((OpportunityItemsAdapter) mSkillsRecyclerView.getAdapter()).getItemsIds());
+                    mPresenter.addNewSkill(((OpportunitiesItemsAdapter) mSkillsRecyclerView.getAdapter()).getItemsIds());
                 }
             }
         }));
@@ -230,7 +224,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         baseImageAddItem.add(image);
         mGalleryRecyclerView.setAdapter(new GalleryViewAdapter(baseImageAddItem, true, new GalleryViewAdapter.OnGalleryInteractionListener() {
             @Override
-            public void onImageClicked(ArrayList<Image> values, Image item, int position) {
+            public void onImageClicked(List<Image> values, Image item, int position) {
                 if (position == mGalleryRecyclerView.getAdapter().getItemCount() - 1) {
                     mPresenter.addNewImage();
                 }
@@ -269,10 +263,10 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
             public void onCheckedChanged(RadioGroup group, @IdRes int checkedId) {
                 switch (checkedId) {
                     case R.id.isLocation:
-                        mPresenter.onLocationTypeChanged(LocationType.LOCATION);
+                        mPresenter.onLocationTypeChanged(Opportunity.LocationType.LOCATION);
                         break;
                     case R.id.isVirtual:
-                        mPresenter.onLocationTypeChanged(LocationType.VIRTUAL);
+                        mPresenter.onLocationTypeChanged(Opportunity.LocationType.VIRTUAL);
                         break;
                 }
             }
@@ -339,8 +333,8 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
             contact.setId(null);
         }
 
-        List<Long> skillIds = ((OpportunityItemsAdapter) mSkillsRecyclerView.getAdapter()).getItemsIds();
-        List<Long> causeIds = ((OpportunityItemsAdapter) mCausesRecyclerView.getAdapter()).getItemsIds();
+        List<Long> skillIds = ((OpportunitiesItemsAdapter) mSkillsRecyclerView.getAdapter()).getItemsIds();
+        List<Long> causeIds = ((OpportunitiesItemsAdapter) mCausesRecyclerView.getAdapter()).getItemsIds();
         String volunteersNumber = mVolunteersNumberView.getText().toString().trim();
         String timeCommitment = mTimeCommitmentView.getText().toString().trim();
         String othersRequirements = mOthersRequirementsView.getText().toString().trim();
@@ -407,7 +401,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
 
     @Override
     public void addUniqueCauses(List<? extends SelectableItem> causes, List<? extends SelectableItem> causesToRemove) {
-        OpportunityItemsAdapter adapter = (OpportunityItemsAdapter) mCausesRecyclerView.getAdapter();
+        OpportunitiesItemsAdapter adapter = (OpportunitiesItemsAdapter) mCausesRecyclerView.getAdapter();
         adapter.addAndRemoveItems(causes, causesToRemove);
         mCausesRecyclerView.scrollToPosition(adapter.getItemCount() - 1);
         mCausesErrorView.setVisibility(View.GONE);
@@ -415,7 +409,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
 
     @Override
     public void addUniqueSkills(List<? extends SelectableItem> skills, List<? extends SelectableItem> skillsToRemove) {
-        OpportunityItemsAdapter adapter = (OpportunityItemsAdapter) mSkillsRecyclerView.getAdapter();
+        OpportunitiesItemsAdapter adapter = (OpportunitiesItemsAdapter) mSkillsRecyclerView.getAdapter();
         adapter.addAndRemoveItems(skills, skillsToRemove);
         mSkillsRecyclerView.scrollToPosition(adapter.getItemCount() - 1);
         mSkillsErrorView.setVisibility(View.GONE);
@@ -424,7 +418,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @Override
     public void addImages(List<Image> images) {
         GalleryViewAdapter adapter = (GalleryViewAdapter) mGalleryRecyclerView.getAdapter();
-        adapter.addItemBeforeLast(images);
+        adapter.addItemsBeforeLast(images);
         mGalleryRecyclerView.scrollToPosition(adapter.getItemCount() - 1);
     }
 
@@ -685,15 +679,15 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     }
 
     @Override
-    public void setTimeGroupType(TimeType timeType) {
+    public void setTimeGroupType(Opportunity.TimeType timeType) {
         mIsDatedRadioButton.setChecked(timeType == DATED);
         mIsOngoingRadioButton.setChecked(timeType == ONGOING);
     }
 
     @Override
-    public void setLocationGroupType(LocationType locationType) {
-        mIsLocationRadioButton.setChecked(locationType == LocationType.LOCATION);
-        mIsVirtualRadioButton.setChecked(locationType == LocationType.VIRTUAL);
+    public void setLocationGroupType(Opportunity.LocationType locationType) {
+        mIsLocationRadioButton.setChecked(locationType == Opportunity.LocationType.LOCATION);
+        mIsVirtualRadioButton.setChecked(locationType == Opportunity.LocationType.VIRTUAL);
     }
 
     @Override

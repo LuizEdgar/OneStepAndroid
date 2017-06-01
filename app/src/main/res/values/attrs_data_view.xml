@@ -1,0 +1,9 @@
+<resources>
+    <declare-styleable name="DataView">
+        <attr name="title" format="string" />
+        <attr name="data" format="string" />
+        <attr name="sub_data" format="string" />
+        <attr name="primary_icon" format="color|reference" />
+        <attr name="secondary_icon" format="color|reference" />
+    </declare-styleable>
+</resources>

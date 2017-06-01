@@ -15,6 +15,7 @@ public class DateHelper {
     public static final DateFormat isoDayFormat = buildIsoDayFormat();
     public static final DateFormat postDatetimeFormat = buildPostDatetimeFormat();
     public static final DateFormat eventDatetimeFormat = buildEventDatetimeFormat();
+    public static final DateFormat eventDateFormat = buildEventDateFormat();
     public static final DateFormat dateFormat = buildDateFormat();
     public static final DateFormat timeFormat = buildTimeFormat();
     public static final DateFormat dayFormat = buildDayFormat();
@@ -61,10 +62,17 @@ public class DateHelper {
         return dayFormat;
     }
 
+    private static DateFormat buildEventDateFormat() {
+        DateFormat dayFormat = null;
+
+        dayFormat = new SimpleDateFormat("dd MMMM", Locale.getDefault());
+        return dayFormat;
+    }
+
     private static DateFormat buildEventDatetimeFormat() {
         DateFormat dayFormat = null;
 
-        dayFormat = new SimpleDateFormat("dd MMMM - HH:mm", Locale.getDefault());
+        dayFormat = new SimpleDateFormat("dd MMMM, HH:mm", Locale.getDefault());
         return dayFormat;
     }
 

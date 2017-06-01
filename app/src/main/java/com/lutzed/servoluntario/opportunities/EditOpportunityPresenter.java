@@ -1,4 +1,4 @@
-package com.lutzed.servoluntario.opportunity;
+package com.lutzed.servoluntario.opportunities;
 
 import android.graphics.Bitmap;
 import android.text.TextUtils;
@@ -30,9 +30,9 @@ import retrofit2.Response;
  * Created by luizfreitas on 18/04/2017.
  */
 
-public class OpportunityPresenter implements OpportunityContract.Presenter {
+public class EditOpportunityPresenter implements EditOpportunityContract.Presenter {
 
-    private final OpportunityContract.View mView;
+    private final EditOpportunityContract.View mView;
     private final Api.ApiClient mApiClient;
     private final AuthHelper mAuthHelper;
     private Opportunity mOpportunity;
@@ -49,8 +49,8 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
     private List<Image> mLocalImages;
     private List<Image> mImagesToDestroy;
 
-    public OpportunityPresenter(OpportunityFragment opportunityFragment, Api.ApiClient apiClient, AuthHelper authHelper, Opportunity opportunity) {
-        mView = opportunityFragment;
+    public EditOpportunityPresenter(EditOpportunityFragment editOpportunityFragment, Api.ApiClient apiClient, AuthHelper authHelper, Opportunity opportunity) {
+        mView = editOpportunityFragment;
         mApiClient = apiClient;
         mAuthHelper = authHelper;
         mView.setPresenter(this);
@@ -81,12 +81,12 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
 
             mIsVirtual = mOpportunity.getVirtual();
             if (!mOpportunity.getVirtual()) {
-                mView.setLocationGroupType(OpportunityFragment.LocationType.LOCATION);
+                mView.setLocationGroupType(Opportunity.LocationType.LOCATION);
                 if (mOpportunity.getLocation() != null) {
                     mView.setLocation(mOpportunity.getLocation().getName());
                 }
             } else {
-                mView.setLocationGroupType(OpportunityFragment.LocationType.VIRTUAL);
+                mView.setLocationGroupType(Opportunity.LocationType.VIRTUAL);
             }
 
             mIsOngoing = mOpportunity.getOngoing();
@@ -101,7 +101,7 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
                 mEndAt = Calendar.getInstance();
             }
             if (!mOpportunity.getOngoing()) {
-                mView.setTimeGroupType(OpportunityFragment.TimeType.DATED);
+                mView.setTimeGroupType(Opportunity.TimeType.DATED);
                 mStartDateSet = mOpportunity.getStartDateSet();
                 if (mOpportunity.getStartDateSet()) {
                     mView.setStartDate(DateHelper.format(DateHelper.dateFormat, mOpportunity.getStartAt()));
@@ -119,7 +119,7 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
                     mView.setEndTime(DateHelper.format(DateHelper.timeFormat, mOpportunity.getEndAt()));
                 }
             } else {
-                mView.setTimeGroupType(OpportunityFragment.TimeType.ONGOING);
+                mView.setTimeGroupType(Opportunity.TimeType.ONGOING);
             }
 
         } else {
@@ -373,15 +373,15 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
     }
 
     @Override
-    public void onLocationTypeChanged(OpportunityFragment.LocationType locationType) {
-        mIsVirtual = locationType == OpportunityFragment.LocationType.VIRTUAL;
-        mView.setShowLocationGroup(locationType == OpportunityFragment.LocationType.LOCATION);
+    public void onLocationTypeChanged(Opportunity.LocationType locationType) {
+        mIsVirtual = locationType == Opportunity.LocationType.VIRTUAL;
+        mView.setShowLocationGroup(locationType == Opportunity.LocationType.LOCATION);
     }
 
     @Override
-    public void onTimeTypeChanged(OpportunityFragment.TimeType timeType) {
-        mIsOngoing = timeType == OpportunityFragment.TimeType.ONGOING;
-        mView.setShowTimeGroup(timeType == OpportunityFragment.TimeType.DATED);
+    public void onTimeTypeChanged(Opportunity.TimeType timeType) {
+        mIsOngoing = timeType == Opportunity.TimeType.ONGOING;
+        mView.setShowTimeGroup(timeType == Opportunity.TimeType.DATED);
     }
 
     @Override

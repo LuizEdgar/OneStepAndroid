@@ -1,20 +1,36 @@
 package com.lutzed.servoluntario.main;
 
+import android.content.Context;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lutzed.servoluntario.R;
+import com.lutzed.servoluntario.adapters.GalleryViewAdapter;
 import com.lutzed.servoluntario.models.FeedItem;
+import com.lutzed.servoluntario.models.Image;
+import com.lutzed.servoluntario.models.Location;
 import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.Organization;
+import com.lutzed.servoluntario.util.CircleTransform;
+import com.lutzed.servoluntario.util.DateHelper;
+import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.lutzed.servoluntario.R.id.infos;
 
 public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -99,120 +115,117 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Organization item = holder.mItem = (Organization) mValues.get(position);
 
         holder.mContentView.setText(item.getFeedableType());
-//        final Context context = holder.itemView.getContext();
+        final Context context = holder.itemView.getContext();
 
-//        if (item.get) {
-//            Picasso.with(context).load(mUser.getProfileImage().getUrl()).transform(new CircleTransform(false)).into(holder.mProfilePictureView);
-//        }
-//
-//        if (item.hasDownloadableImage()) {
-//            holder.mImageView.setVisibility(View.VISIBLE);
-//            Picasso.with(context).load(item.getImage().getUrl()).into(holder.mImageView);
-//        } else {
-//            holder.mImageView.setVisibility(View.GONE);
-//        }
-//
-//        String headline = item.getHeadline();
-//        if (!TextUtils.isEmpty(headline)) {
-//            holder.mHeadlineView.setText(headline);
-//            holder.mHeadlineView.setVisibility(View.VISIBLE);
-//        } else {
-//            holder.mHeadlineView.setVisibility(View.GONE);
-//        }
-//
-//        String content = item.getContent();
-//        if (!TextUtils.isEmpty(content)) {
-//            holder.mContentView.setText(content);
-//            holder.mContentView.setVisibility(View.VISIBLE);
-//        } else {
-//            holder.mContentView.setVisibility(View.GONE);
-//        }
-//
-//        holder.mSubheadView.setText(DateHelper.format(DateHelper.postDatetimeFormat, item.getCreatedAt()));
-//
-//        holder.mShareButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (mListener != null){
-//                    mListener.onItemShare(holder.mItem);
-//                }
-//            }
-//        });
-//
-//        if (mIsAdminMode) {
-//            holder.mEditButton.setVisibility(View.VISIBLE);
-//            holder.mEditButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    if (null != mListener) {
-//                        mListener.onEditClicked(holder.mItem, holder.getAdapterPosition());
-//                    }
-//                }
-//            });
-//        } else {
-//            holder.mEditButton.setVisibility(View.GONE);
-//        }
+        if (item.getProfileImage() != null) {
+            Picasso.with(context).load(item.getProfileImage().getUrl()).transform(new CircleTransform(true)).placeholder(R.drawable.ic_user_placeholder).into(holder.mProfilePictureView);
+        } else {
+            holder.mProfilePictureView.setImageResource(R.drawable.ic_user_placeholder);
+        }
+
+        if (!item.getImages().isEmpty()) {
+            holder.mRecyclerView.setVisibility(View.VISIBLE);
+            ((GalleryViewAdapter) holder.mRecyclerView.getAdapter()).setItems(item.getImages());
+        } else {
+            holder.mRecyclerView.setVisibility(View.GONE);
+        }
+
+        holder.mNameView.setText(item.getName());
+
+        String content = item.getAbout();
+        if (!TextUtils.isEmpty(content)) {
+            holder.mContentView.setText(content);
+            holder.mContentView.setVisibility(View.VISIBLE);
+        } else {
+            holder.mContentView.setVisibility(View.GONE);
+        }
+
+        Location location = item.getLocations().get(0);
+        if (location != null) {
+            String city = location.getCity();
+            String country = location.getCountry();
+            String infos = country;
+            if (city != null) {
+                infos = city + ", " + infos;
+            }
+            holder.mInfosView.setText(infos);
+        }
+
     }
 
-    private void setupOpportunity(final OpportunityViewHolder holder, int position) {
+    private void setupOpportunity(final OpportunityViewHolder holder, final int position) {
         Opportunity item = holder.mItem = (Opportunity) mValues.get(position);
 
-        holder.mContentView.setText(item.getFeedableType());
-//
-//        Context context = holder.itemView.getContext();
-//
-//        if (item.hasDownloadableImage()) {
-//            holder.mImageView.setVisibility(View.VISIBLE);
-//            Picasso.with(context).load(item.getImage().getUrl()).into(holder.mImageView);
-//        } else {
-//            holder.mImageView.setVisibility(View.GONE);
-//        }
-//
-//        String headline = item.getHeadline();
-//        if (!TextUtils.isEmpty(headline)) {
-//            holder.mHeadlineView.setText(headline);
-//            holder.mHeadlineView.setVisibility(View.VISIBLE);
-//        } else {
-//            holder.mHeadlineView.setVisibility(View.GONE);
-//        }
-//
-//        String content = item.getContent();
-//        if (!TextUtils.isEmpty(content)) {
-//            holder.mContentView.setText(content);
-//            holder.mContentView.setVisibility(View.VISIBLE);
-//        } else {
-//            holder.mContentView.setVisibility(View.GONE);
-//        }
-//
-//        holder.mPlaceTextView.setText(item.getPlaceTime().getPlace());
-//
-//        Date eventTime = DateHelper.deserialize(item.getPlaceTime().getTimeAt());
-//        holder.mDayTextView.setText(DateHelper.format(DateHelper.dayFormat, eventTime));
-//        holder.mMonthTextView.setText(DateHelper.format(DateHelper.monthFormat, eventTime));
-//        holder.mTimeTextView.setText(DateHelper.format(DateHelper.eventDatetimeFormat, eventTime));
-//
-//        holder.mShareButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (mListener != null){
-//                    mListener.onItemShare(holder.mItem);
-//                }
-//            }
-//        });
-//
-//        if (mIsAdminMode) {
-//            holder.mEditButton.setVisibility(View.VISIBLE);
-//            holder.mEditButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    if (null != mListener) {
-//                        mListener.onEditClicked(holder.mItem, holder.getAdapterPosition());
-//                    }
-//                }
-//            });
-//        } else {
-//            holder.mEditButton.setVisibility(View.GONE);
-//        }
+        Context context = holder.itemView.getContext();
+
+        Image profileImage = item.getOpportunitable().getProfileImage();
+        if (profileImage != null) {
+            Picasso.with(context).load(profileImage.getUrl()).transform(new CircleTransform(true)).placeholder(R.drawable.ic_user_placeholder).into(holder.mProfilePictureView);
+        } else {
+            holder.mProfilePictureView.setImageResource(R.drawable.ic_user_placeholder);
+        }
+
+        if (!item.getImages().isEmpty()) {
+            holder.mRecyclerView.setVisibility(View.VISIBLE);
+            ((GalleryViewAdapter) holder.mRecyclerView.getAdapter()).setItems(item.getImages());
+        } else {
+            holder.mRecyclerView.setVisibility(View.GONE);
+        }
+
+        String headline = item.getTitle();
+        if (!TextUtils.isEmpty(headline)) {
+            holder.mTitleView.setText(headline);
+            holder.mTitleView.setVisibility(View.VISIBLE);
+        } else {
+            holder.mTitleView.setVisibility(View.GONE);
+        }
+
+        holder.mInfosView.setText("Postado por " + item.getOpportunitable().getName());
+
+        String content = item.getDescription();
+        if (!TextUtils.isEmpty(content)) {
+            holder.mContentView.setText(content);
+            holder.mContentView.setVisibility(View.VISIBLE);
+        } else {
+            holder.mContentView.setVisibility(View.GONE);
+        }
+
+        if (!item.getVirtual()) {
+            holder.mPlaceTextView.setText(item.getLocation().getName());
+        } else {
+            holder.mPlaceTextView.setText(R.string.virtual);
+        }
+
+        String time;
+        if (!item.getOngoing()) {
+            Date startTime = DateHelper.deserialize(item.getStartAt());
+            if (item.getStartTimeSet())
+                time = DateHelper.format(DateHelper.eventDatetimeFormat, startTime);
+            else time = DateHelper.format(DateHelper.eventDateFormat, startTime);
+
+            Date endTime = DateHelper.deserialize(item.getStartAt());
+            if (item.getEndDateSet() && endTime != null) {
+                if (item.getEndTimeSet())
+                    time += " - " + DateHelper.format(DateHelper.eventDatetimeFormat, endTime);
+                else time += " - " + DateHelper.format(DateHelper.eventDateFormat, endTime);
+            }
+        } else {
+            time = context.getString(R.string.ongoing);
+        }
+        holder.mTimeTextView.setText(time);
+
+        View.OnClickListener itemListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null) {
+                    mListener.onItemClicked(holder.mItem, position);
+                }
+            }
+        };
+
+        holder.mMoreButton.setOnClickListener(itemListener);
+        holder.mTitleView.setOnClickListener(itemListener);
+
     }
 
     @Override
@@ -228,15 +241,11 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public class OrganizationHolder extends RecyclerView.ViewHolder {
 
         public final View mView;
-        //        @BindView(R.id.profile_picture) ImageView mProfilePictureView;
-//        @BindView(R.id.name) TextView mNameView;
+        @BindView(R.id.profile_picture) ImageView mProfilePictureView;
+        @BindView(R.id.name) TextView mNameView;
+        @BindView(infos) TextView mInfosView;
         @BindView(R.id.content) TextView mContentView;
-//        @BindView(R.id.subhead) TextView mSubheadView;
-//        @BindView(R.id.headline) TextView mHeadlineView;
-//        @BindView(R.id.content) TextView mContentView;
-//        @BindView(R.id.image) ImageView mImageView;
-//        @BindView(R.id.share_button) ImageButton mShareButton;
-//        @BindView(R.id.edit_button) ImageButton mEditButton;
+        @BindView(R.id.imagesRecyclerView) RecyclerView mRecyclerView;
         public Organization mItem;
 
         public OrganizationHolder(View view) {
@@ -244,6 +253,9 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             mView = view;
 
             ButterKnife.bind(this, view);
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.HORIZONTAL, false));
+            mRecyclerView.addItemDecoration(new DividerItemDecoration(view.getContext(), DividerItemDecoration.HORIZONTAL));
+            mRecyclerView.setAdapter(new GalleryViewAdapter(new ArrayList<Image>(), false, null));
         }
 
         @Override
@@ -255,24 +267,25 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     public class OpportunityViewHolder extends RecyclerView.ViewHolder {
 
         public final View mView;
+        @BindView(R.id.place) TextView mPlaceTextView;
+        @BindView(R.id.time) TextView mTimeTextView;
+        @BindView(R.id.profile_picture) ImageView mProfilePictureView;
+        @BindView(R.id.title) TextView mTitleView;
+        @BindView(infos) TextView mInfosView;
         @BindView(R.id.content) TextView mContentView;
-        //        @BindView(R.id.day) TextView mDayTextView;
-//        @BindView(R.id.month) TextView mMonthTextView;
-//        @BindView(R.id.place) TextView mPlaceTextView;
-//        @BindView(R.id.time) TextView mTimeTextView;
-//        @BindView(R.id.headline) TextView mHeadlineView;
-//        @BindView(R.id.subhead) TextView mSubheadView;
-//        @BindView(R.id.content) TextView mContentView;
-//        @BindView(R.id.image) ImageView mImageView;
-//        @BindView(R.id.share_button) Button mShareButton;
-//        @BindView(R.id.edit_button) ImageButton mEditButton;
+        @BindView(R.id.imagesRecyclerView) RecyclerView mRecyclerView;
+        @BindView(R.id.more_button) Button mMoreButton;
         public Opportunity mItem;
 
         public OpportunityViewHolder(View view) {
             super(view);
             mView = view;
-
             ButterKnife.bind(this, view);
+
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.HORIZONTAL, false));
+            mRecyclerView.addItemDecoration(new DividerItemDecoration(view.getContext(), DividerItemDecoration.HORIZONTAL));
+            mRecyclerView.setAdapter(new GalleryViewAdapter(new ArrayList<Image>(), false, null));
+
         }
 
         @Override

@@ -1,5 +1,6 @@
 package com.lutzed.servoluntario.main;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,10 +14,15 @@ import android.widget.FrameLayout;
 
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.api.Api;
+import com.lutzed.servoluntario.models.Opportunity;
+import com.lutzed.servoluntario.opportunities.EditOpportunityActivity;
 import com.lutzed.servoluntario.util.AuthHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,9 +53,27 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.navigation_do:
                     navigateToDo();
+
+                    AuthHelper.getInstance(MainActivity.this).signout();
+                    finish();
                     break;
                 case R.id.navigation_profile:
                     navigateToProfile();
+
+                    Api.getClient(AuthHelper.getInstance(MainActivity.this).getUser()).getOpportunity(11l).enqueue(new Callback<Opportunity>() {
+                        @Override
+                        public void onResponse(Call<Opportunity> call, Response<Opportunity> response) {
+                            Intent intent = new Intent(MainActivity.this, EditOpportunityActivity.class);
+                            intent.putExtra(EditOpportunityActivity.EXTRA_OPPORTUNITY, response.body());
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onFailure(Call<Opportunity> call, Throwable t) {
+                            t.printStackTrace();
+                        }
+                    });
+
                     break;
             }
             return true;

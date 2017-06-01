@@ -1,14 +1,17 @@
-package com.lutzed.servoluntario.opportunity;
+package com.lutzed.servoluntario.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lutzed.servoluntario.R;
+import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.selection.ItemsSelectionFragment.OnListFragmentInteractionListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,7 +26,7 @@ import butterknife.ButterKnife;
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class OpportunityItemsAdapter extends RecyclerView.Adapter<OpportunityItemsAdapter.ViewHolder> {
+public class OpportunitiesItemsAdapter extends RecyclerView.Adapter<OpportunitiesItemsAdapter.ViewHolder> {
 
     private final List<SelectableItem> mValues;
     private final OnAdapterListener mListener;
@@ -32,7 +35,7 @@ public class OpportunityItemsAdapter extends RecyclerView.Adapter<OpportunityIte
         void onAdapterInteraction(SelectableItem mItem, int adapterPosition);
     }
 
-    public OpportunityItemsAdapter(List<SelectableItem> items, OnAdapterListener listener) {
+    public OpportunitiesItemsAdapter(List<SelectableItem> items, OnAdapterListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -69,7 +72,34 @@ public class OpportunityItemsAdapter extends RecyclerView.Adapter<OpportunityIte
         notifyDataSetChanged();
     }
 
-    List<Long> getItemsIds() {
+    public void addItems(List<? extends SelectableItem> items) {
+        if (items == null || items.isEmpty()) {
+            return;
+        }
+        int startPosition = getItemCount();
+        mValues.addAll(startPosition, items);
+
+        Collections.sort(mValues, new Comparator<SelectableItem>() {
+            @Override
+            public int compare(SelectableItem o1, SelectableItem o2) {
+                if (o1.getId() == null) {
+                    return 1;
+                } else if (o2.getId() == null) {
+                    return -1;
+                } else if (o1.getId() > o2.getId()) {
+                    return 1;
+                } else if (o1.getId() < o2.getId()) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+
+        notifyItemRangeInserted(startPosition, items.size());
+    }
+
+    public List<Long> getItemsIds() {
         List<Long> list = new ArrayList<>();
         for (int i = 0; i < mValues.size() - 1; i++) {
             SelectableItem item = mValues.get(i);
@@ -81,15 +111,22 @@ public class OpportunityItemsAdapter extends RecyclerView.Adapter<OpportunityIte
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_selectable_opportunity, parent, false);
+                .inflate(R.layout.item_opportunity_items, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getId() + "");
-        holder.mContentView.setText(mValues.get(position).getName());
+
+        Image image = holder.mItem.getImage();
+        if (image != null) {
+            Picasso.with(holder.mView.getContext()).load(image.getUrl()).placeholder(R.drawable.ic_group_work_black_24dp).into(holder.mImageView);
+        } else {
+            holder.mImageView.setImageResource(R.drawable.ic_group_work_black_24dp);
+        }
+
+        holder.mNameView.setText(mValues.get(position).getName());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -108,8 +145,8 @@ public class OpportunityItemsAdapter extends RecyclerView.Adapter<OpportunityIte
 
     class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
-        @BindView(R.id.id) TextView mIdView;
-        @BindView(R.id.content) TextView mContentView;
+        @BindView(R.id.image) ImageView mImageView;
+        @BindView(R.id.name) TextView mNameView;
 
         SelectableItem mItem;
 
@@ -122,7 +159,7 @@ public class OpportunityItemsAdapter extends RecyclerView.Adapter<OpportunityIte
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mNameView.getText() + "'";
         }
     }
 }

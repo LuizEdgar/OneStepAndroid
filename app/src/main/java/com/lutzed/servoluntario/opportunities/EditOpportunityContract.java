@@ -1,4 +1,4 @@
-package com.lutzed.servoluntario.opportunity;
+package com.lutzed.servoluntario.opportunities;
 
 import android.graphics.Bitmap;
 
@@ -7,6 +7,7 @@ import com.lutzed.servoluntario.interfaces.BasePresenter;
 import com.lutzed.servoluntario.interfaces.BaseView;
 import com.lutzed.servoluntario.models.Contact;
 import com.lutzed.servoluntario.models.Image;
+import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.SelectableItem;
 
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ import java.util.List;
  * Created by luizfreitas on 18/04/2017.
  */
 
-public interface OpportunityContract {
+public interface EditOpportunityContract {
 
     interface View extends BaseView<Presenter> {
         void setLoadingIndicator(boolean active);
@@ -73,9 +74,9 @@ public interface OpportunityContract {
 
         void setEndTime(String endTime);
 
-        void setTimeGroupType(OpportunityFragment.TimeType timeType);
+        void setTimeGroupType(Opportunity.TimeType timeType);
 
-        void setLocationGroupType(OpportunityFragment.LocationType locationType);
+        void setLocationGroupType(Opportunity.LocationType locationType);
 
         void showTitleRequiredError();
 
@@ -135,9 +136,9 @@ public interface OpportunityContract {
 
         void onNewPlaceSelected(Place place);
 
-        void onLocationTypeChanged(OpportunityFragment.LocationType locationType);
+        void onLocationTypeChanged(Opportunity.LocationType locationType);
 
-        void onTimeTypeChanged(OpportunityFragment.TimeType timeType);
+        void onTimeTypeChanged(Opportunity.TimeType timeType);
 
         void startDateClicked();
 

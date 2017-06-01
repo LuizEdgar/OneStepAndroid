@@ -15,6 +15,16 @@ public abstract class SelectableItem implements Parcelable {
 
     @Expose protected String name;
 
+    public Image getImage() {
+        return image;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
+    @Expose protected Image image;
+
     @Expose protected String description;
 
     @Expose

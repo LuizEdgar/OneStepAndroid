@@ -31,7 +31,7 @@ public class CircleTransform implements Transformation {
 
     private boolean isBordered;
 
-    private final int DEFAULT_BORDER_COLOR = Color.WHITE;
+    private final int DEFAULT_BORDER_COLOR = Color.LTGRAY;
     private final int DEFAULT_BORDER_RADIUS = 6;
 
     @Override

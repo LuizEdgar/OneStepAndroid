@@ -8,8 +8,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lutzed.servoluntario.R;
+import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.selection.ItemsSelectionFragment.OnListFragmentInteractionListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,8 +106,15 @@ public class ItemsSelectionAdapter extends RecyclerView.Adapter<ItemsSelectionAd
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getId() + "");
-        holder.mContentView.setText(mValues.get(position).getName());
+
+        holder.mNameView.setText(mValues.get(position).getName());
+
+        Image image = holder.mItem.getImage();
+        if (image != null) {
+            Picasso.with(holder.mView.getContext()).load(image.getUrl()).placeholder(R.drawable.ic_group_work_black_24dp).into(holder.mImageView);
+        } else {
+            holder.mImageView.setImageResource(R.drawable.ic_group_work_black_24dp);
+        }
 
         holder.mCheckMark.setVisibility(holder.mItem.isSelected() ? View.VISIBLE : View.INVISIBLE);
 
@@ -131,8 +140,8 @@ public class ItemsSelectionAdapter extends RecyclerView.Adapter<ItemsSelectionAd
 
     class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
-        @BindView(R.id.id) TextView mIdView;
-        @BindView(R.id.content) TextView mContentView;
+        @BindView(R.id.image) ImageView mImageView;
+        @BindView(R.id.name) TextView mNameView;
         @BindView(R.id.checkMark) ImageView mCheckMark;
 
         SelectableItem mItem;
@@ -147,7 +156,7 @@ public class ItemsSelectionAdapter extends RecyclerView.Adapter<ItemsSelectionAd
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mNameView.getText() + "'";
         }
     }
 }

@@ -1,370 +1,196 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:ls="http://schemas.android.com/apk/res-auto"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:gravity="center_horizontal"
-              android:orientation="vertical"
-              tools:context="com.lutzed.servoluntario.signup.SignUpActivity">
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.lutzed.servoluntario.opportunities.OpportunityFragment"
+    tools:showIn="@layout/activity_opportunity">
 
-    <!-- Login progress -->
-    <ProgressBar
-        android:id="@+id/progress"
-        style="?android:attr/progressBarStyleLarge"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:visibility="gone"/>
-
-    <ScrollView
-        android:id="@+id/form"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp"
+            android:textColor="@color/colorPrimary"
+            android:textSize="20sp"/>
+
+        <TextView
+            android:id="@+id/creator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="4dp"
+            android:textColor="@color/secondaryText"
+            android:textSize="14sp"/>
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp"/>
+
+        <include layout="@layout/partial_divider"/>
+
+        <com.lutzed.servoluntario.util.DataView
+            android:id="@+id/time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:primary_icon="@drawable/ic_date_range_black_24dp"
+            app:title="@string/time"/>
+
+        <com.lutzed.servoluntario.util.DataView
+            android:id="@+id/location"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:primary_icon="@drawable/ic_place_black_24dp"
+            app:title="@string/location"/>
+
+        <com.lutzed.servoluntario.util.DataView
+            android:id="@+id/contact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
+            app:title="@string/contact"/>
 
         <LinearLayout
-            android:id="@+id/create_opportunity_form"
+            android:id="@+id/galleryWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:paddingBottom="@dimen/activity_vertical_margin"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin">
+            android:visibility="gone">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/titleInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+            <include layout="@layout/partial_divider"/>
 
-                <EditText
-                    android:id="@+id/title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_title"
-                    android:maxLines="1"/>
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/descriptionInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/description"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="top"
-                    android:hint="@string/prompt_description"
-                    android:inputType="textMultiLine"
-                    android:lines="4"
-                    android:maxLines="4"/>
-
-            </android.support.design.widget.TextInputLayout>
-
-            <com.satsuware.usefulviews.LabelledSpinner
-                android:id="@+id/contactSpinner"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/galleryTitle"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                ls:labelText="@string/prompt_contact"/>
+                android:paddingBottom="16dp"
+                android:paddingLeft="52dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:text="@string/gallery"
+                android:textColor="@color/tertiaryText"
+                android:textSize="18sp"/>
 
-            <LinearLayout
-                android:id="@+id/causesWrapper"
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/imagesRecyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/causes"/>
-
-                <TextView
-                    android:id="@+id/causesError"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/skills"
-                    android:textColor="@color/red"
-                    android:textSize="12sp"
-                    android:visibility="gone"/>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/causesRecyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:orientation="horizontal"/>
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/skillsWrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/skills"/>
-
-                <TextView
-                    android:id="@+id/skillsError"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/skills"
-                    android:textColor="@color/red"
-                    android:textSize="12sp"
-                    android:visibility="gone"/>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/skillsRecyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:orientation="horizontal"/>
-
-            </LinearLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/volunteersNumberInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/volunteersNumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_volunteers_number"
-                    android:inputType="number"
-                    android:maxLines="1"/>
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/timeCommitmentInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/timeCommitment"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_time_commitment"
-                    android:inputType="text"
-                    android:maxLines="1"/>
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/othersRequirementsInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/othersRequirements"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_others_requirements"
-                    android:inputType="text"
-                    android:maxLines="1"/>
-
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/tagsInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/tags"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_tags"
-                    android:inputType="text"
-                    android:maxLines="1"/>
-
-            </android.support.design.widget.TextInputLayout>
-
-            <LinearLayout
-                android:id="@+id/imagesWrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/causes"/>
-
-                <TextView
-                    android:id="@+id/imagesError"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/skills"
-                    android:textColor="@color/red"
-                    android:textSize="12sp"
-                    android:visibility="gone"/>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/imagesRecyclerView"
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:orientation="horizontal"/>
-
-            </LinearLayout>
-
-
-            <RadioGroup
-                android:id="@+id/locationTypeGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/isLocation"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:checked="true"
-                    android:text="@string/location"/>
-
-                <RadioButton
-                    android:id="@+id/isVirtual"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/virtual"/>
-
-            </RadioGroup>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/locationInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/location"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_location"
-                    android:inputType="text"
-                    android:maxLines="1"/>
-
-            </android.support.design.widget.TextInputLayout>
-
-            <RadioGroup
-                android:id="@+id/timeTypeGroup"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <RadioButton
-                    android:id="@+id/isDated"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:checked="true"
-                    android:text="@string/dated"/>
-
-                <RadioButton
-                    android:id="@+id/isOngoing"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/ongoing"/>
-
-            </RadioGroup>
-
-            <LinearLayout
-                android:id="@+id/dateWrapper"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/startDateAtInputLayout"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2">
-
-                        <EditText
-                            android:id="@+id/startDateAt"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/from"
-                            android:inputType="date"
-                            android:maxLines="1"
-                            android:text="@string/date"
-                            android:textColor="@color/disabledText"/>
-
-                    </android.support.design.widget.TextInputLayout>
-
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/startTimeAtInputLayout"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-
-                        <EditText
-                            android:id="@+id/startTimeAt"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="text"
-                            android:maxLines="1"
-                            android:text="@string/time"
-                            android:textColor="@color/disabledText"/>
-
-                    </android.support.design.widget.TextInputLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/endDateAtInputLayout"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2">
-
-                        <EditText
-                            android:id="@+id/endDateAt"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/to"
-                            android:inputType="date"
-                            android:maxLines="1"
-                            android:text="@string/date"
-                            android:textColor="@color/disabledText"/>
-
-                    </android.support.design.widget.TextInputLayout>
-
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/endTimeAtInputLayout"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-
-                        <EditText
-                            android:id="@+id/endTimeAt"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="text"
-                            android:maxLines="1"
-                            android:text="@string/time"
-                            android:textColor="@color/disabledText"/>
-
-                    </android.support.design.widget.TextInputLayout>
-
-                </LinearLayout>
-            </LinearLayout>
+                android:layout_height="120dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"/>
 
         </LinearLayout>
-    </ScrollView>
-</LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/causesWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/partial_divider"/>
+
+            <TextView
+                android:id="@+id/causesTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:paddingLeft="52dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:text="@string/causes"
+                android:textColor="@color/tertiaryText"
+                android:textSize="18sp"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/causesRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/skillsWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/partial_divider"/>
+
+            <TextView
+                android:id="@+id/skillsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:paddingLeft="52dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:text="@string/skills"
+                android:textColor="@color/tertiaryText"
+                android:textSize="18sp"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/skillsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/othersWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <include layout="@layout/partial_divider"/>
+
+            <com.lutzed.servoluntario.util.DataView
+                android:id="@+id/volunteersNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
+                app:title="@string/volunteers_number"/>
+
+            <com.lutzed.servoluntario.util.DataView
+                android:id="@+id/timeCommitment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
+                app:title="@string/time_commitment"/>
+
+            <com.lutzed.servoluntario.util.DataView
+                android:id="@+id/othersRequirements"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
+                app:title="@string/others_requirements"/>
+
+            <com.lutzed.servoluntario.util.DataView
+                android:id="@+id/tags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
+                app:title="@string/tags"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

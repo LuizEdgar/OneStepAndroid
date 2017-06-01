@@ -58,6 +58,21 @@ public class Organization implements FeedItem {
     private List<Long> skillIds;
 
     @Expose
+    @SerializedName("profile_image")
+    private Image profileImage;
+
+    @Expose(serialize = false, deserialize = true)
+    private List<Image> images;
+
+    @Expose(serialize = true, deserialize = false)
+    @SerializedName("images_attributes")
+    private List<Image> imagesAttributes;
+
+    @Expose(serialize = true, deserialize = false)
+    @SerializedName("images_attributes_64")
+    private List<String> imagesAttributes64;
+
+    @Expose
     @SerializedName("established_at")
     private String establishedAt;
 
@@ -227,6 +242,38 @@ public class Organization implements FeedItem {
 
     public String getFeedableType() {
         return feedableType;
+    }
+
+    public Image getProfileImage() {
+        return profileImage;
+    }
+
+    public List<Image> getImages() {
+        return images;
+    }
+
+    public void setImages(List<Image> images) {
+        this.images = images;
+    }
+
+    public List<Image> getImagesAttributes() {
+        return imagesAttributes;
+    }
+
+    public void setImagesAttributes(List<Image> imagesAttributes) {
+        this.imagesAttributes = imagesAttributes;
+    }
+
+    public List<String> getImagesAttributes64() {
+        return imagesAttributes64;
+    }
+
+    public void setImagesAttributes64(List<String> imagesAttributes64) {
+        this.imagesAttributes64 = imagesAttributes64;
+    }
+
+    public void setProfileImage(Image profileImage) {
+        this.profileImage = profileImage;
     }
 
     public void setFeedableType(String feedableType) {
