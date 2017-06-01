@@ -3,6 +3,7 @@ package com.lutzed.servoluntario.main;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.FeedItem;
 import com.lutzed.servoluntario.models.Opportunity;
+import com.lutzed.servoluntario.models.Organization;
 
 import java.util.List;
 
@@ -40,6 +41,11 @@ public class FeedPresenter implements FeedContract.Presenter {
     @Override
     public void opportunityClicked(Opportunity opportunity) {
         mView.showOpportunity(opportunity);
+    }
+
+    @Override
+    public void organizationClicked(Organization organization) {
+        mView.showOrganization(organization);
     }
 
     @Override

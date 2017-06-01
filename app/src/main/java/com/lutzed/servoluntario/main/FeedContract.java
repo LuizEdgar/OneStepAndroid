@@ -4,6 +4,7 @@ import com.lutzed.servoluntario.interfaces.BasePresenter;
 import com.lutzed.servoluntario.interfaces.BaseView;
 import com.lutzed.servoluntario.models.FeedItem;
 import com.lutzed.servoluntario.models.Opportunity;
+import com.lutzed.servoluntario.models.Organization;
 
 import java.util.List;
 
@@ -27,6 +28,8 @@ public interface FeedContract {
         void showNoItems();
 
         void showOpportunity(Opportunity opportunity);
+
+        void showOrganization(Organization organization);
     }
 
     interface Presenter extends BasePresenter {
@@ -35,5 +38,7 @@ public interface FeedContract {
         void refreshItems();
 
         void opportunityClicked(Opportunity opportunity);
+
+        void organizationClicked(Organization organization);
     }
 }

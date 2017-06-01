@@ -19,6 +19,7 @@ public class DateHelper {
     public static final DateFormat dateFormat = buildDateFormat();
     public static final DateFormat timeFormat = buildTimeFormat();
     public static final DateFormat dayFormat = buildDayFormat();
+    public static final DateFormat yearFormat = buildYearFormat();
 
     public static final DateFormat monthFormat = buildMonthFormat();
     private static final long SECOND_MILI = 1000;
@@ -82,6 +83,10 @@ public class DateHelper {
 
     private static DateFormat buildMonthFormat() {
         return new SimpleDateFormat("MMM", Locale.getDefault());
+    }
+
+    private static DateFormat buildYearFormat() {
+        return new SimpleDateFormat("yyyy", Locale.getDefault());
     }
 
     public static String format(DateFormat formatOut, String dateString) {

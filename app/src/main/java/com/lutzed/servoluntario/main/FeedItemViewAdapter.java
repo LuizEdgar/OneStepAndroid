@@ -19,6 +19,7 @@ import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.Location;
 import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.Organization;
+import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.CircleTransform;
 import com.lutzed.servoluntario.util.DateHelper;
 import com.squareup.picasso.Picasso;
@@ -43,11 +44,9 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public interface OnFeedItemAdapterListener {
-        void onEditClicked(FeedItem feedItem, int position);
-
-        void onItemClicked(FeedItem feedItem, int position);
-
-        void onItemShare(FeedItem feedItem);
+        void onOrganizationClicked(Organization organization);
+        void onOpportunityClicked(Opportunity opportunity);
+        void onVolunteerClicked(Volunteer volunteer);
     }
 
     public void clearData() {
@@ -151,6 +150,17 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.mInfosView.setText(infos);
         }
 
+        View.OnClickListener itemListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null) {
+                    mListener.onOrganizationClicked(holder.mItem);
+                }
+            }
+        };
+
+        holder.mNameView.setOnClickListener(itemListener);
+
     }
 
     private void setupOpportunity(final OpportunityViewHolder holder, final int position) {
@@ -218,7 +228,7 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             @Override
             public void onClick(View view) {
                 if (mListener != null) {
-                    mListener.onItemClicked(holder.mItem, position);
+                    mListener.onOpportunityClicked(holder.mItem);
                 }
             }
         };

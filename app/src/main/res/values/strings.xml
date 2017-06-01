@@ -43,8 +43,8 @@
     <string name="action_save">Save</string>
     <string name="prompt_about">About</string>
     <string name="prompt_occupation">Occupation</string>
-    <string name="prompt_mission">Mission</string>
-    <string name="prompt_site">Site</string>
+    <string name="mission">Mission</string>
+    <string name="site">Site</string>
     <string name="title_activity_items_selection">Selection</string>
     <string name="action_next">Next</string>
     <string name="title_activity_edit_opportunity">Create Opportunity</string>
@@ -171,5 +171,8 @@
     </string>
     <string name="title_activity_opportunity">Opportunity</string>
     <string name="gallery">Gallery</string>
+    <string name="established_at">Established At</string>
+    <string name="cnpj">CNPJ</string>
+    <string name="title_activity_organization">Organization</string>
 
 </resources>

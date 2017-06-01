@@ -15,7 +15,10 @@ import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.dummy.DummyContent.DummyItem;
 import com.lutzed.servoluntario.models.FeedItem;
 import com.lutzed.servoluntario.models.Opportunity;
+import com.lutzed.servoluntario.models.Organization;
+import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.opportunities.OpportunityActivity;
+import com.lutzed.servoluntario.organization.OrganizationActivity;
 import com.lutzed.servoluntario.util.EndlessRecyclerViewScrollListener;
 import com.lutzed.servoluntario.util.VerticalSpaceItemDecoration;
 
@@ -79,19 +82,17 @@ public class FeedFragment extends Fragment implements FeedContract.View, MainFra
 
         mRecyclerView.setAdapter(new FeedItemViewAdapter(new ArrayList<FeedItem>(), new FeedItemViewAdapter.OnFeedItemAdapterListener() {
             @Override
-            public void onEditClicked(FeedItem feedItem, int position) {
-
+            public void onOrganizationClicked(Organization organization) {
+                mPresenter.organizationClicked(organization);
             }
 
             @Override
-            public void onItemClicked(FeedItem feedItem, int position) {
-                if (feedItem instanceof Opportunity){
-                    mPresenter.opportunityClicked((Opportunity) feedItem);
-                }
+            public void onOpportunityClicked(Opportunity opportunity) {
+                mPresenter.opportunityClicked(opportunity);
             }
 
             @Override
-            public void onItemShare(FeedItem feedItem) {
+            public void onVolunteerClicked(Volunteer volunteer) {
 
             }
         }));
@@ -182,6 +183,12 @@ public class FeedFragment extends Fragment implements FeedContract.View, MainFra
         startActivity(intent);
     }
 
+    @Override
+    public void showOrganization(Organization organization) {
+        Intent intent = new Intent(getContext(), OrganizationActivity.class);
+        intent.putExtra(OrganizationActivity.EXTRA_ORGANIZATION, organization);
+        startActivity(intent);
+    }
 
     /**
      * This interface must be implemented by activities that contain this
