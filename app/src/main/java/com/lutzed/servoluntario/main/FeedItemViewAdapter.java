@@ -207,15 +207,18 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
         holder.mTimeTextView.setText(time);
 
-        holder.mMoreButton.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener itemListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mListener != null) {
                     mListener.onItemClicked(holder.mItem, position);
                 }
             }
-        });
-        
+        };
+
+        holder.mMoreButton.setOnClickListener(itemListener);
+        holder.mTitleView.setOnClickListener(itemListener);
+
     }
 
     @Override

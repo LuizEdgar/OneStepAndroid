@@ -1,4 +1,4 @@
-package com.lutzed.servoluntario.opportunity;
+package com.lutzed.servoluntario.opportunities;
 
 import android.graphics.Bitmap;
 
@@ -17,7 +17,7 @@ import java.util.List;
  * Created by luizfreitas on 18/04/2017.
  */
 
-public interface OpportunityContract {
+public interface OpportunitiesContract {
 
     interface View extends BaseView<Presenter> {
         void setLoadingIndicator(boolean active);

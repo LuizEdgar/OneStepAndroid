@@ -1,4 +1,4 @@
-package com.lutzed.servoluntario.opportunity;
+package com.lutzed.servoluntario.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -23,7 +23,7 @@ import butterknife.ButterKnife;
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class OpportunityItemsAdapter extends RecyclerView.Adapter<OpportunityItemsAdapter.ViewHolder> {
+public class OpportunitiesItemsAdapter extends RecyclerView.Adapter<OpportunitiesItemsAdapter.ViewHolder> {
 
     private final List<SelectableItem> mValues;
     private final OnAdapterListener mListener;
@@ -32,7 +32,7 @@ public class OpportunityItemsAdapter extends RecyclerView.Adapter<OpportunityIte
         void onAdapterInteraction(SelectableItem mItem, int adapterPosition);
     }
 
-    public OpportunityItemsAdapter(List<SelectableItem> items, OnAdapterListener listener) {
+    public OpportunitiesItemsAdapter(List<SelectableItem> items, OnAdapterListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -69,7 +69,7 @@ public class OpportunityItemsAdapter extends RecyclerView.Adapter<OpportunityIte
         notifyDataSetChanged();
     }
 
-    List<Long> getItemsIds() {
+    public List<Long> getItemsIds() {
         List<Long> list = new ArrayList<>();
         for (int i = 0; i < mValues.size() - 1; i++) {
             SelectableItem item = mValues.get(i);

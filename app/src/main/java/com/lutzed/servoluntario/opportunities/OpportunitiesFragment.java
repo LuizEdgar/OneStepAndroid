@@ -1,4 +1,4 @@
-package com.lutzed.servoluntario.opportunity;
+package com.lutzed.servoluntario.opportunities;
 
 import android.Manifest;
 import android.animation.Animator;
@@ -52,13 +52,13 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.adapters.GalleryViewAdapter;
+import com.lutzed.servoluntario.adapters.OpportunitiesItemsAdapter;
 import com.lutzed.servoluntario.dialogs.ContactDialogFragment;
 import com.lutzed.servoluntario.models.Contact;
 import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.models.Skill;
-import com.lutzed.servoluntario.adapters.OpportunitiesItemsAdapter;
 import com.lutzed.servoluntario.selection.ItemsSelectionActivity;
 import com.lutzed.servoluntario.util.Constants;
 import com.lutzed.servoluntario.util.FileAndPathHolder;
@@ -85,7 +85,7 @@ import static com.lutzed.servoluntario.models.Opportunity.TimeType.ONGOING;
 /**
  * A login screen that offers login via email/password.
  */
-public class OpportunityFragment extends Fragment implements OpportunityContract.View {
+public class OpportunitiesFragment extends Fragment implements OpportunitiesContract.View {
 
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 182;
     private static final int REQUEST_IMAGE_PICK = 126;
@@ -132,13 +132,13 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @BindView(R.id.skillsError) TextView mSkillsErrorView;
     @BindView(R.id.imagesRecyclerView) RecyclerView mGalleryRecyclerView;
 
-    private OpportunityContract.Presenter mPresenter;
+    private OpportunitiesContract.Presenter mPresenter;
     private int mCurrentContactSpinnerSelectedPosition;
     private ColorStateList mDefaultEditTextColor;
     private String mCurrentPath;
 
-    public static OpportunityFragment newInstance() {
-        return new OpportunityFragment();
+    public static OpportunitiesFragment newInstance() {
+        return new OpportunitiesFragment();
     }
 
     @Override
@@ -163,7 +163,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     }
 
     @Override
-    public void setPresenter(OpportunityContract.Presenter presenter) {
+    public void setPresenter(OpportunitiesContract.Presenter presenter) {
         mPresenter = presenter;
     }
 

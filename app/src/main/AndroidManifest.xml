@@ -47,7 +47,7 @@
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".opportunity.OpportunityActivity"
+            android:name=".opportunities.OpportunitiesActivity"
             android:label="@string/title_activity_create_opportunity"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>

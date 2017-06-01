@@ -1,4 +1,4 @@
-package com.lutzed.servoluntario.opportunity;
+package com.lutzed.servoluntario.opportunities;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,11 +13,11 @@ import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.util.ActivityUtils;
 import com.lutzed.servoluntario.util.AuthHelper;
 
-public class OpportunityActivity extends AppCompatActivity {
+public class OpportunitiesActivity extends AppCompatActivity {
 
     public static final String EXTRA_OPPORTUNITY = "extra_opportunity";
 
-    private OpportunityPresenter mOpportunityPresenter;
+    private OpportunitiesPresenter mOpportunitiesPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,22 +31,22 @@ public class OpportunityActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        OpportunityFragment opportunityFragment =
-                (OpportunityFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        OpportunitiesFragment opportunitiesFragment =
+                (OpportunitiesFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
 
 
-        if (opportunityFragment == null) {
+        if (opportunitiesFragment == null) {
             // Create the fragment
-            opportunityFragment = OpportunityFragment.newInstance();
+            opportunitiesFragment = OpportunitiesFragment.newInstance();
             ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), opportunityFragment, R.id.contentFrame);
+                    getSupportFragmentManager(), opportunitiesFragment, R.id.contentFrame);
         }
 
         AuthHelper authHelper = AuthHelper.getInstance(this);
         // Create the presenter
 
         Opportunity opportunity = getIntent().getParcelableExtra(EXTRA_OPPORTUNITY);
-        mOpportunityPresenter = new OpportunityPresenter(opportunityFragment, Api.getClient(authHelper.getUser()), authHelper, opportunity);
+        mOpportunitiesPresenter = new OpportunitiesPresenter(opportunitiesFragment, Api.getClient(authHelper.getUser()), authHelper, opportunity);
 
         // Load previously saved state, if available.
         if (savedInstanceState != null) {
@@ -71,8 +71,8 @@ public class OpportunityActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (mOpportunityPresenter != null){
-            mOpportunityPresenter.onRequestPermissionResult(requestCode, permissions, grantResults);
+        if (mOpportunitiesPresenter != null){
+            mOpportunitiesPresenter.onRequestPermissionResult(requestCode, permissions, grantResults);
         }
     }
 }

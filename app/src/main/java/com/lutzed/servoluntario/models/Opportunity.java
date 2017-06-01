@@ -468,4 +468,12 @@ public class Opportunity implements Parcelable, FeedItem {
             return new Opportunity[size];
         }
     };
+
+    public enum LocationType {
+        LOCATION, VIRTUAL;
+    }
+
+    public enum TimeType {
+        DATED, ONGOING;
+    }
 }
