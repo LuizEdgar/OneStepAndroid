@@ -66,7 +66,7 @@
                 android:id="@+id/contactSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                ls:labelText="@string/prompt_contact"/>
+                ls:labelText="@string/contact"/>
 
             <LinearLayout
                 android:id="@+id/causesWrapper"
@@ -133,7 +133,7 @@
                     android:id="@+id/volunteersNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_volunteers_number"
+                    android:hint="@string/volunteers_number"
                     android:inputType="number"
                     android:maxLines="1"/>
 
@@ -148,7 +148,7 @@
                     android:id="@+id/timeCommitment"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_time_commitment"
+                    android:hint="@string/time_commitment"
                     android:inputType="text"
                     android:maxLines="1"/>
 
@@ -163,7 +163,7 @@
                     android:id="@+id/othersRequirements"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_others_requirements"
+                    android:hint="@string/others_requirements"
                     android:inputType="text"
                     android:maxLines="1"/>
 
@@ -178,7 +178,7 @@
                     android:id="@+id/tags"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_tags"
+                    android:hint="@string/tags"
                     android:inputType="text"
                     android:maxLines="1"/>
 

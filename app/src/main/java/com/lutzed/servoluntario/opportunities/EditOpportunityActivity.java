@@ -13,16 +13,16 @@ import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.util.ActivityUtils;
 import com.lutzed.servoluntario.util.AuthHelper;
 
-public class OpportunitiesActivity extends AppCompatActivity {
+public class EditOpportunityActivity extends AppCompatActivity {
 
     public static final String EXTRA_OPPORTUNITY = "extra_opportunity";
 
-    private OpportunitiesPresenter mOpportunitiesPresenter;
+    private EditOpportunityPresenter mEditOpportunityPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_opportunities);
+        setContentView(R.layout.activity_edit_opportunity);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -31,22 +31,22 @@ public class OpportunitiesActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        OpportunitiesFragment opportunitiesFragment =
-                (OpportunitiesFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        EditOpportunityFragment editOpportunityFragment =
+                (EditOpportunityFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
 
 
-        if (opportunitiesFragment == null) {
+        if (editOpportunityFragment == null) {
             // Create the fragment
-            opportunitiesFragment = OpportunitiesFragment.newInstance();
+            editOpportunityFragment = EditOpportunityFragment.newInstance();
             ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), opportunitiesFragment, R.id.contentFrame);
+                    getSupportFragmentManager(), editOpportunityFragment, R.id.contentFrame);
         }
 
         AuthHelper authHelper = AuthHelper.getInstance(this);
         // Create the presenter
 
         Opportunity opportunity = getIntent().getParcelableExtra(EXTRA_OPPORTUNITY);
-        mOpportunitiesPresenter = new OpportunitiesPresenter(opportunitiesFragment, Api.getClient(authHelper.getUser()), authHelper, opportunity);
+        mEditOpportunityPresenter = new EditOpportunityPresenter(editOpportunityFragment, Api.getClient(authHelper.getUser()), authHelper, opportunity);
 
         // Load previously saved state, if available.
         if (savedInstanceState != null) {
@@ -71,8 +71,8 @@ public class OpportunitiesActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (mOpportunitiesPresenter != null){
-            mOpportunitiesPresenter.onRequestPermissionResult(requestCode, permissions, grantResults);
+        if (mEditOpportunityPresenter != null){
+            mEditOpportunityPresenter.onRequestPermissionResult(requestCode, permissions, grantResults);
         }
     }
 }

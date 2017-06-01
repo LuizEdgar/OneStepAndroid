@@ -54,7 +54,7 @@ public class GalleryViewAdapter extends RecyclerView.Adapter<GalleryViewAdapter.
         if (items == null || items.isEmpty()) {
             return;
         }
-        int startPosition = 0;
+        int startPosition = getItemCount();
         mValues.addAll(startPosition, items);
         notifyItemRangeInserted(startPosition, items.size());
     }

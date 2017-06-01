@@ -69,6 +69,33 @@ public class OpportunitiesItemsAdapter extends RecyclerView.Adapter<Opportunitie
         notifyDataSetChanged();
     }
 
+    public void addItems(List<? extends SelectableItem> items) {
+        if (items == null || items.isEmpty()) {
+            return;
+        }
+        int startPosition = getItemCount();
+        mValues.addAll(startPosition, items);
+
+        Collections.sort(mValues, new Comparator<SelectableItem>() {
+            @Override
+            public int compare(SelectableItem o1, SelectableItem o2) {
+                if (o1.getId() == null) {
+                    return 1;
+                } else if (o2.getId() == null) {
+                    return -1;
+                } else if (o1.getId() > o2.getId()) {
+                    return 1;
+                } else if (o1.getId() < o2.getId()) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            }
+        });
+
+        notifyItemRangeInserted(startPosition, items.size());
+    }
+
     public List<Long> getItemsIds() {
         List<Long> list = new ArrayList<>();
         for (int i = 0; i < mValues.size() - 1; i++) {

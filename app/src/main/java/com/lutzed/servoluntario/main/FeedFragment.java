@@ -1,6 +1,7 @@
 package com.lutzed.servoluntario.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -13,6 +14,8 @@ import android.view.ViewGroup;
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.dummy.DummyContent.DummyItem;
 import com.lutzed.servoluntario.models.FeedItem;
+import com.lutzed.servoluntario.models.Opportunity;
+import com.lutzed.servoluntario.opportunities.OpportunityActivity;
 import com.lutzed.servoluntario.util.EndlessRecyclerViewScrollListener;
 import com.lutzed.servoluntario.util.VerticalSpaceItemDecoration;
 
@@ -74,8 +77,24 @@ public class FeedFragment extends Fragment implements FeedContract.View, MainFra
         mRecyclerView.setLayoutManager(layoutManager);
         mRecyclerView.addItemDecoration(new VerticalSpaceItemDecoration(getResources().getDimensionPixelSize(R.dimen.recicler_view_vertical_spacing)));
 
-        mRecyclerView.setAdapter(new FeedItemViewAdapter(new ArrayList<FeedItem>(), mListener));
+        mRecyclerView.setAdapter(new FeedItemViewAdapter(new ArrayList<FeedItem>(), new FeedItemViewAdapter.OnFeedItemAdapterListener() {
+            @Override
+            public void onEditClicked(FeedItem feedItem, int position) {
 
+            }
+
+            @Override
+            public void onItemClicked(FeedItem feedItem, int position) {
+                if (feedItem instanceof Opportunity){
+                    mPresenter.opportunityClicked((Opportunity) feedItem);
+                }
+            }
+
+            @Override
+            public void onItemShare(FeedItem feedItem) {
+
+            }
+        }));
 
         mScrollListener = new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
@@ -154,6 +173,13 @@ public class FeedFragment extends Fragment implements FeedContract.View, MainFra
     @Override
     public void showNoItems() {
 
+    }
+
+    @Override
+    public void showOpportunity(Opportunity opportunity) {
+        Intent intent = new Intent(getContext(), OpportunityActivity.class);
+        intent.putExtra(OpportunityActivity.EXTRA_OPPORTUNITY, opportunity);
+        startActivity(intent);
     }
 
 

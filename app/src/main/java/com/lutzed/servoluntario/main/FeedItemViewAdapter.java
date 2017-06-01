@@ -119,16 +119,16 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         if (item.getProfileImage() != null) {
             Picasso.with(context).load(item.getProfileImage().getUrl()).transform(new CircleTransform(true)).placeholder(R.drawable.ic_user_placeholder).into(holder.mProfilePictureView);
+        } else {
+            holder.mProfilePictureView.setImageResource(R.drawable.ic_user_placeholder);
         }
 
-//        if (item.getImages() != null && !item.getImages().isEmpty()) {
-//            holder.mImageView.setVisibility(View.VISIBLE);
-//            Picasso.with(context).load(item.getImages().get(0).getUrl()).into(holder.mImageView);
-//        } else {
-//            holder.mImageView.setVisibility(View.GONE);
-//        }
-
-        ((GalleryViewAdapter) holder.mRecyclerView.getAdapter()).setItems(item.getImages());
+        if (!item.getImages().isEmpty()) {
+            holder.mRecyclerView.setVisibility(View.VISIBLE);
+            ((GalleryViewAdapter) holder.mRecyclerView.getAdapter()).setItems(item.getImages());
+        } else {
+            holder.mRecyclerView.setVisibility(View.GONE);
+        }
 
         holder.mNameView.setText(item.getName());
 
@@ -161,9 +161,16 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         Image profileImage = item.getOpportunitable().getProfileImage();
         if (profileImage != null) {
             Picasso.with(context).load(profileImage.getUrl()).transform(new CircleTransform(true)).placeholder(R.drawable.ic_user_placeholder).into(holder.mProfilePictureView);
+        } else {
+            holder.mProfilePictureView.setImageResource(R.drawable.ic_user_placeholder);
         }
 
-        ((GalleryViewAdapter) holder.mRecyclerView.getAdapter()).setItems(item.getImages());
+        if (!item.getImages().isEmpty()) {
+            holder.mRecyclerView.setVisibility(View.VISIBLE);
+            ((GalleryViewAdapter) holder.mRecyclerView.getAdapter()).setItems(item.getImages());
+        } else {
+            holder.mRecyclerView.setVisibility(View.GONE);
+        }
 
         String headline = item.getTitle();
         if (!TextUtils.isEmpty(headline)) {
@@ -203,7 +210,7 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 else time += " - " + DateHelper.format(DateHelper.eventDateFormat, endTime);
             }
         } else {
-            time = "Flexível";
+            time = context.getString(R.string.ongoing);
         }
         holder.mTimeTextView.setText(time);
 

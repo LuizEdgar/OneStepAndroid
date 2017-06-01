@@ -1,4 +1,4 @@
-package com.lutzed.servoluntario.opportunity;
+package com.lutzed.servoluntario.opportunities;
 
 import android.graphics.Bitmap;
 import android.text.TextUtils;
@@ -30,9 +30,9 @@ import retrofit2.Response;
  * Created by luizfreitas on 18/04/2017.
  */
 
-public class OpportunityPresenter implements OpportunityContract.Presenter {
+public class EditOpportunityPresenter implements EditOpportunityContract.Presenter {
 
-    private final OpportunityContract.View mView;
+    private final EditOpportunityContract.View mView;
     private final Api.ApiClient mApiClient;
     private final AuthHelper mAuthHelper;
     private Opportunity mOpportunity;
@@ -49,8 +49,8 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
     private List<Image> mLocalImages;
     private List<Image> mImagesToDestroy;
 
-    public OpportunityPresenter(OpportunityFragment opportunityFragment, Api.ApiClient apiClient, AuthHelper authHelper, Opportunity opportunity) {
-        mView = opportunityFragment;
+    public EditOpportunityPresenter(EditOpportunityFragment editOpportunityFragment, Api.ApiClient apiClient, AuthHelper authHelper, Opportunity opportunity) {
+        mView = editOpportunityFragment;
         mApiClient = apiClient;
         mAuthHelper = authHelper;
         mView.setPresenter(this);

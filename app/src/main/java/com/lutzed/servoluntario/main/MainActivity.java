@@ -15,7 +15,7 @@ import android.widget.FrameLayout;
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.Opportunity;
-import com.lutzed.servoluntario.opportunities.OpportunitiesActivity;
+import com.lutzed.servoluntario.opportunities.EditOpportunityActivity;
 import com.lutzed.servoluntario.util.AuthHelper;
 
 import butterknife.BindView;
@@ -63,8 +63,8 @@ public class MainActivity extends AppCompatActivity {
                     Api.getClient(AuthHelper.getInstance(MainActivity.this).getUser()).getOpportunity(11l).enqueue(new Callback<Opportunity>() {
                         @Override
                         public void onResponse(Call<Opportunity> call, Response<Opportunity> response) {
-                            Intent intent = new Intent(MainActivity.this, OpportunitiesActivity.class);
-                            intent.putExtra(OpportunitiesActivity.EXTRA_OPPORTUNITY, response.body());
+                            Intent intent = new Intent(MainActivity.this, EditOpportunityActivity.class);
+                            intent.putExtra(EditOpportunityActivity.EXTRA_OPPORTUNITY, response.body());
                             startActivity(intent);
                         }
 
