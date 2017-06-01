@@ -8,6 +8,8 @@ import com.lutzed.servoluntario.models.Organization;
 import com.lutzed.servoluntario.util.AuthHelper;
 import com.lutzed.servoluntario.util.DateHelper;
 
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -76,8 +78,9 @@ public class OrganizationPresenter implements OrganizationContract.Presenter {
         mView.setMission(organization.getMission());
         mView.setCnpj(organization.getCnpj());
         mView.setContacts(organization.getContacts());
-        Location location = organization.getLocations().get(0);
-        if (location != null) mView.setLocation(location.getName());
+        List<Location> locations = organization.getLocations();
+        if (locations != null && !locations.isEmpty())
+            mView.setLocation(locations.get(0).getName());
         String establishedAt = organization.getEstablishedAt();
         if (!TextUtils.isEmpty(establishedAt))
             mView.setEstablishedAt(DateHelper.format(DateHelper.yearFormat, establishedAt));

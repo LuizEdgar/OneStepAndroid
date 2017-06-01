@@ -174,5 +174,6 @@
     <string name="established_at">Established At</string>
     <string name="cnpj">CNPJ</string>
     <string name="title_activity_organization">Organization</string>
+    <string name="title_activity_volunteer">Volunteer</string>
 
 </resources>

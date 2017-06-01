@@ -17,6 +17,7 @@ import com.lutzed.servoluntario.adapters.GalleryViewAdapter;
 import com.lutzed.servoluntario.models.FeedItem;
 import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.Location;
+import com.lutzed.servoluntario.models.Opportunitable;
 import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.Organization;
 import com.lutzed.servoluntario.models.Volunteer;
@@ -45,8 +46,10 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
     public interface OnFeedItemAdapterListener {
         void onOrganizationClicked(Organization organization);
+        void onOrganizationClicked(Long organizationId);
         void onOpportunityClicked(Opportunity opportunity);
         void onVolunteerClicked(Volunteer volunteer);
+        void onVolunteerClicked(Long volunteerId);
     }
 
     public void clearData() {
@@ -235,6 +238,17 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
 
         holder.mMoreButton.setOnClickListener(itemListener);
         holder.mTitleView.setOnClickListener(itemListener);
+
+        holder.mInfosView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (holder.mItem.getOpportunitableTypeAsEnum() == Opportunitable.Type.VOLUNTEER){
+                    mListener.onVolunteerClicked(holder.mItem.getOpportunitable().getId());
+                }else if (holder.mItem.getOpportunitableTypeAsEnum() == Opportunitable.Type.ORGANIZATION){
+                    mListener.onOrganizationClicked(holder.mItem.getOpportunitable().getId());
+                }
+            }
+        });
 
     }
 

@@ -1,4 +1,4 @@
-package com.lutzed.servoluntario.organization;
+package com.lutzed.servoluntario.volunteer;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -9,7 +9,7 @@ import android.widget.ImageView;
 
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.api.Api;
-import com.lutzed.servoluntario.models.Organization;
+import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.ActivityUtils;
 import com.lutzed.servoluntario.util.AuthHelper;
 import com.squareup.picasso.Picasso;
@@ -17,19 +17,19 @@ import com.squareup.picasso.Picasso;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class OrganizationActivity extends AppCompatActivity implements OrganizationFragment.Listener {
+public class VolunteerActivity extends AppCompatActivity implements VolunteerFragment.Listener {
 
-    public static final String EXTRA_ORGANIZATION = "extra_organization";
-    public static final String EXTRA_ORGANIZATION_ID = "extra_organization_id";
+    public static final String EXTRA_VOLUNTEER = "extra_volunteer";
+    public static final String EXTRA_VOLUNTEER_ID = "extra_volunteer_id";
 
     @BindView(R.id.image) ImageView mImageView;
 
-    private OrganizationPresenter mOrganizationPresenter;
+    private VolunteerPresenter mVolunteerPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_organization);
+        setContentView(R.layout.activity_volunteer);
 
         ButterKnife.bind(this);
 
@@ -40,26 +40,26 @@ public class OrganizationActivity extends AppCompatActivity implements Organizat
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        OrganizationFragment organizationFragment =
-                (OrganizationFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
+        VolunteerFragment volunteerFragment =
+                (VolunteerFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
 
 
-        if (organizationFragment == null) {
+        if (volunteerFragment == null) {
             // Create the fragment
-            organizationFragment = OrganizationFragment.newInstance();
+            volunteerFragment = VolunteerFragment.newInstance();
             ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), organizationFragment, R.id.contentFrame);
+                    getSupportFragmentManager(), volunteerFragment, R.id.contentFrame);
         }
 
         AuthHelper authHelper = AuthHelper.getInstance(this);
         // Create the presenter
 
-        if (getIntent().hasExtra(EXTRA_ORGANIZATION)) {
-            Organization opportunity = getIntent().getParcelableExtra(EXTRA_ORGANIZATION);
-            mOrganizationPresenter = new OrganizationPresenter(organizationFragment, Api.getClient(authHelper.getUser()), authHelper, opportunity);
-        } else if (getIntent().hasExtra(EXTRA_ORGANIZATION_ID)) {
-            long id = getIntent().getLongExtra(EXTRA_ORGANIZATION_ID, 0);
-            mOrganizationPresenter = new OrganizationPresenter(organizationFragment, Api.getClient(authHelper.getUser()), authHelper, id);
+        if (getIntent().hasExtra(EXTRA_VOLUNTEER)) {
+            Volunteer volunteer = getIntent().getParcelableExtra(EXTRA_VOLUNTEER);
+            mVolunteerPresenter = new VolunteerPresenter(volunteerFragment, Api.getClient(authHelper.getUser()), authHelper, volunteer);
+        } else if (getIntent().hasExtra(EXTRA_VOLUNTEER_ID)) {
+            long id = getIntent().getLongExtra(EXTRA_VOLUNTEER_ID, 0);
+            mVolunteerPresenter = new VolunteerPresenter(volunteerFragment, Api.getClient(authHelper.getUser()), authHelper, id);
         }
 
         // Load previously saved state, if available.

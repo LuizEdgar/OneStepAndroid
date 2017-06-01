@@ -76,4 +76,31 @@ public class Opportunitable implements Parcelable {
             return new Opportunitable[size];
         }
     };
+
+    public enum Type {
+        ALL("All"),
+        VOLUNTEER("Volunteer"),
+        ORGANIZATION("Organization");
+
+        private final String value;
+
+        Type(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public static Type fromString(String value) {
+            switch (value) {
+                case "Volunteer":
+                    return VOLUNTEER;
+                case "Organization":
+                    return ORGANIZATION;
+                default:
+                    return ALL;
+            }
+        }
+    }
 }

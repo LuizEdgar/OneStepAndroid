@@ -358,8 +358,12 @@ public class Opportunity implements Parcelable, FeedItem {
     }
 
     @Override
-    public Type getFeedableTypeAsEnum(){
+    public Type getFeedableTypeAsEnum() {
         return Type.fromString(this.feedableType);
+    }
+
+    public Opportunitable.Type getOpportunitableTypeAsEnum() {
+        return Opportunitable.Type.fromString(this.opportunitableType);
     }
 
     public String getFeedableType() {
