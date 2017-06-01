@@ -4,11 +4,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lutzed.servoluntario.R;
+import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.selection.ItemsSelectionFragment.OnListFragmentInteractionListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -108,15 +111,22 @@ public class OpportunitiesItemsAdapter extends RecyclerView.Adapter<Opportunitie
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_selectable_opportunity, parent, false);
+                .inflate(R.layout.item_opportunity_items, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getId() + "");
-        holder.mContentView.setText(mValues.get(position).getName());
+
+        Image image = holder.mItem.getImage();
+        if (image != null) {
+            Picasso.with(holder.mView.getContext()).load(image.getUrl()).placeholder(R.drawable.ic_group_work_black_24dp).into(holder.mImageView);
+        } else {
+            holder.mImageView.setImageResource(R.drawable.ic_group_work_black_24dp);
+        }
+
+        holder.mNameView.setText(mValues.get(position).getName());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,8 +145,8 @@ public class OpportunitiesItemsAdapter extends RecyclerView.Adapter<Opportunitie
 
     class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
-        @BindView(R.id.id) TextView mIdView;
-        @BindView(R.id.content) TextView mContentView;
+        @BindView(R.id.image) ImageView mImageView;
+        @BindView(R.id.name) TextView mNameView;
 
         SelectableItem mItem;
 
@@ -149,7 +159,7 @@ public class OpportunitiesItemsAdapter extends RecyclerView.Adapter<Opportunitie
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mNameView.getText() + "'";
         }
     }
 }

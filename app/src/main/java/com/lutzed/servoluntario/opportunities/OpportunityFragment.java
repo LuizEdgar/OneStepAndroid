@@ -43,9 +43,10 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @BindView(R.id.causesRecyclerView) RecyclerView mCausesRecyclerView;
     @BindView(R.id.skillsRecyclerView) RecyclerView mSkillsRecyclerView;
     @BindView(R.id.imagesRecyclerView) RecyclerView mGalleryRecyclerView;
-    @BindView(R.id.causesTitle) View mCausesTitleView;
-    @BindView(R.id.skillsTitle) View mSkillsTitleView;
-    @BindView(R.id.galleryTitle) View mGalleryView;
+    @BindView(R.id.othersWrapper) View mOthersWrapper;
+    @BindView(R.id.causesWrapper) View mCausesWrapper;
+    @BindView(R.id.skillsWrapper) View mSkillsWrapper;
+    @BindView(R.id.galleryWrapper) View mGalleryWrapper;
 
     private OpportunityContract.Presenter mPresenter;
 
@@ -112,7 +113,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     public void addCauses(List<? extends SelectableItem> causes) {
         if (causes == null || causes.isEmpty()) {
             mCausesRecyclerView.setVisibility(View.GONE);
-            mCausesTitleView.setVisibility(View.GONE);
+            mCausesWrapper.setVisibility(View.GONE);
         } else {
             OpportunitiesItemsAdapter adapter = (OpportunitiesItemsAdapter) mCausesRecyclerView.getAdapter();
             adapter.addItems(causes);
@@ -123,7 +124,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     public void addSkills(List<? extends SelectableItem> skills) {
         if (skills == null || skills.isEmpty()) {
             mSkillsRecyclerView.setVisibility(View.GONE);
-            mSkillsTitleView.setVisibility(View.GONE);
+            mSkillsWrapper.setVisibility(View.GONE);
         } else {
             OpportunitiesItemsAdapter adapter = (OpportunitiesItemsAdapter) mSkillsRecyclerView.getAdapter();
             adapter.addItems(skills);
@@ -134,7 +135,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     public void addImages(List<Image> images) {
         if (images == null || images.isEmpty()) {
             mGalleryRecyclerView.setVisibility(View.GONE);
-            mGalleryView.setVisibility(View.GONE);
+            mGalleryWrapper.setVisibility(View.GONE);
         } else {
             GalleryViewAdapter adapter = (GalleryViewAdapter) mGalleryRecyclerView.getAdapter();
             adapter.addItems(images);
@@ -160,6 +161,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         if (volunteersNumber == null) {
             mVolunteersNumberView.setVisibility(View.GONE);
         } else {
+            mOthersWrapper.setVisibility(View.VISIBLE);
             mVolunteersNumberView.setData(String.valueOf(volunteersNumber));
         }
 
@@ -170,6 +172,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         if (TextUtils.isEmpty(timeCommitment)) {
             mTimeCommitmentView.setVisibility(View.GONE);
         } else {
+            mOthersWrapper.setVisibility(View.VISIBLE);
             mTimeCommitmentView.setData(timeCommitment);
         }
     }
@@ -179,6 +182,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         if (TextUtils.isEmpty(othersRequirements)) {
             mOthersRequirementsView.setVisibility(View.GONE);
         } else {
+            mOthersWrapper.setVisibility(View.VISIBLE);
             mOthersRequirementsView.setData(othersRequirements);
         }
     }
@@ -188,6 +192,7 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         if (TextUtils.isEmpty(tags)) {
             mTagsView.setVisibility(View.GONE);
         } else {
+            mOthersWrapper.setVisibility(View.VISIBLE);
             mTagsView.setData(tags);
         }
     }

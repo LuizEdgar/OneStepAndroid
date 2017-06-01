@@ -42,6 +42,8 @@
             android:paddingRight="16dp"
             android:paddingTop="16dp"/>
 
+        <include layout="@layout/partial_divider"/>
+
         <com.lutzed.servoluntario.util.DataView
             android:id="@+id/time"
             android:layout_width="match_parent"
@@ -63,90 +65,131 @@
             app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
             app:title="@string/contact"/>
 
-        <TextView
-            android:id="@+id/galleryTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:paddingLeft="52dp"
-            android:paddingRight="16dp"
-            android:paddingTop="16dp"
-            android:text="@string/gallery"
-            android:textColor="@color/secondaryText"
-            android:textSize="18sp"/>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/imagesRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"/>
-
-        <TextView
-            android:id="@+id/causesTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:paddingLeft="52dp"
-            android:paddingRight="16dp"
-            android:paddingTop="16dp"
-            android:text="@string/causes"
-            android:textColor="@color/secondaryText"
-            android:textSize="18sp"/>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/causesRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"/>
-
-        <TextView
-            android:id="@+id/skillsTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="16dp"
-            android:paddingLeft="52dp"
-            android:paddingRight="16dp"
-            android:paddingTop="16dp"
-            android:text="@string/skills"
-            android:textColor="@color/secondaryText"
-            android:textSize="18sp"/>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/skillsRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"/>
-
-        <com.lutzed.servoluntario.util.DataView
-            android:id="@+id/volunteersNumber"
+        <LinearLayout
+            android:id="@+id/galleryWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
-            app:title="@string/volunteers_number"/>
+            android:orientation="vertical"
+            android:visibility="gone">
 
-        <com.lutzed.servoluntario.util.DataView
-            android:id="@+id/timeCommitment"
+            <include layout="@layout/partial_divider"/>
+
+            <TextView
+                android:id="@+id/galleryTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:paddingLeft="52dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:text="@string/gallery"
+                android:textColor="@color/tertiaryText"
+                android:textSize="18sp"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/imagesRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/causesWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
-            app:title="@string/time_commitment"/>
+            android:orientation="vertical">
 
-        <com.lutzed.servoluntario.util.DataView
-            android:id="@+id/othersRequirements"
+            <include layout="@layout/partial_divider"/>
+
+            <TextView
+                android:id="@+id/causesTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:paddingLeft="52dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:text="@string/causes"
+                android:textColor="@color/tertiaryText"
+                android:textSize="18sp"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/causesRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/skillsWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
-            app:title="@string/others_requirements"/>
+            android:orientation="vertical">
 
-        <com.lutzed.servoluntario.util.DataView
-            android:id="@+id/tags"
+            <include layout="@layout/partial_divider"/>
+
+            <TextView
+                android:id="@+id/skillsTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="16dp"
+                android:paddingLeft="52dp"
+                android:paddingRight="16dp"
+                android:paddingTop="8dp"
+                android:text="@string/skills"
+                android:textColor="@color/tertiaryText"
+                android:textSize="18sp"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/skillsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/othersWrapper"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
-            app:title="@string/tags"/>
+            android:orientation="vertical">
+
+            <include layout="@layout/partial_divider"/>
+
+            <com.lutzed.servoluntario.util.DataView
+                android:id="@+id/volunteersNumber"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
+                app:title="@string/volunteers_number"/>
+
+            <com.lutzed.servoluntario.util.DataView
+                android:id="@+id/timeCommitment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
+                app:title="@string/time_commitment"/>
+
+            <com.lutzed.servoluntario.util.DataView
+                android:id="@+id/othersRequirements"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
+                app:title="@string/others_requirements"/>
+
+            <com.lutzed.servoluntario.util.DataView
+                android:id="@+id/tags"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
+                app:title="@string/tags"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 

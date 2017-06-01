@@ -17,7 +17,6 @@
         android:clipToPadding="false"
         android:padding="8dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.lutzed.servoluntario.main.FeedFragment"
-        tools:listitem="@layout/item_selection"/>
+        tools:context="com.lutzed.servoluntario.main.FeedFragment"/>
 
 </android.support.v4.widget.SwipeRefreshLayout>
