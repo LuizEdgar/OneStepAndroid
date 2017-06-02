@@ -90,6 +90,7 @@
                 android:id="@+id/imagesRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="120dp"
+                android:clipToPadding="false"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"/>
 
@@ -119,6 +120,7 @@
                 android:id="@+id/causesRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clipToPadding="false"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"/>
 
@@ -148,6 +150,7 @@
                 android:id="@+id/skillsRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:clipToPadding="false"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"/>
 
@@ -165,28 +168,28 @@
                 android:id="@+id/volunteersNumber"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
+                app:primary_icon="@drawable/ic_people_black_24dp"
                 app:title="@string/volunteers_number"/>
 
             <com.lutzed.servoluntario.util.DataView
                 android:id="@+id/timeCommitment"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
+                app:primary_icon="@drawable/ic_timelapse_black_24dp"
                 app:title="@string/time_commitment"/>
 
             <com.lutzed.servoluntario.util.DataView
                 android:id="@+id/othersRequirements"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
+                app:primary_icon="@drawable/ic_format_list_numbered_black_24dp"
                 app:title="@string/others_requirements"/>
 
             <com.lutzed.servoluntario.util.DataView
                 android:id="@+id/tags"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
+                app:primary_icon="@drawable/ic_hashtag"
                 app:title="@string/tags"/>
 
         </LinearLayout>

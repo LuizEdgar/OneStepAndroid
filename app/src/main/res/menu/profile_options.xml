@@ -1,0 +1,28 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context="com.lutzed.servoluntario.opportunity.OpportunityDetail">
+
+    <item
+        android:id="@+id/action_options"
+        android:icon="@drawable/ic_more_vert_white_24dp"
+        android:title="@string/action_options"
+        app:showAsAction="always">
+        <!-- "file" submenu -->
+        <menu>
+            <item
+                android:id="@+id/share"
+                android:title="@string/share"/>
+            <item
+                android:id="@+id/action_edit"
+                android:title="@string/edit"
+                android:visible="false"/>
+            <item
+                android:id="@+id/action_sign_out"
+                android:title="@string/sign_out"
+                android:visible="false"/>
+        </menu>
+
+    </item>
+
+</menu>

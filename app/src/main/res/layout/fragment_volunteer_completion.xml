@@ -30,6 +30,15 @@
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin">
 
+            <ImageView
+                android:id="@+id/profileImage"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/ic_user_placeholder"/>
+
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -38,7 +47,7 @@
                     android:id="@+id/about"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_about"
+                    android:hint="@string/about"
                     android:inputType="textCapSentences"
                     android:maxLines="1"/>
 
@@ -52,7 +61,7 @@
                     android:id="@+id/occupation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_occupation"
+                    android:hint="@string/occupation"
                     android:imeActionId="@+id/save"
                     android:imeActionLabel="@string/action_save"
                     android:imeOptions="actionUnspecified"

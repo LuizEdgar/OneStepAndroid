@@ -67,6 +67,17 @@ public class OrganizationPresenter implements OrganizationContract.Presenter {
         });
     }
 
+    @Override
+    public void onEditOrganizationClicked() {
+        mView.showEditOrganization();
+    }
+
+    @Override
+    public void signOut() {
+        mAuthHelper.signout();
+        mView.signOut();
+    }
+
     private void setOrganizationDateOnView(Organization organization) {
         mView.setName(organization.getName());
         mView.setAbout(organization.getAbout());

@@ -1,5 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:ls="http://schemas.android.com/apk/res-auto"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
               xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
@@ -22,7 +22,7 @@
         android:layout_height="match_parent">
 
         <LinearLayout
-            android:id="@+id/create_opportunity_form"
+            android:id="@+id/edit_user_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -31,42 +31,119 @@
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin">
 
+            <ImageView
+                android:id="@+id/profileImage"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="16dp"
+                android:scaleType="centerCrop"
+                app:srcCompat="@drawable/ic_user_placeholder"/>
+
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/titleInputLayout"
+                android:id="@+id/emailInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/title"
+                    android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/title"
+                    android:hint="@string/email"
                     android:maxLines="1"/>
 
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/descriptionInputLayout"
+                android:id="@+id/usernameInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/description"
+                    android:id="@+id/username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/username"
+                    android:maxLines="1"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/passwordInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/password"
+                    android:inputType="textPassword"
+                    android:maxLines="1"
+                    android:text="@string/mock_password"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/nameInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/name"
+                    android:maxLines="1"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/aboutInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/about"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="top"
-                    android:hint="@string/description"
+                    android:hint="@string/about"
                     android:inputType="textMultiLine"
                     android:lines="4"
                     android:maxLines="4"/>
 
             </android.support.design.widget.TextInputLayout>
 
-            <com.satsuware.usefulviews.LabelledSpinner
-                android:id="@+id/contactSpinner"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/locationInputLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                ls:labelText="@string/contact"/>
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/location"
+                    android:inputType="text"
+                    android:maxLines="1"/>
+
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/contactInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/contact"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/contact"
+                    android:inputType="text"
+                    android:maxLines="1"/>
+
+            </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
                 android:id="@+id/causesWrapper"
@@ -125,60 +202,66 @@
             </LinearLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/volunteersNumberInputLayout"
+                android:id="@+id/sizeInputLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="gone">
 
                 <EditText
-                    android:id="@+id/volunteersNumber"
+                    android:id="@+id/size"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/volunteers_number"
+                    android:hint="@string/size"
                     android:inputType="number"
                     android:maxLines="1"/>
 
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/timeCommitmentInputLayout"
+                android:id="@+id/cnpjInputLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="gone">
 
                 <EditText
-                    android:id="@+id/timeCommitment"
+                    android:id="@+id/cnpj"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/time_commitment"
-                    android:inputType="text"
+                    android:hint="@string/cnpj"
+                    android:inputType="number"
                     android:maxLines="1"/>
 
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/othersRequirementsInputLayout"
+                android:id="@+id/missionInputLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="gone">
 
                 <EditText
-                    android:id="@+id/othersRequirements"
+                    android:id="@+id/mission"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/others_requirements"
-                    android:inputType="text"
-                    android:maxLines="1"/>
+                    android:gravity="top"
+                    android:hint="@string/mission"
+                    android:inputType="textMultiLine"
+                    android:lines="4"
+                    android:maxLines="4"/>
 
             </android.support.design.widget.TextInputLayout>
 
             <android.support.design.widget.TextInputLayout
-                android:id="@+id/tagsInputLayout"
+                android:id="@+id/occupationInputLayout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:visibility="gone">
 
                 <EditText
-                    android:id="@+id/tags"
+                    android:id="@+id/occupation"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/tags"
+                    android:hint="@string/occupation"
                     android:inputType="text"
                     android:maxLines="1"/>
 
@@ -188,12 +271,13 @@
                 android:id="@+id/imagesWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/causes"/>
+                    android:text="@string/images"/>
 
                 <TextView
                     android:id="@+id/imagesError"
@@ -212,158 +296,94 @@
 
             </LinearLayout>
 
-
-            <RadioGroup
-                android:id="@+id/locationTypeGroup"
+            <LinearLayout
+                android:id="@+id/genderWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical"
+                android:visibility="gone">
 
-                <RadioButton
-                    android:id="@+id/isLocation"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:checked="true"
-                    android:text="@string/location"/>
-
-                <RadioButton
-                    android:id="@+id/isVirtual"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/virtual"/>
-
-            </RadioGroup>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/locationInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/location"
+                <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/location"
+                    android:text="@string/gender"/>
+
+                <RadioGroup
+                    android:id="@+id/genderTypeGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/male"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:checked="true"
+                        android:text="@string/male"/>
+
+                    <RadioButton
+                        android:id="@+id/female"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/female"/>
+
+                </RadioGroup>
+
+            </LinearLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/siteInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone">
+
+                <EditText
+                    android:id="@+id/site"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/site"
                     android:inputType="text"
                     android:maxLines="1"/>
 
             </android.support.design.widget.TextInputLayout>
 
-            <RadioGroup
-                android:id="@+id/timeTypeGroup"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/birthAtInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:visibility="gone">
 
-                <RadioButton
-                    android:id="@+id/isDated"
-                    android:layout_width="0dp"
+                <EditText
+                    android:id="@+id/birthAt"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:checked="true"
-                    android:text="@string/dated"/>
+                    android:hint="@string/birth_at"
+                    android:inputType="date"
+                    android:maxLines="1"
+                    android:text="@string/date"
+                    android:textColor="@color/tertiaryText"/>
 
-                <RadioButton
-                    android:id="@+id/isOngoing"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/ongoing"/>
+            </android.support.design.widget.TextInputLayout>
 
-            </RadioGroup>
-
-            <LinearLayout
-                android:id="@+id/dateWrapper"
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/establishedAtInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:visibility="gone">
 
-                <LinearLayout
+                <EditText
+                    android:id="@+id/establishedAt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:hint="@string/established_at"
+                    android:inputType="date"
+                    android:maxLines="1"
+                    android:text="@string/date"
+                    android:textColor="@color/tertiaryText"/>
 
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/startDateAtInputLayout"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2">
-
-                        <EditText
-                            android:id="@+id/startDateAt"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/from"
-                            android:inputType="date"
-                            android:maxLines="1"
-                            android:text="@string/date"
-                            android:textColor="@color/tertiaryText"/>
-
-                    </android.support.design.widget.TextInputLayout>
-
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/startTimeAtInputLayout"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-
-                        <EditText
-                            android:id="@+id/startTimeAt"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="text"
-                            android:maxLines="1"
-                            android:text="@string/time"
-                            android:textColor="@color/tertiaryText"/>
-
-                    </android.support.design.widget.TextInputLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/endDateAtInputLayout"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2">
-
-                        <EditText
-                            android:id="@+id/endDateAt"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="@string/to"
-                            android:inputType="date"
-                            android:maxLines="1"
-                            android:text="@string/date"
-                            android:textColor="@color/tertiaryText"/>
-
-                    </android.support.design.widget.TextInputLayout>
-
-                    <android.support.design.widget.TextInputLayout
-                        android:id="@+id/endTimeAtInputLayout"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-
-                        <EditText
-                            android:id="@+id/endTimeAt"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="text"
-                            android:maxLines="1"
-                            android:text="@string/time"
-                            android:textColor="@color/tertiaryText"/>
-
-                    </android.support.design.widget.TextInputLayout>
-
-                </LinearLayout>
-            </LinearLayout>
+            </android.support.design.widget.TextInputLayout>
 
         </LinearLayout>
     </ScrollView>

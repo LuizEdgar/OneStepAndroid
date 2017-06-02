@@ -14,10 +14,23 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <ImageView
+            android:id="@+id/profileImage"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center_horizontal"
+            android:paddingLeft="16dp"
+            android:visibility="gone"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp"
+            android:scaleType="centerCrop"
+            app:srcCompat="@drawable/ic_user_placeholder"/>
+
         <TextView
             android:id="@+id/title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
             android:paddingTop="16dp"
@@ -52,7 +65,7 @@
             android:id="@+id/site"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:primary_icon="@drawable/ic_date_range_black_24dp"
+            app:primary_icon="@drawable/ic_language_black_24dp"
             app:title="@string/site"/>
 
         <LinearLayout
@@ -155,21 +168,21 @@
                 android:id="@+id/mission"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
+                app:primary_icon="@drawable/ic_goal"
                 app:title="@string/mission"/>
 
             <com.lutzed.servoluntario.util.DataView
                 android:id="@+id/establishedAt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
+                app:primary_icon="@drawable/ic_cake_black_24dp"
                 app:title="@string/established_at"/>
 
             <com.lutzed.servoluntario.util.DataView
                 android:id="@+id/cnpj"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:primary_icon="@drawable/ic_perm_contact_calendar_black_24dp"
+                app:primary_icon="@drawable/ic_business_black_24dp"
                 app:title="@string/cnpj"/>
 
         </LinearLayout>

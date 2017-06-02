@@ -9,6 +9,8 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/list"
+        android:padding="16dp"
+        android:clipToPadding="false"
         android:name="com.lutzed.servoluntario.selection.ItemsSelectionFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

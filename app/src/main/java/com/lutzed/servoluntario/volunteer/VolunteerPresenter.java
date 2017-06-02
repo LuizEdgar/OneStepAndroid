@@ -4,6 +4,7 @@ import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.Location;
 import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.AuthHelper;
+import com.lutzed.servoluntario.util.DateHelper;
 
 import java.util.List;
 
@@ -64,9 +65,25 @@ public class VolunteerPresenter implements VolunteerContract.Presenter {
         });
     }
 
+    @Override
+    public void onEditVolunteerClicked() {
+        mView.showEditVolunteer();
+    }
+
+    @Override
+    public void signOut() {
+        mAuthHelper.signout();
+        mView.signOut();
+    }
+
     private void setVolunteerDateOnView(Volunteer volunteer) {
         mView.setName(volunteer.getName());
         mView.setAbout(volunteer.getAbout());
+        mView.setOccupation(volunteer.getOccupation());
+        mView.setBirthAt(DateHelper.format(DateHelper.yearFormat, volunteer.getBirthAt()));
+        String gender = volunteer.getGenderEnum().toString().toLowerCase();
+        gender = Character.toUpperCase(gender.charAt(0)) + gender.substring(1);
+        mView.setGender(gender);
         mView.addCauses(volunteer.getCauses());
         mView.addSkills(volunteer.getSkills());
         if (volunteer.getProfileImage() != null)

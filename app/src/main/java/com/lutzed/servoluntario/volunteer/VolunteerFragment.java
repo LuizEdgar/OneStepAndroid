@@ -1,6 +1,7 @@
 package com.lutzed.servoluntario.volunteer;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,17 +9,25 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.adapters.GalleryViewAdapter;
 import com.lutzed.servoluntario.adapters.OpportunitiesItemsAdapter;
+import com.lutzed.servoluntario.login.LoginActivity;
 import com.lutzed.servoluntario.models.Contact;
 import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.SelectableItem;
+import com.lutzed.servoluntario.user.EditUserActivity;
+import com.lutzed.servoluntario.util.CircleTransform;
 import com.lutzed.servoluntario.util.DataView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,18 +39,19 @@ import butterknife.ButterKnife;
  * A login screen that offers login via email/password.
  */
 public class VolunteerFragment extends Fragment implements VolunteerContract.View {
+    private static final String BUNDLE_CAN_EDIT = "bundle_can_edit";
 
+    @BindView(R.id.profileImage) ImageView mProfileImage;
     @BindView(R.id.title) TextView mNameView;
     @BindView(R.id.about) TextView mAboutView;
     @BindView(R.id.location) DataView mLocationView;
     @BindView(R.id.contact) DataView mContactView;
-    @BindView(R.id.site) DataView mSiteView;
     @BindView(R.id.imagesRecyclerView) RecyclerView mGalleryRecyclerView;
     @BindView(R.id.causesRecyclerView) RecyclerView mCausesRecyclerView;
     @BindView(R.id.skillsRecyclerView) RecyclerView mSkillsRecyclerView;
-    @BindView(R.id.establishedAt) DataView mEstablishedAtView;
-    @BindView(R.id.mission) DataView mMissionView;
-    @BindView(R.id.cnpj) DataView mCnpjView;
+    @BindView(R.id.birthAt) DataView mBirthAtView;
+    @BindView(R.id.occupation) DataView mOccupationView;
+    @BindView(R.id.gender) DataView mGenderView;
     @BindView(R.id.othersWrapper) View mOthersWrapper;
     @BindView(R.id.causesWrapper) View mCausesWrapper;
     @BindView(R.id.skillsWrapper) View mSkillsWrapper;
@@ -50,9 +60,25 @@ public class VolunteerFragment extends Fragment implements VolunteerContract.Vie
     private VolunteerContract.Presenter mPresenter;
 
     private Listener mListener;
+    private boolean mCanEdit;
 
-    public static VolunteerFragment newInstance() {
-        return new VolunteerFragment();
+    public static VolunteerFragment newInstance(boolean canEdit) {
+        VolunteerFragment fragment = new VolunteerFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(BUNDLE_CAN_EDIT, canEdit);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            mCanEdit = getArguments().getBoolean(BUNDLE_CAN_EDIT);
+        }
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -63,7 +89,7 @@ public class VolunteerFragment extends Fragment implements VolunteerContract.Vie
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_organization, container, false);
+        View root = inflater.inflate(R.layout.fragment_volunteer, container, false);
         ButterKnife.bind(this, root);
 
         LinearLayoutManager causesLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -95,6 +121,10 @@ public class VolunteerFragment extends Fragment implements VolunteerContract.Vie
             }
         }));
 
+        if (mListener == null) {
+            mProfileImage.setVisibility(View.VISIBLE);
+        }
+
         return root;
     }
 
@@ -103,6 +133,29 @@ public class VolunteerFragment extends Fragment implements VolunteerContract.Vie
         super.onViewCreated(view, savedInstanceState);
 
         mPresenter.start();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.profile_options, menu);
+
+        if (mCanEdit) {
+            menu.findItem(R.id.action_edit).setVisible(true);
+            menu.findItem(R.id.action_sign_out).setVisible(true);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_edit) {
+            mPresenter.onEditVolunteerClicked();
+            return true;
+        } else if (item.getItemId() == R.id.action_sign_out) {
+            mPresenter.signOut();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -158,32 +211,33 @@ public class VolunteerFragment extends Fragment implements VolunteerContract.Vie
     }
 
     @Override
-    public void setCnpj(String cnpj) {
-        if (cnpj == null) {
-            mCnpjView.setVisibility(View.GONE);
+    public void setOccupation(String occupation) {
+        if (occupation == null) {
+            mOccupationView.setVisibility(View.GONE);
         } else {
             mOthersWrapper.setVisibility(View.VISIBLE);
-            mCnpjView.setData(cnpj);
+            mOccupationView.setData(occupation);
         }
 
     }
 
     @Override
-    public void setSite(String site) {
-        if (TextUtils.isEmpty(site)) {
-            mSiteView.setVisibility(View.GONE);
+    public void setGender(String gender) {
+        if (TextUtils.isEmpty(gender)) {
+            mGenderView.setVisibility(View.GONE);
         } else {
-            mSiteView.setData(site);
+            mOthersWrapper.setVisibility(View.VISIBLE);
+            mGenderView.setData(gender);
         }
     }
 
     @Override
-    public void setMission(String mission) {
-        if (TextUtils.isEmpty(mission)) {
-            mMissionView.setVisibility(View.GONE);
+    public void setBirthAt(String birthAt) {
+        if (TextUtils.isEmpty(birthAt)) {
+            mBirthAtView.setVisibility(View.GONE);
         } else {
             mOthersWrapper.setVisibility(View.VISIBLE);
-            mMissionView.setData(mission);
+            mBirthAtView.setData(birthAt);
         }
     }
 
@@ -193,15 +247,6 @@ public class VolunteerFragment extends Fragment implements VolunteerContract.Vie
             mLocationView.setVisibility(View.GONE);
         } else {
             mLocationView.setData(location);
-        }
-    }
-
-    @Override
-    public void setEstablishedAt(String establishedAt) {
-        if (TextUtils.isEmpty(establishedAt)) {
-            mEstablishedAtView.setVisibility(View.GONE);
-        } else {
-            mEstablishedAtView.setData(establishedAt);
         }
     }
 
@@ -224,6 +269,22 @@ public class VolunteerFragment extends Fragment implements VolunteerContract.Vie
     @Override
     public void setCoverImage(String url) {
         if (mListener != null) mListener.onCoverImage(url);
+        else
+            Picasso.with(getContext()).load(url).transform(new CircleTransform(true)).placeholder(R.drawable.ic_user_placeholder).into(mProfileImage);
+    }
+
+    @Override
+    public void showEditVolunteer() {
+        Intent intent = new Intent(getContext(), EditUserActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void signOut() {
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        getActivity().finish();
+        startActivity(intent);
     }
 
     @Override
@@ -240,7 +301,7 @@ public class VolunteerFragment extends Fragment implements VolunteerContract.Vie
         mListener = null;
     }
 
-    public interface Listener{
+    public interface Listener {
         void onCoverImage(String url);
     }
 

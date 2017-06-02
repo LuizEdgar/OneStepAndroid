@@ -9,6 +9,7 @@ import android.widget.ImageView;
 
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.api.Api;
+import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.ActivityUtils;
 import com.lutzed.servoluntario.util.AuthHelper;
@@ -17,7 +18,7 @@ import com.squareup.picasso.Picasso;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class VolunteerActivity extends AppCompatActivity implements VolunteerFragment.Listener {
+public class VolunteerActivity extends AppCompatActivity implements VolunteerFragment.Listener{
 
     public static final String EXTRA_VOLUNTEER = "extra_volunteer";
     public static final String EXTRA_VOLUNTEER_ID = "extra_volunteer_id";
@@ -43,23 +44,29 @@ public class VolunteerActivity extends AppCompatActivity implements VolunteerFra
         VolunteerFragment volunteerFragment =
                 (VolunteerFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
 
+        Volunteer volunteer = null;
+        long volunteerId = 0;
+        if (getIntent().hasExtra(EXTRA_VOLUNTEER)) {
+            volunteer = getIntent().getParcelableExtra(EXTRA_VOLUNTEER);
+            volunteerId = volunteer.getId();
+        } else if (getIntent().hasExtra(EXTRA_VOLUNTEER_ID)) {
+            volunteerId = getIntent().getLongExtra(EXTRA_VOLUNTEER_ID, 0);
+        }
 
+        AuthHelper authHelper = AuthHelper.getInstance(this);
         if (volunteerFragment == null) {
             // Create the fragment
-            volunteerFragment = VolunteerFragment.newInstance();
+            volunteerFragment = VolunteerFragment.newInstance(authHelper.getUser().getKindEnum() == User.Kind.VOLUNTEER && authHelper.getUser().getVolunteer().getId().equals(volunteerId));
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), volunteerFragment, R.id.contentFrame);
         }
 
-        AuthHelper authHelper = AuthHelper.getInstance(this);
         // Create the presenter
 
         if (getIntent().hasExtra(EXTRA_VOLUNTEER)) {
-            Volunteer volunteer = getIntent().getParcelableExtra(EXTRA_VOLUNTEER);
             mVolunteerPresenter = new VolunteerPresenter(volunteerFragment, Api.getClient(authHelper.getUser()), authHelper, volunteer);
         } else if (getIntent().hasExtra(EXTRA_VOLUNTEER_ID)) {
-            long id = getIntent().getLongExtra(EXTRA_VOLUNTEER_ID, 0);
-            mVolunteerPresenter = new VolunteerPresenter(volunteerFragment, Api.getClient(authHelper.getUser()), authHelper, id);
+            mVolunteerPresenter = new VolunteerPresenter(volunteerFragment, Api.getClient(authHelper.getUser()), authHelper, volunteerId);
         }
 
         // Load previously saved state, if available.
