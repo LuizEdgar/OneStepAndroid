@@ -182,5 +182,9 @@
     <string name="male">Male</string>
     <string name="female">Female</string>
     <string name="contacts">Contacts</string>
+    <string name="action_options">Options</string>
+    <string name="share">Share</string>
+    <string name="edit">Edit</string>
+    <string name="sign_out">Sign Out</string>
 
 </resources>

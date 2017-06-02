@@ -64,6 +64,17 @@ public class VolunteerPresenter implements VolunteerContract.Presenter {
         });
     }
 
+    @Override
+    public void onEditVolunteerClicked() {
+        mView.showEditVolunteer();
+    }
+
+    @Override
+    public void signOut() {
+        mAuthHelper.signout();
+        mView.signOut();
+    }
+
     private void setVolunteerDateOnView(Volunteer volunteer) {
         mView.setName(volunteer.getName());
         mView.setAbout(volunteer.getAbout());

@@ -40,9 +40,17 @@ public interface OrganizationContract {
         void addImages(List<Image> images);
 
         void setCoverImage(String url);
+
+        void showEditOrganization();
+
+        void signOut();
     }
 
     interface Presenter extends BasePresenter {
         void loadOpportunity();
+
+        void onEditOrganizationClicked();
+
+        void signOut();
     }
 }

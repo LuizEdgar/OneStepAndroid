@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.Organization;
+import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.util.ActivityUtils;
 import com.lutzed.servoluntario.util.AuthHelper;
 import com.squareup.picasso.Picasso;
@@ -44,22 +45,29 @@ public class OrganizationActivity extends AppCompatActivity implements Organizat
                 (OrganizationFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
 
 
+        Organization organization = null;
+        long organizationId = 0;
+        if (getIntent().hasExtra(EXTRA_ORGANIZATION)) {
+            organization = getIntent().getParcelableExtra(EXTRA_ORGANIZATION);
+            organizationId = organization.getId();
+        } else if (getIntent().hasExtra(EXTRA_ORGANIZATION_ID)) {
+            organizationId = getIntent().getLongExtra(EXTRA_ORGANIZATION_ID, 0);
+        }
+
+        AuthHelper authHelper = AuthHelper.getInstance(this);
         if (organizationFragment == null) {
             // Create the fragment
-            organizationFragment = OrganizationFragment.newInstance();
+            organizationFragment = OrganizationFragment.newInstance(authHelper.getUser().getKindEnum() == User.Kind.ORGANIZATION && authHelper.getUser().getOrganization().getId().equals(organizationId));
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), organizationFragment, R.id.contentFrame);
         }
 
-        AuthHelper authHelper = AuthHelper.getInstance(this);
         // Create the presenter
 
         if (getIntent().hasExtra(EXTRA_ORGANIZATION)) {
-            Organization opportunity = getIntent().getParcelableExtra(EXTRA_ORGANIZATION);
-            mOrganizationPresenter = new OrganizationPresenter(organizationFragment, Api.getClient(authHelper.getUser()), authHelper, opportunity);
+            mOrganizationPresenter = new OrganizationPresenter(organizationFragment, Api.getClient(authHelper.getUser()), authHelper, organization);
         } else if (getIntent().hasExtra(EXTRA_ORGANIZATION_ID)) {
-            long id = getIntent().getLongExtra(EXTRA_ORGANIZATION_ID, 0);
-            mOrganizationPresenter = new OrganizationPresenter(organizationFragment, Api.getClient(authHelper.getUser()), authHelper, id);
+            mOrganizationPresenter = new OrganizationPresenter(organizationFragment, Api.getClient(authHelper.getUser()), authHelper, organizationId);
         }
 
         // Load previously saved state, if available.

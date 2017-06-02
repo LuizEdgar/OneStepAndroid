@@ -40,9 +40,17 @@ public interface VolunteerContract {
         void addImages(List<Image> images);
 
         void setCoverImage(String url);
+
+        void showEditVolunteer();
+
+        void signOut();
     }
 
     interface Presenter extends BasePresenter {
         void loadOpportunity();
+
+        void onEditVolunteerClicked();
+
+        void signOut();
     }
 }

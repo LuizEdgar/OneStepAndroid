@@ -21,6 +21,7 @@ public class FeedPresenter implements FeedContract.Presenter {
     private final FeedContract.View mView;
     private final Api.ApiClient mApiClient;
     private int mPageToGet;
+    private boolean mHasStarted;
 
     public FeedPresenter(FeedFragment opportunityFragment, Api.ApiClient apiClient) {
         mView = opportunityFragment;
@@ -32,6 +33,7 @@ public class FeedPresenter implements FeedContract.Presenter {
     @Override
     public void start() {
         loadItems(false);
+        mHasStarted = true;
     }
 
     @Override
@@ -86,5 +88,10 @@ public class FeedPresenter implements FeedContract.Presenter {
                 mView.showLoadingError();
             }
         });
+    }
+
+    @Override
+    public boolean hasStarted() {
+        return mHasStarted;
     }
 }

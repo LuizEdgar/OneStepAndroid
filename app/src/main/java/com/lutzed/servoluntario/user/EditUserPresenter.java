@@ -54,6 +54,9 @@ public class EditUserPresenter implements EditUserContract.Presenter {
     @Override
     public void start() {
 
+        mEstablishedAt = Calendar.getInstance();
+        mBirthAt = Calendar.getInstance();
+
         if (mUser.getKindEnum() == User.Kind.VOLUNTEER) {
 //            setupVolunteerData(mUser.getVolunteer());
         } else {
@@ -320,7 +323,7 @@ public class EditUserPresenter implements EditUserContract.Presenter {
 
     @Override
     public void birthAtClicked() {
-        mView.showEstablishedAtPicker(mEstablishedAt.get(Calendar.YEAR), mEstablishedAt.get(Calendar.MONTH), mEstablishedAt.get(Calendar.DAY_OF_MONTH));
+        mView.showEstablishedAtPicker(mBirthAt.get(Calendar.YEAR), mBirthAt.get(Calendar.MONTH), mBirthAt.get(Calendar.DAY_OF_MONTH));
     }
 
     @Override

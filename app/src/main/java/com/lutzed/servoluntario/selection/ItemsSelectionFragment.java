@@ -92,7 +92,7 @@ public class ItemsSelectionFragment extends Fragment implements ItemsSelectionCo
 
         ButterKnife.bind(this, view);
 
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 3);
         mRecyclerView.setLayoutManager(gridLayoutManager);
 
         mRecyclerView.setAdapter(new ItemsSelectionAdapter(new ArrayList<SelectableItem>(), mListener, mMode));

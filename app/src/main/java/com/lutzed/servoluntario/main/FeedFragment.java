@@ -68,6 +68,8 @@ public class FeedFragment extends Fragment implements FeedContract.View, MainFra
 
         if (getArguments() != null) {
         }
+
+        setHasOptionsMenu(false);
     }
 
     @Override

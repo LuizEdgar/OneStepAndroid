@@ -54,5 +54,6 @@ public interface FeedContract {
 
         void volunteerClicked(Long volunteerId);
 
+        boolean hasStarted();
     }
 }

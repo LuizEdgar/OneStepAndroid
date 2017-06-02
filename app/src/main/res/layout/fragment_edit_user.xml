@@ -32,6 +32,20 @@
             android:paddingTop="@dimen/activity_vertical_margin">
 
             <android.support.design.widget.TextInputLayout
+                android:id="@+id/emailInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/name"
+                    android:maxLines="1"/>
+
+            </android.support.design.widget.TextInputLayout>
+            
+            <android.support.design.widget.TextInputLayout
                 android:id="@+id/nameInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
@@ -313,7 +327,7 @@
                     android:id="@+id/establishedAt"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/birth_at"
+                    android:hint="@string/established_at"
                     android:inputType="date"
                     android:maxLines="1"
                     android:text="@string/date"

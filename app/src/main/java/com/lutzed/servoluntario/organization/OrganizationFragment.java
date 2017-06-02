@@ -1,6 +1,7 @@
 package com.lutzed.servoluntario.organization;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -15,9 +19,11 @@ import android.widget.TextView;
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.adapters.GalleryViewAdapter;
 import com.lutzed.servoluntario.adapters.OpportunitiesItemsAdapter;
+import com.lutzed.servoluntario.login.LoginActivity;
 import com.lutzed.servoluntario.models.Contact;
 import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.SelectableItem;
+import com.lutzed.servoluntario.user.EditUserActivity;
 import com.lutzed.servoluntario.util.DataView;
 
 import java.util.ArrayList;
@@ -30,6 +36,7 @@ import butterknife.ButterKnife;
  * A login screen that offers login via email/password.
  */
 public class OrganizationFragment extends Fragment implements OrganizationContract.View {
+    private static final String BUNDLE_CAN_EDIT = "bundle_can_edit";
 
     @BindView(R.id.title) TextView mNameView;
     @BindView(R.id.about) TextView mAboutView;
@@ -50,14 +57,30 @@ public class OrganizationFragment extends Fragment implements OrganizationContra
     private OrganizationContract.Presenter mPresenter;
 
     private Listener mListener;
+    private boolean mCanEdit;
 
-    public static OrganizationFragment newInstance() {
-        return new OrganizationFragment();
+    public static OrganizationFragment newInstance(boolean canEdit) {
+        OrganizationFragment fragment = new OrganizationFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(BUNDLE_CAN_EDIT, canEdit);
+        fragment.setArguments(args);
+        return fragment;
     }
 
     @Override
     public void setPresenter(OrganizationContract.Presenter presenter) {
         mPresenter = presenter;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            mCanEdit = getArguments().getBoolean(BUNDLE_CAN_EDIT);
+        }
+
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -104,6 +127,30 @@ public class OrganizationFragment extends Fragment implements OrganizationContra
 
         mPresenter.start();
     }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.profile_options, menu);
+
+        if (mCanEdit) {
+            menu.findItem(R.id.action_edit).setVisible(true);
+            menu.findItem(R.id.action_sign_out).setVisible(true);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_edit) {
+            mPresenter.onEditOrganizationClicked();
+            return true;
+        }else if (item.getItemId() == R.id.action_sign_out){
+            mPresenter.signOut();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
 
     @Override
     public void setLoadingIndicator(final boolean active) {
@@ -227,6 +274,20 @@ public class OrganizationFragment extends Fragment implements OrganizationContra
     }
 
     @Override
+    public void showEditOrganization() {
+        Intent intent = new Intent(getContext(), EditUserActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void signOut() {
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        getActivity().finish();
+        startActivity(intent);
+    }
+
+    @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         if (context instanceof Listener) {
@@ -240,7 +301,7 @@ public class OrganizationFragment extends Fragment implements OrganizationContra
         mListener = null;
     }
 
-    public interface Listener{
+    public interface Listener {
         void onCoverImage(String url);
     }
 
