@@ -13,6 +13,8 @@ public class Constants {
     public static final int MIN_OPPORTUNITY_SKILLS_REQUIRED = 0;
     public static final int MIN_OPPORTUNITY_CAUSES_REQUIRED = 0;
     public static final int MAX_IMAGE_SIZE = 600;
-    public static final int MIN_USER_CAUSES_REQUIRED = 0;
-    public static final int MIN_USER_SKILLS_REQUIRED = 0;
+    public static final int MIN_VOLUNTEERS_CAUSES_REQUIRED = 0;
+    public static final int MIN_VOLUNTEERS_SKILLS_REQUIRED = 0;
+    public static final int MIN_ORGANIZATIONS_CAUSES_REQUIRED = 0;
+    public static final int MIN_ORGANIZATIONS_SKILLS_REQUIRED = 0;
 }

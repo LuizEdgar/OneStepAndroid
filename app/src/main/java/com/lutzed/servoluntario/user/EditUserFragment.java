@@ -337,6 +337,7 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
 
     @Override
     public void addImages(List<Image> images) {
+        mImagesWrapperView.setVisibility(View.VISIBLE);
         GalleryViewAdapter adapter = (GalleryViewAdapter) mGalleryRecyclerView.getAdapter();
         adapter.addItemsBeforeLast(images);
         mGalleryRecyclerView.scrollToPosition(adapter.getItemCount() - 1);
@@ -835,7 +836,19 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
 
     @Override
     public void triggerSaveOrganization() {
+        String email = mEmailView.getText().toString().trim();
+        String username = mUsernameView.getText().toString().trim();
+        String name = mNameView.getText().toString().trim();
+        String about = mAboutView.getText().toString().trim();
 
+        List<Long> skillIds = ((OpportunitiesItemsAdapter) mSkillsRecyclerView.getAdapter()).getItemsIds();
+        List<Long> causeIds = ((OpportunitiesItemsAdapter) mCausesRecyclerView.getAdapter()).getItemsIds();
+
+        String size = mSizeView.getText().toString().trim();
+        String cnpj = mCnpjView.getText().toString().trim();
+        String mission = mMissionView.getText().toString().trim();
+
+        mPresenter.attemptSaveOrganization(email, username, name, about, skillIds, causeIds, size, cnpj, mission);
     }
 }
 

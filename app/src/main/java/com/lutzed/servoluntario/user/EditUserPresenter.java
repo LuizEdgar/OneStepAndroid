@@ -116,6 +116,155 @@ public class EditUserPresenter implements EditUserContract.Presenter {
         mView.addImages(organization.getImages());
     }
 
+    @Override
+    public void attemptSaveOrganization(String email, String username, String name, String about, List<Long> skillIds, List<Long> causeIds, String size, String cnpj, String mission) {
+        boolean cancel = false;
+
+        // Check for a valid password, if the user entered one.
+        if (TextUtils.isEmpty(username)) {
+            mView.showUsernameRequiredError();
+            if (!cancel) mView.setFocusUsernameField();
+            cancel = true;
+        } else if (!Snippets.isUsernameValid(username)) {
+            mView.showInvalidUsernameError();
+            if (!cancel) mView.setFocusUsernameField();
+            cancel = true;
+        }
+
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(email)) {
+            mView.showEmailRequiredError();
+            if (!cancel) mView.setFocusEmailField();
+            cancel = true;
+        } else if (!Snippets.isEmailValid(email)) {
+            mView.showInvalidEmailError();
+            if (!cancel) mView.setFocusEmailField();
+            cancel = true;
+        }
+
+        // Check for a valid name
+        if (TextUtils.isEmpty(name)) {
+            mView.showNameRequiredError();
+            mView.setNameFocus();
+            cancel = true;
+        }
+
+        if (mContact == null && mUser.getOrganization().getContacts() == null && mUser.getOrganization().getContacts().isEmpty()) {
+            mView.showContactRequiredError();
+            if (!cancel) mView.setFocusContactField();
+            cancel = true;
+        }
+
+        if (mCurrentPlace == null && mUser.getOrganization().getLocations() == null && mUser.getOrganization().getLocations().isEmpty()) {
+            mView.showLocationRequiredError();
+            if (!cancel) mView.setFocusLocation();
+            cancel = true;
+        }
+
+
+        int minCausesRequired = Constants.MIN_ORGANIZATIONS_CAUSES_REQUIRED;
+        if (minCausesRequired > 0 && causeIds.isEmpty()) {
+            mView.showCausesMinimumRequiredError(minCausesRequired);
+            if (!cancel) mView.setFocusCauses();
+            cancel = true;
+        }
+
+        int minSkillsRequired = Constants.MIN_ORGANIZATIONS_SKILLS_REQUIRED;
+        if (minSkillsRequired > 0 && skillIds.isEmpty()) {
+            mView.showSkillsMinimumRequiredError(minSkillsRequired);
+            if (!cancel) mView.setFocusSkills();
+            cancel = true;
+        }
+
+        if (!cancel) {
+            mView.setSavingIndicator(true);
+
+            User user = new User();
+            user.setId(mUser.getId());
+
+            user.setEmail(email);
+            user.setUsername(username);
+
+            Organization organization = new Organization();
+            organization.setId(mUser.getOrganization().getId());
+
+            organization.setName(name);
+            organization.setAbout(about);
+
+            Integer sizeInt;
+            try {
+                sizeInt = Integer.parseInt(size);
+            } catch (NumberFormatException e) {
+                sizeInt = null;
+            }
+            organization.setSize(sizeInt);
+            organization.setCnpj(cnpj);
+            organization.setMission(mission);
+
+            List<Contact> contacts = mUser.getOrganization().getContacts();
+            if (contacts != null && !contacts.isEmpty()) {
+                mContact.setId(contacts.get(0).getId());
+            }
+            List<Contact> contactsAttributes = new ArrayList<>();
+            contactsAttributes.add(mContact);
+            organization.setContactsAttributes(contactsAttributes);
+
+            if (mCurrentPlace != null) {
+                Location location = new Location();
+                List<Location> locations = mUser.getOrganization().getLocations();
+                if (locations != null && !locations.isEmpty()) {
+                    location.setId(locations.get(0).getId());
+                }
+                location.setName(mCurrentPlace.getName().toString());
+                location.setAddress1(mCurrentPlace.getAddress().toString());
+                location.setGooglePlacesId(mCurrentPlace.getId());
+                location.setLatitude(mCurrentPlace.getLatLng().latitude);
+                location.setLongitude(mCurrentPlace.getLatLng().longitude);
+
+                List<Location> locationsAttributes = new ArrayList<>();
+                locationsAttributes.add(location);
+                organization.setLocationsAttributes(locationsAttributes);
+            }
+
+            organization.setCauseIds(causeIds);
+            organization.setSkillIds(skillIds);
+            if (mProfileImage != null && mProfileImage.getBitmap() != null) {
+                organization.setProfileImage64(Snippets.encodeToBase64(mProfileImage.getBitmap(), true));
+            }
+
+            if (mEstablishedAtSet)
+                organization.setEstablishedAt(DateHelper.format(DateHelper.iso8601Format, mEstablishedAt.getTime()));
+
+            if (!mLocalImages.isEmpty()) {
+                List<String> base64Images = new ArrayList<>();
+                for (Image mLocalImage : mLocalImages) {
+                    base64Images.add(Snippets.encodeToBase64(mLocalImage.getBitmap(), true));
+                }
+                organization.setImagesAttributes64(base64Images);
+            }
+            organization.setImagesAttributes(mImagesToDestroy);
+
+            user.setOrganizationAttributes(organization);
+
+            Callback<User> updateCallback = new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    mAuthHelper.setUser(response.body());
+                    mView.setSavingIndicator(false);
+                    mView.close();
+                }
+
+                @Override
+                public void onFailure(Call<User> call, Throwable t) {
+                    mView.setSavingIndicator(false);
+                    t.printStackTrace();
+                }
+            };
+
+            mApiClient.updateUser(mUser.getId(), user).enqueue(updateCallback);
+        }
+    }
+
     private void setupVolunteerData(Volunteer volunteer) {
         mView.setName(volunteer.getName());
         mView.setAbout(volunteer.getAbout());
@@ -190,14 +339,14 @@ public class EditUserPresenter implements EditUserContract.Presenter {
             cancel = true;
         }
 
-        int minCausesRequired = Constants.MIN_USER_CAUSES_REQUIRED;
+        int minCausesRequired = Constants.MIN_VOLUNTEERS_CAUSES_REQUIRED;
         if (minCausesRequired > 0 && causeIds.isEmpty()) {
             mView.showCausesMinimumRequiredError(minCausesRequired);
             if (!cancel) mView.setFocusCauses();
             cancel = true;
         }
 
-        int minSkillsRequired = Constants.MIN_USER_SKILLS_REQUIRED;
+        int minSkillsRequired = Constants.MIN_VOLUNTEERS_SKILLS_REQUIRED;
         if (minSkillsRequired > 0 && skillIds.isEmpty()) {
             mView.showSkillsMinimumRequiredError(minSkillsRequired);
             if (!cancel) mView.setFocusSkills();
@@ -248,7 +397,7 @@ public class EditUserPresenter implements EditUserContract.Presenter {
             volunteer.setOccupation(occupation);
             volunteer.setCauseIds(causeIds);
             volunteer.setSkillIds(skillIds);
-            if (mProfileImage != null && mProfileImage.getBitmap() != null){
+            if (mProfileImage != null && mProfileImage.getBitmap() != null) {
                 volunteer.setProfileImage64(Snippets.encodeToBase64(mProfileImage.getBitmap(), true));
             }
 

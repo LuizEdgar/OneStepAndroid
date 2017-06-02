@@ -62,7 +62,10 @@ public class LocalCircleTransform {
             // Draw the image smaller than the background so a little border will be seen
             canvas.drawCircle(r, r, r - DEFAULT_BORDER_RADIUS, paint);
         }
-        squaredBitmap.recycle();
+
+        if (squaredBitmap != source) {
+            squaredBitmap.recycle();
+        }
 
         return bitmap;
     }
