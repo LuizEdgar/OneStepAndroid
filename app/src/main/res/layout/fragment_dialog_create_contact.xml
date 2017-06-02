@@ -57,7 +57,7 @@
                     android:id="@+id/email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_email"
+                    android:hint="@string/email"
                     android:imeActionId="@+id/save"
                     android:imeActionLabel="@string/action_save"
                     android:imeOptions="actionUnspecified"

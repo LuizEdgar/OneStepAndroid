@@ -8,6 +8,7 @@ import com.lutzed.servoluntario.interfaces.BaseView;
 import com.lutzed.servoluntario.models.Contact;
 import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.SelectableItem;
+import com.lutzed.servoluntario.models.Volunteer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +22,11 @@ public interface EditUserContract {
     interface View extends BaseView<Presenter> {
         void setLoadingIndicator(boolean active);
 
-        void setContacts(List<Contact> contacts);
-
         void addUniqueCauses(List<? extends SelectableItem> causes, List<? extends SelectableItem> toRemove);
 
         void addUniqueSkills(List<? extends SelectableItem> skills, List<? extends SelectableItem> toRemove);
 
-        void showCreateNewContact();
+        void showCreateNewContact(Contact contact);
 
         void showAddNewCause(List<Long> checkedItems);
 
@@ -69,27 +68,65 @@ public interface EditUserContract {
 
         void setFocusLocation();
 
-        void addImages(List<Image> images);
-
-        void showImageTypePicker();
-
-        void showAddNewImageFromGallery();
-
-        void showAddNewImageFromCamera();
-
-        void removeImageItem(Image imagem, int position);
-
-        void onRequestPermissionsResultFromPresenter(int requestCode, String[] permissions, int[] grantResults);
-
         void setCnpj(String cnpj);
 
         void setProfileImage(String url);
 
         void setEstablishedAt(String format);
+
+        void setUsername(String username);
+
+        void setEmail(String email);
+
+        void setSite(String site);
+
+        void setContact(String name);
+
+        void setOccupation(String occupation);
+
+        void setShowPasswordField(boolean visible);
+
+        void setGender(Volunteer.GenderEnum genderEnum);
+
+        void setSize(Integer size);
+
+        void setBirthAt(String format);
+
+        void triggerSaveVolunteer();
+
+        void triggerSaveOrganization();
+
+        void showUsernameRequiredError();
+
+        void setFocusUsernameField();
+
+        void showInvalidUsernameError();
+
+        void showEmailRequiredError();
+
+        void setFocusEmailField();
+
+        void showInvalidEmailError();
+
+        void addImages(List<Image> images);
+
+        void showImageTypePicker();
+
+        void showProfileImageTypePicker();
+
+        void showAddNewImageFromGallery(int request);
+
+        void showAddNewImageFromCamera(int request);
+
+        void removeImageItem(Image imagem, int position);
+
+        void onRequestPermissionsResultFromPresenter(int requestCode, String[] permissions, int[] grantResults);
+
+        void setProfileImage(Bitmap bitmap);
     }
 
     interface Presenter extends BasePresenter {
-        void attemptSaveUser(String title, String description, Contact contact, List<Long> skillIds, List<Long> causeIds, String volunteersNumber, String timeCommitment, String othersRequirements, String tags);
+        void attemptSaveUser();
 
         void createNewContact();
 
@@ -99,6 +136,8 @@ public interface EditUserContract {
 
         void onNewItemsSelection(ArrayList<SelectableItem> parcelableArrayListExtra, ArrayList<SelectableItem> parcelableArrayListExtra1);
 
+        void attemptSaveVolunteer(String email, String username, String name, String about, List<Long> skillIds, List<Long> causeIds, Volunteer.GenderEnum genderEnum, String occupation);
+
         void addNewContact(String name, String phone, String email);
 
         void onNewPlaceSelected(Place place);
@@ -106,12 +145,6 @@ public interface EditUserContract {
         void onEstablishedDateSelected(int year, int month, int dayOfMonth);
 
         void onBirthDateSelected(int year, int month, int dayOfMonth);
-
-        void addNewImage();
-
-        void addNewImageFromCamera();
-
-        void addNewImageFromGallery();
 
         void onNewImageAdded(Bitmap bitmap);
 
@@ -123,5 +156,14 @@ public interface EditUserContract {
 
         void establishedAtClicked();
 
+        void addNewImage();
+
+        void addNewProfileImage();
+
+        void addNewImageFromCamera(int request);
+
+        void addNewImageFromGallery(int request);
+
+        void onNewProfileImageAdded(Bitmap proportionalResizedBitmap);
     }
 }

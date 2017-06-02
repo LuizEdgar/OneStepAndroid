@@ -194,7 +194,12 @@ public class EditOpportunityPresenter implements EditOpportunityContract.Present
         if (!cancel) {
             mView.setSavingIndicator(true);
 
-            int volunteersNumberInt = 10;
+            Integer volunteersNumberInt;
+            try {
+                volunteersNumberInt = Integer.parseInt(volunteersNumber);
+            } catch (NumberFormatException e) {
+                volunteersNumberInt = null;
+            }
 
             Opportunity opportunity = new Opportunity();
             if (isUpdate) {

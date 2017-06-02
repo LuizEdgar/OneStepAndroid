@@ -113,9 +113,8 @@ public class MainActivity extends AppCompatActivity {
     private void navigateToEditProfile() {
         if (mEditProfileFragment == null) {
             mEditProfileFragment = EditUserFragment.newInstance();
-            addFragment(mEditProfileFragment, EDIT_PROFILE_TAG);
             mEditProfilePresenter = new EditUserPresenter(mEditProfileFragment, mApiClient, AuthHelper.getInstance(MainActivity.this));
-            mEditProfileFragment.start();
+            addFragment(mEditProfileFragment, EDIT_PROFILE_TAG);
         } else {
             showFragment(mEditProfileFragment);
         }
@@ -205,13 +204,10 @@ public class MainActivity extends AppCompatActivity {
                 mCurrentFragment = mDoFragment;
             } else if (isCurrentFragment(mEditProfileFragment)) {
                 mCurrentFragment = mEditProfileFragment;
-                mEditProfileFragment.start();
             } else if (isCurrentFragment(mVolunteerFragment)) {
                 mCurrentFragment = mVolunteerFragment;
-//                mVolunteerFragment.start();
             } else if (isCurrentFragment(mOrganizationFragment)) {
                 mCurrentFragment = mOrganizationFragment;
-//                mOrganizationFragment.start();
             } else {
                 throw new IllegalStateException("Unable to restore current section Fragment");
             }

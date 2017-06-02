@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.lutzed.servoluntario.R;
-import com.lutzed.servoluntario.dummy.DummyContent.DummyItem;
 import com.lutzed.servoluntario.models.FeedItem;
 import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.Organization;
@@ -29,12 +28,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
- */
 public class FeedFragment extends Fragment implements FeedContract.View, MainFragmentInterface {
 
     @BindView(R.id.list) RecyclerView mRecyclerView;

@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lutzed.servoluntario.R;
@@ -24,7 +25,9 @@ import com.lutzed.servoluntario.models.Contact;
 import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.user.EditUserActivity;
+import com.lutzed.servoluntario.util.CircleTransform;
 import com.lutzed.servoluntario.util.DataView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +41,7 @@ import butterknife.ButterKnife;
 public class OrganizationFragment extends Fragment implements OrganizationContract.View {
     private static final String BUNDLE_CAN_EDIT = "bundle_can_edit";
 
+    @BindView(R.id.profileImage) ImageView mProfileImage;
     @BindView(R.id.title) TextView mNameView;
     @BindView(R.id.about) TextView mAboutView;
     @BindView(R.id.location) DataView mLocationView;
@@ -118,6 +122,10 @@ public class OrganizationFragment extends Fragment implements OrganizationContra
             }
         }));
 
+        if (mListener == null) {
+            mProfileImage.setVisibility(View.VISIBLE);
+        }
+
         return root;
     }
 
@@ -144,7 +152,7 @@ public class OrganizationFragment extends Fragment implements OrganizationContra
         if (item.getItemId() == R.id.action_edit) {
             mPresenter.onEditOrganizationClicked();
             return true;
-        }else if (item.getItemId() == R.id.action_sign_out){
+        } else if (item.getItemId() == R.id.action_sign_out) {
             mPresenter.signOut();
             return true;
         }
@@ -271,6 +279,8 @@ public class OrganizationFragment extends Fragment implements OrganizationContra
     @Override
     public void setCoverImage(String url) {
         if (mListener != null) mListener.onCoverImage(url);
+        else
+            Picasso.with(getContext()).load(url).transform(new CircleTransform(true)).placeholder(R.drawable.ic_user_placeholder).into(mProfileImage);
     }
 
     @Override

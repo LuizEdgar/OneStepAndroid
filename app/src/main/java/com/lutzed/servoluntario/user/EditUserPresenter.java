@@ -15,12 +15,18 @@ import com.lutzed.servoluntario.models.Skill;
 import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.AuthHelper;
+import com.lutzed.servoluntario.util.Constants;
 import com.lutzed.servoluntario.util.DateHelper;
+import com.lutzed.servoluntario.util.Snippets;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by luizfreitas on 18/04/2017.
@@ -34,11 +40,13 @@ public class EditUserPresenter implements EditUserContract.Presenter {
     private final User mUser;
     private Calendar mEstablishedAt;
     private Calendar mBirthAt;
-    private boolean mMultiDateSet;
+    private boolean mEstablishedAtSet;
+    private boolean mBirthAtSet;
     private Place mCurrentPlace;
-    private List<Contact> mContacts;
     private List<Image> mLocalImages;
     private List<Image> mImagesToDestroy;
+    private Contact mContact;
+    private Image mProfileImage;
 
     public EditUserPresenter(EditUserFragment editUserFragment, Api.ApiClient apiClient, AuthHelper authHelper) {
         mView = editUserFragment;
@@ -46,7 +54,6 @@ public class EditUserPresenter implements EditUserContract.Presenter {
         mAuthHelper = authHelper;
         mUser = authHelper.getUser();
         mView.setPresenter(this);
-        mContacts = new ArrayList<>();
         mLocalImages = new ArrayList<>();
         mImagesToDestroy = new ArrayList<>();
     }
@@ -57,22 +64,39 @@ public class EditUserPresenter implements EditUserContract.Presenter {
         mEstablishedAt = Calendar.getInstance();
         mBirthAt = Calendar.getInstance();
 
+        setupUserData();
         if (mUser.getKindEnum() == User.Kind.VOLUNTEER) {
-//            setupVolunteerData(mUser.getVolunteer());
+            setupVolunteerData(mUser.getVolunteer());
         } else {
-//            setupOrganizationData(mUser.getOrganization());
+            setupOrganizationData(mUser.getOrganization());
         }
     }
 
-    private void setupOrganizationData(Organization organization) {
-        if (organization.getProfileImage() != null)
-            mView.setProfileImage(organization.getProfileImage().getUrl());
+    private void setupUserData() {
+        mView.setEmail(mUser.getEmail());
+        mView.setUsername(mUser.getUsername());
+        mView.setShowPasswordField(true);
+    }
 
+    private void setupOrganizationData(Organization organization) {
         mView.setName(organization.getName());
         mView.setAbout(organization.getAbout());
+
+        if (organization.getProfileImage() != null) {
+            mProfileImage = organization.getProfileImage();
+            mView.setProfileImage(mProfileImage.getUrl());
+        }
+
         mView.setMission(organization.getMission());
         mView.setCnpj(organization.getCnpj());
-        mView.setContacts(organization.getContacts());
+        mView.setCnpj(organization.getCnpj());
+        mView.setSize(organization.getSize());
+
+        List<Contact> contacts = organization.getContacts();
+        if (contacts != null && !contacts.isEmpty()) {
+            mContact = contacts.get(0);
+            mView.setContact(mContact.toString());
+        }
 
         List<Location> locations = organization.getLocations();
         if (locations != null && !locations.isEmpty()) {
@@ -93,159 +117,183 @@ public class EditUserPresenter implements EditUserContract.Presenter {
     }
 
     private void setupVolunteerData(Volunteer volunteer) {
+        mView.setName(volunteer.getName());
+        mView.setAbout(volunteer.getAbout());
 
+        if (volunteer.getProfileImage() != null) {
+            mProfileImage = volunteer.getProfileImage();
+            mView.setProfileImage(mProfileImage.getUrl());
+        }
+
+        mView.setOccupation(volunteer.getOccupation());
+        mView.setGender(volunteer.getGenderEnum());
+
+        List<Contact> contacts = volunteer.getContacts();
+        if (contacts != null && !contacts.isEmpty()) {
+            mContact = contacts.get(0);
+            mView.setContact(mContact.toString());
+        }
+
+        List<Location> locations = volunteer.getLocations();
+        if (locations != null && !locations.isEmpty()) {
+            mView.setLocation(locations.get(0).getName());
+        }
+
+        String birthAt = volunteer.getBirthAt();
+        if (!TextUtils.isEmpty(birthAt)) {
+            mBirthAt = DateHelper.deserializeToCalendar(birthAt);
+            mView.setBirthAt(DateHelper.format(DateHelper.yearFormat, birthAt));
+        } else {
+            mBirthAt = Calendar.getInstance();
+        }
+
+        mView.addUniqueCauses(volunteer.getCauses(), null);
+        mView.addUniqueSkills(volunteer.getSkills(), null);
     }
 
     @Override
-    public void attemptSaveUser(String title, String description, Contact contact, List<Long> skillIds, List<Long> causeIds, String volunteersNumber, String timeCommitment, String othersRequirements, String tags) {
-//        mView.resetErrors();
-//
-//        boolean cancel = false;
-//
-//        boolean isUpdate = mOpportunity != null;
-//
-//        // Check for a valid name
-//        if (TextUtils.isEmpty(title)) {
-//            mView.showNameRequiredError();
-//            mView.setNameFocus();
-//            cancel = true;
-//        }
-//
-//        if (contact == null) {
-//            mView.showContactRequiredError();
-//            if (!cancel) mView.setFocusContactField();
-//            cancel = true;
-//        }
-//
-//        int minCausesRequired = Constants.MIN_OPPORTUNITY_CAUSES_REQUIRED;
-//        if (minCausesRequired > 0 && causeIds.isEmpty()) {
-//            mView.showCausesMinimumRequiredError(minCausesRequired);
-//            if (!cancel) mView.setFocusCauses();
-//            cancel = true;
-//        }
-//
-//        int minSkillsRequired = Constants.MIN_OPPORTUNITY_SKILLS_REQUIRED;
-//        if (minSkillsRequired > 0 && skillIds.isEmpty()) {
-//            mView.showSkillsMinimumRequiredError(minSkillsRequired);
-//            if (!cancel) mView.setFocusSkills();
-//            cancel = true;
-//        }
-//
-//        if (!mIsVirtual && mCurrentPlace == null && isUpdate && mOpportunity.getLocation() == null) {
-//            mView.showLocationRequiredError();
-//            if (!cancel) mView.setFocusLocation();
-//            cancel = true;
-//        }
-//
-//        if (!mIsOngoing) {
-//            if (!mMultiDateSet) {
-//                mView.showStartDateRequiredError();
-//                if (!cancel) mView.setFocusTime();
-//                cancel = true;
-//            }
-//
-//            if (!mEndDateSet) {
-//                mView.showEndDateRequiredError();
-//                if (!cancel) mView.setFocusTime();
-//                cancel = true;
-//            }
-//
-//            if (mMultiDateSet && mEndDateSet && mEndAt.before(mEstablishedAt)) {
-//                mView.showEndBeforeStartError();
-//                if (!cancel) mView.setFocusTime();
-//                cancel = true;
-//            }
-//        }
-//
-//        if (!cancel) {
-//            mView.setSavingIndicator(true);
-//
-//            int volunteersNumberInt = 10;
-//
-//            Opportunity opportunity = new Opportunity();
-//            if (isUpdate) {
-//                opportunity.setId(mOpportunity.getId());
-//                opportunity.setImagesAttributes(mImagesToDestroy);
-//            }
-//            opportunity.setName(title);
-//            opportunity.setAbout(description);
-//            if (isUpdate && mOpportunity.getContact() != null)
-//                contact.setId(mOpportunity.getContact().getId());
-//            opportunity.setContactAttributes(contact);
-//            opportunity.setVolunteersNumber(volunteersNumberInt);
-//            opportunity.setMission(timeCommitment);
-//            opportunity.setOthersRequirements(othersRequirements);
-//            opportunity.setCauseIds(causeIds);
-//            opportunity.setSkillIds(skillIds);
-//            opportunity.setTags(tags);
-//
-//            opportunity.setVirtual(mIsVirtual);
-//            if (!mIsVirtual && mCurrentPlace != null) {
-//                Location location = new Location();
-//                if (isUpdate && mOpportunity.getLocation() != null)
-//                    location.setId(mOpportunity.getLocation().getId());
-//                location.setName(mCurrentPlace.getName().toString());
-//                location.setAddress1(mCurrentPlace.getAddress().toString());
-//                location.setGooglePlacesId(mCurrentPlace.getId());
-//                location.setLatitude(mCurrentPlace.getLatLng().latitude);
-//                location.setLongitude(mCurrentPlace.getLatLng().longitude);
-//                opportunity.setLocationAttributes(location);
-//            }
-//
-//            opportunity.setOngoing(mIsOngoing);
-//            if (!mIsOngoing) {
-//                if (mMultiDateSet || mStartTimeSet)
-//                    opportunity.setStartAt(DateHelper.format(DateHelper.iso8601Format, mEstablishedAt.getTime()));
-//                opportunity.setOngoing(false);
-//                if (mEndDateSet || mEndTimeSet)
-//                    opportunity.setEndAt(DateHelper.format(DateHelper.iso8601Format, mEndAt.getTime()));
-//                opportunity.setOngoing(false);
-//
-//                opportunity.setStartDateSet(mMultiDateSet);
-//                opportunity.setEndDateSet(mEndDateSet);
-//                opportunity.setStartTimeSet(mStartTimeSet);
-//                opportunity.setEndTimeSet(mEndTimeSet);
-//            }
-//
-//            if (!mLocalImages.isEmpty()) {
-//                List<String> base64Images = new ArrayList<>();
-//                for (Image mLocalImage : mLocalImages) {
-//                    base64Images.add(Snippets.encodeToBase64(mLocalImage.getBitmap(), true));
-//                }
-//                opportunity.setImagesAttributes64(base64Images);
-//            }
-//
-//            Callback<Opportunity> opportunityCallback = new Callback<Opportunity>() {
-//                @Override
-//                public void onResponse(Call<Opportunity> call, Response<Opportunity> response) {
-//                    mView.setSavingIndicator(false);
-//                    mView.close();
-//                }
-//
-//                @Override
-//                public void onFailure(Call<Opportunity> call, Throwable t) {
-//                    mView.setSavingIndicator(false);
-//                    t.printStackTrace();
-//                }
-//            };
-//
-//            if (isUpdate)
-//                mApiClient.updateOpportunity(opportunity.getId(), opportunity).enqueue(opportunityCallback);
-//            else mApiClient.createOpportunity(opportunity).enqueue(opportunityCallback);
-//        }
+    public void attemptSaveVolunteer(String email, String username, String name, String about, List<Long> skillIds, List<Long> causeIds, Volunteer.GenderEnum genderEnum, String occupation) {
+        boolean cancel = false;
+
+        // Check for a valid password, if the user entered one.
+        if (TextUtils.isEmpty(username)) {
+            mView.showUsernameRequiredError();
+            if (!cancel) mView.setFocusUsernameField();
+            cancel = true;
+        } else if (!Snippets.isUsernameValid(username)) {
+            mView.showInvalidUsernameError();
+            if (!cancel) mView.setFocusUsernameField();
+            cancel = true;
+        }
+
+        // Check for a valid email address.
+        if (TextUtils.isEmpty(email)) {
+            mView.showEmailRequiredError();
+            if (!cancel) mView.setFocusEmailField();
+            cancel = true;
+        } else if (!Snippets.isEmailValid(email)) {
+            mView.showInvalidEmailError();
+            if (!cancel) mView.setFocusEmailField();
+            cancel = true;
+        }
+
+        // Check for a valid name
+        if (TextUtils.isEmpty(name)) {
+            mView.showNameRequiredError();
+            mView.setNameFocus();
+            cancel = true;
+        }
+
+        if (mContact == null && mUser.getVolunteer().getContacts() == null && mUser.getVolunteer().getContacts().isEmpty()) {
+            mView.showContactRequiredError();
+            if (!cancel) mView.setFocusContactField();
+            cancel = true;
+        }
+
+        int minCausesRequired = Constants.MIN_USER_CAUSES_REQUIRED;
+        if (minCausesRequired > 0 && causeIds.isEmpty()) {
+            mView.showCausesMinimumRequiredError(minCausesRequired);
+            if (!cancel) mView.setFocusCauses();
+            cancel = true;
+        }
+
+        int minSkillsRequired = Constants.MIN_USER_SKILLS_REQUIRED;
+        if (minSkillsRequired > 0 && skillIds.isEmpty()) {
+            mView.showSkillsMinimumRequiredError(minSkillsRequired);
+            if (!cancel) mView.setFocusSkills();
+            cancel = true;
+        }
+
+        if (!cancel) {
+            mView.setSavingIndicator(true);
+
+            User user = new User();
+            user.setId(mUser.getId());
+
+            user.setEmail(email);
+            user.setUsername(username);
+
+            Volunteer volunteer = new Volunteer();
+            volunteer.setId(mUser.getVolunteer().getId());
+
+            volunteer.setName(name);
+            volunteer.setAbout(about);
+
+            List<Contact> contacts = mUser.getVolunteer().getContacts();
+            if (contacts != null && !contacts.isEmpty()) {
+                mContact.setId(contacts.get(0).getId());
+            }
+            List<Contact> contactsAttributes = new ArrayList<>();
+            contactsAttributes.add(mContact);
+            volunteer.setContactsAttributes(contactsAttributes);
+
+            if (mCurrentPlace != null) {
+                Location location = new Location();
+                List<Location> locations = mUser.getVolunteer().getLocations();
+                if (locations != null && !locations.isEmpty()) {
+                    location.setId(locations.get(0).getId());
+                }
+                location.setName(mCurrentPlace.getName().toString());
+                location.setAddress1(mCurrentPlace.getAddress().toString());
+                location.setGooglePlacesId(mCurrentPlace.getId());
+                location.setLatitude(mCurrentPlace.getLatLng().latitude);
+                location.setLongitude(mCurrentPlace.getLatLng().longitude);
+
+                List<Location> locationsAttributes = new ArrayList<>();
+                locationsAttributes.add(location);
+                volunteer.setLocationsAttributes(locationsAttributes);
+            }
+
+            volunteer.setGender(genderEnum.getValue());
+            volunteer.setOccupation(occupation);
+            volunteer.setCauseIds(causeIds);
+            volunteer.setSkillIds(skillIds);
+            if (mProfileImage != null && mProfileImage.getBitmap() != null){
+                volunteer.setProfileImage64(Snippets.encodeToBase64(mProfileImage.getBitmap(), true));
+            }
+
+            if (mBirthAtSet)
+                volunteer.setBirthAt(DateHelper.format(DateHelper.iso8601Format, mBirthAt.getTime()));
+
+            user.setVolunteerAttributes(volunteer);
+
+            Callback<User> updateCallback = new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    mAuthHelper.setUser(response.body());
+                    mView.setSavingIndicator(false);
+                    mView.close();
+                }
+
+                @Override
+                public void onFailure(Call<User> call, Throwable t) {
+                    mView.setSavingIndicator(false);
+                    t.printStackTrace();
+                }
+            };
+
+            mApiClient.updateUser(mUser.getId(), user).enqueue(updateCallback);
+        }
     }
 
     @Override
     public void addNewContact(String name, String phone, String email) {
-        Contact contact = new Contact(name, phone, email);
-        contact.setId(new Random().nextLong());
-        mContacts.add(contact);
-        mView.setContacts(mContacts);
+        mContact = new Contact(name, phone, email);
+        mView.setContact(mContact.toString());
+    }
+
+    @Override
+    public void attemptSaveUser() {
+        if (mUser.getKindEnum() == User.Kind.VOLUNTEER) {
+            mView.triggerSaveVolunteer();
+        } else {
+            mView.triggerSaveOrganization();
+        }
     }
 
     @Override
     public void createNewContact() {
-        mView.showCreateNewContact();
+        mView.showCreateNewContact(mContact);
     }
 
     @Override
@@ -264,13 +312,24 @@ public class EditUserPresenter implements EditUserContract.Presenter {
     }
 
     @Override
-    public void addNewImageFromCamera() {
-        mView.showAddNewImageFromCamera();
+    public void addNewProfileImage() {
+        mView.showProfileImageTypePicker();
     }
 
     @Override
-    public void addNewImageFromGallery() {
-        mView.showAddNewImageFromGallery();
+    public void addNewImageFromCamera(int request) {
+        mView.showAddNewImageFromCamera(request);
+    }
+
+    @Override
+    public void addNewImageFromGallery(int request) {
+        mView.showAddNewImageFromGallery(request);
+    }
+
+    @Override
+    public void onNewProfileImageAdded(Bitmap bitmap) {
+        mProfileImage = new Image(bitmap);
+        mView.setProfileImage(bitmap);
     }
 
     @Override
@@ -284,7 +343,8 @@ public class EditUserPresenter implements EditUserContract.Presenter {
     }
 
     @Override
-    public void onNewItemsSelection(ArrayList<SelectableItem> selectedItems, ArrayList<SelectableItem> notSelectedItems) {
+    public void onNewItemsSelection
+            (ArrayList<SelectableItem> selectedItems, ArrayList<SelectableItem> notSelectedItems) {
         SelectableItem typeTestItem = null;
 
         if (selectedItems != null && !selectedItems.isEmpty()) {
@@ -314,11 +374,11 @@ public class EditUserPresenter implements EditUserContract.Presenter {
 
     @Override
     public void onEstablishedDateSelected(int year, int month, int dayOfMonth) {
-        mMultiDateSet = true;
+        mEstablishedAtSet = true;
         mEstablishedAt.set(Calendar.YEAR, year);
         mEstablishedAt.set(Calendar.MONTH, month);
         mEstablishedAt.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        mView.setEstablishedAt(DateHelper.format(DateHelper.dateFormat, year, month, dayOfMonth));
+        mView.setEstablishedAt(DateHelper.format(DateHelper.yearFormat, year, month, dayOfMonth));
     }
 
     @Override
@@ -328,11 +388,11 @@ public class EditUserPresenter implements EditUserContract.Presenter {
 
     @Override
     public void onBirthDateSelected(int year, int month, int dayOfMonth) {
-        mMultiDateSet = true;
+        mBirthAtSet = true;
         mEstablishedAt.set(Calendar.YEAR, year);
         mEstablishedAt.set(Calendar.MONTH, month);
         mEstablishedAt.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        mView.setEstablishedAt(DateHelper.format(DateHelper.dateFormat, year, month, dayOfMonth));
+        mView.setEstablishedAt(DateHelper.format(DateHelper.yearFormat, year, month, dayOfMonth));
     }
 
     @Override
@@ -346,7 +406,8 @@ public class EditUserPresenter implements EditUserContract.Presenter {
     }
 
     @Override
-    public void onRequestPermissionResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionResult(int requestCode, String[] permissions,
+                                          int[] grantResults) {
         mView.onRequestPermissionsResultFromPresenter(requestCode, permissions, grantResults);
     }
 }

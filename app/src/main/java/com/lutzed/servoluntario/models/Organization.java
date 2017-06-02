@@ -65,6 +65,10 @@ public class Organization implements FeedItem, Parcelable {
     @SerializedName("profile_image")
     private Image profileImage;
 
+    @Expose
+    @SerializedName("profile_image_64")
+    private String profileImage64;
+
     @Expose(serialize = false, deserialize = true)
     private List<Image> images;
 
@@ -365,4 +369,12 @@ public class Organization implements FeedItem, Parcelable {
             return new Organization[size];
         }
     };
+
+    public String getProfileImage64() {
+        return profileImage64;
+    }
+
+    public void setProfileImage64(String profileImage64) {
+        this.profileImage64 = profileImage64;
+    }
 }

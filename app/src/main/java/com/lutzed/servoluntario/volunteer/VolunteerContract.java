@@ -27,15 +27,7 @@ public interface VolunteerContract {
 
         void setAbout(String description);
 
-        void setCnpj(String cnpj);
-
-        void setSite(String site);
-
-        void setMission(String mission);
-
         void setLocation(String location);
-
-        void setEstablishedAt(String time);
 
         void addImages(List<Image> images);
 
@@ -44,6 +36,12 @@ public interface VolunteerContract {
         void showEditVolunteer();
 
         void signOut();
+
+        void setOccupation(String occupation);
+
+        void setBirthAt(String format);
+
+        void setGender(String gender);
     }
 
     interface Presenter extends BasePresenter {

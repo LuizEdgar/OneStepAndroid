@@ -78,6 +78,10 @@ public class Volunteer implements Parcelable {
     private Image profileImage;
 
     @Expose
+    @SerializedName("profile_image_64")
+    private String profileImage64;
+
+    @Expose
     @SerializedName("created_at")
     private String createdAt;
 
@@ -185,6 +189,10 @@ public class Volunteer implements Parcelable {
         return gender;
     }
 
+    public GenderEnum getGenderEnum() {
+        return GenderEnum.fromString(gender);
+    }
+
     public void setGender(String gender) {
         this.gender = gender;
     }
@@ -267,6 +275,41 @@ public class Volunteer implements Parcelable {
 
     public void setProfileImage(Image profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public String getProfileImage64() {
+        return profileImage64;
+    }
+
+    public void setProfileImage64(String profileImage64) {
+        this.profileImage64 = profileImage64;
+    }
+
+    public enum GenderEnum {
+        OTHER("other"),
+        MALE("male"),
+        FEMALE("female");
+
+        private final String value;
+
+        GenderEnum(String value) {
+            this.value = value;
+        }
+
+        public String getValue() {
+            return value;
+        }
+
+        public static GenderEnum fromString(String value) {
+            switch (value) {
+                case "male":
+                    return MALE;
+                case "female":
+                    return FEMALE;
+                default:
+                    return OTHER;
+            }
+        }
     }
 
     @Override

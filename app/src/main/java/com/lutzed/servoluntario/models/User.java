@@ -18,6 +18,10 @@ public class User {
 
     @Expose private String username;
 
+    @Expose
+    @SerializedName("facebook_id")
+    private String facebookId;
+
     @Expose private String email;
 
     @Expose private String kind;
@@ -187,6 +191,14 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getFacebookId() {
+        return facebookId;
+    }
+
+    public void setFacebookId(String facebookId) {
+        this.facebookId = facebookId;
     }
 
     public enum Kind {

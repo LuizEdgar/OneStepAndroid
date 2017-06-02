@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lutzed.servoluntario.R;
@@ -24,7 +25,9 @@ import com.lutzed.servoluntario.models.Contact;
 import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.user.EditUserActivity;
+import com.lutzed.servoluntario.util.CircleTransform;
 import com.lutzed.servoluntario.util.DataView;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,17 +41,17 @@ import butterknife.ButterKnife;
 public class VolunteerFragment extends Fragment implements VolunteerContract.View {
     private static final String BUNDLE_CAN_EDIT = "bundle_can_edit";
 
+    @BindView(R.id.profileImage) ImageView mProfileImage;
     @BindView(R.id.title) TextView mNameView;
     @BindView(R.id.about) TextView mAboutView;
     @BindView(R.id.location) DataView mLocationView;
     @BindView(R.id.contact) DataView mContactView;
-    @BindView(R.id.site) DataView mSiteView;
     @BindView(R.id.imagesRecyclerView) RecyclerView mGalleryRecyclerView;
     @BindView(R.id.causesRecyclerView) RecyclerView mCausesRecyclerView;
     @BindView(R.id.skillsRecyclerView) RecyclerView mSkillsRecyclerView;
-    @BindView(R.id.establishedAt) DataView mEstablishedAtView;
-    @BindView(R.id.mission) DataView mMissionView;
-    @BindView(R.id.cnpj) DataView mCnpjView;
+    @BindView(R.id.birthAt) DataView mBirthAtView;
+    @BindView(R.id.occupation) DataView mOccupationView;
+    @BindView(R.id.gender) DataView mGenderView;
     @BindView(R.id.othersWrapper) View mOthersWrapper;
     @BindView(R.id.causesWrapper) View mCausesWrapper;
     @BindView(R.id.skillsWrapper) View mSkillsWrapper;
@@ -86,7 +89,7 @@ public class VolunteerFragment extends Fragment implements VolunteerContract.Vie
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_organization, container, false);
+        View root = inflater.inflate(R.layout.fragment_volunteer, container, false);
         ButterKnife.bind(this, root);
 
         LinearLayoutManager causesLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false);
@@ -118,6 +121,10 @@ public class VolunteerFragment extends Fragment implements VolunteerContract.Vie
             }
         }));
 
+        if (mListener == null) {
+            mProfileImage.setVisibility(View.VISIBLE);
+        }
+
         return root;
     }
 
@@ -144,7 +151,7 @@ public class VolunteerFragment extends Fragment implements VolunteerContract.Vie
         if (item.getItemId() == R.id.action_edit) {
             mPresenter.onEditVolunteerClicked();
             return true;
-        }else if (item.getItemId() == R.id.action_sign_out){
+        } else if (item.getItemId() == R.id.action_sign_out) {
             mPresenter.signOut();
             return true;
         }
@@ -204,32 +211,33 @@ public class VolunteerFragment extends Fragment implements VolunteerContract.Vie
     }
 
     @Override
-    public void setCnpj(String cnpj) {
-        if (cnpj == null) {
-            mCnpjView.setVisibility(View.GONE);
+    public void setOccupation(String occupation) {
+        if (occupation == null) {
+            mOccupationView.setVisibility(View.GONE);
         } else {
             mOthersWrapper.setVisibility(View.VISIBLE);
-            mCnpjView.setData(cnpj);
+            mOccupationView.setData(occupation);
         }
 
     }
 
     @Override
-    public void setSite(String site) {
-        if (TextUtils.isEmpty(site)) {
-            mSiteView.setVisibility(View.GONE);
+    public void setGender(String gender) {
+        if (TextUtils.isEmpty(gender)) {
+            mGenderView.setVisibility(View.GONE);
         } else {
-            mSiteView.setData(site);
+            mOthersWrapper.setVisibility(View.VISIBLE);
+            mGenderView.setData(gender);
         }
     }
 
     @Override
-    public void setMission(String mission) {
-        if (TextUtils.isEmpty(mission)) {
-            mMissionView.setVisibility(View.GONE);
+    public void setBirthAt(String birthAt) {
+        if (TextUtils.isEmpty(birthAt)) {
+            mBirthAtView.setVisibility(View.GONE);
         } else {
             mOthersWrapper.setVisibility(View.VISIBLE);
-            mMissionView.setData(mission);
+            mBirthAtView.setData(birthAt);
         }
     }
 
@@ -239,15 +247,6 @@ public class VolunteerFragment extends Fragment implements VolunteerContract.Vie
             mLocationView.setVisibility(View.GONE);
         } else {
             mLocationView.setData(location);
-        }
-    }
-
-    @Override
-    public void setEstablishedAt(String establishedAt) {
-        if (TextUtils.isEmpty(establishedAt)) {
-            mEstablishedAtView.setVisibility(View.GONE);
-        } else {
-            mEstablishedAtView.setData(establishedAt);
         }
     }
 
@@ -270,6 +269,8 @@ public class VolunteerFragment extends Fragment implements VolunteerContract.Vie
     @Override
     public void setCoverImage(String url) {
         if (mListener != null) mListener.onCoverImage(url);
+        else
+            Picasso.with(getContext()).load(url).transform(new CircleTransform(true)).placeholder(R.drawable.ic_user_placeholder).into(mProfileImage);
     }
 
     @Override

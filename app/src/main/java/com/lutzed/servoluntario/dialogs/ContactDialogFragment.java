@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.lutzed.servoluntario.R;
+import com.lutzed.servoluntario.models.Contact;
 
 import butterknife.BindView;
 
@@ -23,9 +24,17 @@ public class ContactDialogFragment extends DialogFragment {
     @BindView(R.id.phone) EditText mPhoneView;
 
     private Listener mListener;
+    private Contact mContact;
 
     public ContactDialogFragment() {
 
+    }
+
+    public static ContactDialogFragment newInstance(Contact contact, Listener mListener) {
+        ContactDialogFragment contactDialogFragment = new ContactDialogFragment();
+        contactDialogFragment.mListener = mListener;
+        contactDialogFragment.mContact = contact;
+        return contactDialogFragment;
     }
 
     public static ContactDialogFragment newInstance(Listener mListener) {
@@ -46,6 +55,17 @@ public class ContactDialogFragment extends DialogFragment {
         // Inflate and set the layout for the dialog
         // Pass null as the parent view because its going in the dialog layout
         final View rootView = inflater.inflate(R.layout.fragment_dialog_create_contact, null);
+
+        TextView nameView = (TextView) rootView.findViewById(R.id.name);
+        TextView phoneView = (TextView) rootView.findViewById(R.id.phone);
+        TextView emailView = (TextView) rootView.findViewById(R.id.email);
+
+        if (mContact != null) {
+            nameView.setText(mContact.getName());
+            phoneView.setText(mContact.getPhone());
+            emailView.setText(mContact.getEmail());
+        }
+
         builder.setView(rootView)
                 // Add action buttons
                 .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {

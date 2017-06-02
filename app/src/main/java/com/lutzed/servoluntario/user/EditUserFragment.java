@@ -36,6 +36,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -48,16 +51,19 @@ import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.adapters.GalleryViewAdapter;
 import com.lutzed.servoluntario.adapters.OpportunitiesItemsAdapter;
 import com.lutzed.servoluntario.dialogs.ContactDialogFragment;
-import com.lutzed.servoluntario.main.MainFragmentInterface;
 import com.lutzed.servoluntario.models.Contact;
 import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.models.Skill;
+import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.selection.ItemsSelectionActivity;
+import com.lutzed.servoluntario.util.CircleTransform;
 import com.lutzed.servoluntario.util.Constants;
 import com.lutzed.servoluntario.util.FileAndPathHolder;
+import com.lutzed.servoluntario.util.LocalCircleTransform;
 import com.lutzed.servoluntario.util.Snippets;
 import com.lutzed.servoluntario.util.TextInputLayoutTextWatcher;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -76,9 +82,12 @@ import static android.app.Activity.RESULT_OK;
 /**
  * A login screen that offers login via email/password.
  */
-public class EditUserFragment extends Fragment implements EditUserContract.View, MainFragmentInterface {
+public class EditUserFragment extends Fragment implements EditUserContract.View {
 
     private static final int PLACE_AUTOCOMPLETE_REQUEST_CODE = 182;
+    private static final int REQUEST_IMAGE_PICK_PROFILE = 396;
+    private static final int REQUEST_IMAGE_CAPTURE_PROFILE = 27;
+    private static final int REQUEST_STORAGE_PERMISSION_PROFILE = 213;
     private static final int REQUEST_IMAGE_PICK = 126;
     private static final int REQUEST_IMAGE_CAPTURE = 862;
     private static final int REQUEST_STORAGE_PERMISSION = 545;
@@ -96,7 +105,16 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
     @BindView(R.id.causesWrapper) View mCausesWrapperView;
     @BindView(R.id.skillsWrapper) View mSkillsWrapperView;
     @BindView(R.id.imagesWrapper) View mImagesWrapperView;
+    @BindView(R.id.genderWrapper) View mGenderWrapperView;
+    @BindView(R.id.genderTypeGroup) RadioGroup mGenderRadioGroup;
+    @BindView(R.id.male) RadioButton mMaleRadioButton;
+    @BindView(R.id.female) RadioButton mFemaleRadioButton;
 
+    @BindView(R.id.profileImage) ImageView mProfileImage;
+
+    @BindView(R.id.password) EditText mPasswordView;
+    @BindView(R.id.email) EditText mEmailView;
+    @BindView(R.id.username) EditText mUsernameView;
     @BindView(R.id.name) EditText mNameView;
     @BindView(R.id.size) EditText mSizeView;
     @BindView(R.id.occupation) EditText mOccupationView;
@@ -105,10 +123,24 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
     @BindView(R.id.mission) EditText mMissionView;
     @BindView(R.id.about) EditText mAboutView;
     @BindView(R.id.location) EditText mLocationView;
+    @BindView(R.id.contact) EditText mContactView;
     @BindView(R.id.establishedAt) EditText mEstablishedAtView;
     @BindView(R.id.birthAt) EditText mBirthAtView;
 
+    @BindView(R.id.passwordInputLayout) TextInputLayout mPasswordInputLayout;
+    @BindView(R.id.emailInputLayout) TextInputLayout mEmailInputLayout;
+    @BindView(R.id.usernameInputLayout) TextInputLayout mUsernameInputLayout;
+    @BindView(R.id.nameInputLayout) TextInputLayout mNameInputLayout;
+    @BindView(R.id.sizeInputLayout) TextInputLayout mSizeInputLayout;
+    @BindView(R.id.occupationInputLayout) TextInputLayout mOccupationInputLayout;
+    @BindView(R.id.cnpjInputLayout) TextInputLayout mCnpjInputLayout;
+    @BindView(R.id.siteInputLayout) TextInputLayout mSiteInputLayout;
+    @BindView(R.id.missionInputLayout) TextInputLayout mMissionInputLayout;
+    @BindView(R.id.aboutInputLayout) TextInputLayout mAboutInputLayout;
     @BindView(R.id.locationInputLayout) TextInputLayout mLocationInputLayout;
+    @BindView(R.id.contactInputLayout) TextInputLayout mContactInputLayout;
+    @BindView(R.id.establishedAtInputLayout) TextInputLayout mEstablishedAtInputLayout;
+    @BindView(R.id.birthAtInputLayout) TextInputLayout mBirthAtInputLayout;
 
     private EditUserContract.Presenter mPresenter;
     private int mCurrentContactSpinnerSelectedPosition;
@@ -220,12 +252,22 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
         mLocationView.setCustomSelectionActionModeCallback(noCopyPasteCallback);
         mLocationView.setClickable(true);
 
+        mContactView.setFocusable(false);
+        mContactView.setCustomSelectionActionModeCallback(noCopyPasteCallback);
+        mContactView.setClickable(true);
+
         mEstablishedAtView.setFocusable(false);
         mEstablishedAtView.setCustomSelectionActionModeCallback(noCopyPasteCallback);
-        mBirthAtView.setClickable(true);
+        mEstablishedAtView.setClickable(true);
+
         mBirthAtView.setFocusable(false);
+        mBirthAtView.setCustomSelectionActionModeCallback(noCopyPasteCallback);
+        mBirthAtView.setClickable(true);
 
         mLocationView.addTextChangedListener(new TextInputLayoutTextWatcher(mLocationView, mLocationInputLayout));
+        mContactView.addTextChangedListener(new TextInputLayoutTextWatcher(mContactView, mContactInputLayout));
+        mEstablishedAtView.addTextChangedListener(new TextInputLayoutTextWatcher(mEstablishedAtView, mEstablishedAtInputLayout));
+        mBirthAtView.addTextChangedListener(new TextInputLayoutTextWatcher(mBirthAtView, mBirthAtInputLayout));
 
         return root;
     }
@@ -235,29 +277,12 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
         super.onViewCreated(view, savedInstanceState);
 
         mDefaultEditTextColor = mNameView.getTextColors(); //save original colors
+
+        mPresenter.start();
     }
 
     void onSaveClicked() {
-//        String title = mNameView.getText().toString().trim();
-//        String description = mDescriptionView.getText().toString().trim();
-//
-//        int selectedItemPosition = mContactSpinner.getSpinner().getSelectedItemPosition();
-//        int spinnerCount = mContactSpinner.getSpinner().getCount();
-//        Contact contact = null;
-//        if (selectedItemPosition > 0 && selectedItemPosition < spinnerCount - 1) {
-//            contact = (Contact) mContactSpinner.getSpinner().getSelectedItem();
-//            contact.setId(null);
-//        }
-//
-//        List<Long> skillIds = ((OpportunitiesItemsAdapter) mSkillsRecyclerView.getAdapter()).getItemsIds();
-//        List<Long> causeIds = ((OpportunitiesItemsAdapter) mCausesRecyclerView.getAdapter()).getItemsIds();
-//        String volunteersNumber = mVolunteersNumberView.getText().toString().trim();
-//        String timeCommitment = mTimeCommitmentView.getText().toString().trim();
-//        String othersRequirements = mOthersRequirementsView.getText().toString().trim();
-//        String tags = mTagsView.getText().toString().trim();
-
-//        mPresenter.attemptSaveUser(title, description, contact, skillIds, causeIds, volunteersNumber, timeCommitment, othersRequirements, tags);
-
+        mPresenter.attemptSaveUser();
     }
 
     @Override
@@ -295,21 +320,6 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
     }
 
     @Override
-    public void setContacts(List<Contact> contacts) {
-//        ArrayList<Contact> viewContacts = new ArrayList<>();
-//        if (contacts != null) viewContacts.addAll(contacts);
-//
-//        viewContacts.add(0, new Contact("Select…"));
-//        viewContacts.add(new Contact("Create new…"));
-//
-//        mContactSpinner.setItemsArray(viewContacts);
-//        if (selectedContactId != null) {
-//            mCurrentContactSpinnerSelectedPosition = viewContacts.indexOf(new Contact(selectedContactId));
-//            mContactSpinner.setSelection(mCurrentContactSpinnerSelectedPosition);
-//        }
-    }
-
-    @Override
     public void addUniqueCauses(List<? extends SelectableItem> causes, List<? extends SelectableItem> causesToRemove) {
         OpportunitiesItemsAdapter adapter = (OpportunitiesItemsAdapter) mCausesRecyclerView.getAdapter();
         adapter.addAndRemoveItems(causes, causesToRemove);
@@ -333,7 +343,7 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
     }
 
     @Override
-    public void showCreateNewContact() {
+    public void showCreateNewContact(Contact contact) {
         FragmentTransaction ft = getChildFragmentManager().beginTransaction();
         Fragment prev = getFragmentManager().findFragmentByTag("contactDialog");
         if (prev != null) {
@@ -341,7 +351,7 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
         }
         ft.addToBackStack(null);
 
-        ContactDialogFragment.newInstance(new ContactDialogFragment.Listener() {
+        ContactDialogFragment.newInstance(contact, new ContactDialogFragment.Listener() {
             @Override
             public void onSave(String name, String phone, String email) {
                 mPresenter.addNewContact(name, phone, email);
@@ -396,14 +406,19 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
             } else if (resultCode == RESULT_CANCELED) {
 
             }
-        } else if (requestCode == REQUEST_IMAGE_PICK) {
+        } else if (requestCode == REQUEST_IMAGE_PICK || requestCode == REQUEST_IMAGE_PICK_PROFILE) {
             if (resultCode == RESULT_OK) {
                 if (data == null) {
                     final Bundle extras = data.getExtras();
                     if (extras != null) {
                         //Get image
                         Bitmap bitmap = extras.getParcelable("data");
-                        mPresenter.onNewImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.MAX_IMAGE_SIZE));
+
+                        if (requestCode == REQUEST_IMAGE_PICK) {
+                            mPresenter.onNewImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.MAX_IMAGE_SIZE));
+                        } else {
+                            mPresenter.onNewProfileImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.MAX_IMAGE_SIZE));
+                        }
                     }
                 } else {
                     InputStream inputStream = null;
@@ -413,12 +428,17 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
                         e.printStackTrace();
                     }
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    mPresenter.onNewImageAdded(bitmap);
+                    if (requestCode == REQUEST_IMAGE_PICK) {
+                        mPresenter.onNewImageAdded(bitmap);
+                    } else {
+                        mPresenter.onNewProfileImageAdded(bitmap);
+                    }
+
                 }
             } else if (resultCode == RESULT_CANCELED) {
 
             }
-        } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
+        } else if (requestCode == REQUEST_IMAGE_CAPTURE || requestCode == REQUEST_IMAGE_CAPTURE_PROFILE) {
             if (resultCode == RESULT_OK) {
                 int rotation;
                 try {
@@ -426,7 +446,11 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
                 } catch (IOException e) {
                     rotation = 0;
                 }
-                mPresenter.onNewImageAdded(Snippets.bitmapFromPath(mCurrentPath, Constants.MAX_IMAGE_SIZE, true, rotation));
+                if (requestCode == REQUEST_IMAGE_CAPTURE) {
+                    mPresenter.onNewImageAdded(Snippets.bitmapFromPath(mCurrentPath, Constants.MAX_IMAGE_SIZE, true, rotation));
+                } else {
+                    mPresenter.onNewProfileImageAdded(Snippets.bitmapFromPath(mCurrentPath, Constants.MAX_IMAGE_SIZE, true, rotation));
+                }
             } else if (resultCode == RESULT_CANCELED) {
                 mCurrentPath = null;
             }
@@ -445,6 +469,7 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
 
     @Override
     public void setMission(String timeCommitment) {
+        mMissionInputLayout.setVisibility(View.VISIBLE);
         mMissionView.setText(timeCommitment);
     }
 
@@ -458,6 +483,11 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
         getActivity().finish();
     }
 
+    @OnClick(R.id.profileImage)
+    public void onProfileImageClicked() {
+        mPresenter.addNewProfileImage();
+    }
+
     @OnClick(R.id.location)
     public void onLocationClicked() {
         try {
@@ -469,6 +499,11 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
         } catch (GooglePlayServicesNotAvailableException e) {
             // TODO: Handle the error.
         }
+    }
+
+    @OnClick(R.id.contact)
+    public void onContactClicked() {
+        mPresenter.createNewContact();
     }
 
     @Override
@@ -508,7 +543,7 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
 
     @Override
     public void showNameRequiredError() {
-//        mNameInputLayout.setError(getString(R.string.error_field_required));
+        mNameInputLayout.setError(getString(R.string.error_field_required));
     }
 
     @Override
@@ -518,12 +553,12 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
 
     @Override
     public void showContactRequiredError() {
-        //TODO
+        mContactInputLayout.setError(getString(R.string.error_field_required));
     }
 
     @Override
     public void setFocusContactField() {
-        //TODO
+        mContactView.requestFocus();
     }
 
     @Override
@@ -559,28 +594,42 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
     }
 
     @Override
-    public void showImageTypePicker() {
+    public void showProfileImageTypePicker() {
         new AlertDialog.Builder(getContext()).setItems(R.array.imagePickerOptions, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 if (which == 0) {
-                    mPresenter.addNewImageFromCamera();
+                    mPresenter.addNewImageFromCamera(REQUEST_IMAGE_CAPTURE_PROFILE);
                 } else {
-                    mPresenter.addNewImageFromGallery();
+                    mPresenter.addNewImageFromGallery(REQUEST_IMAGE_PICK_PROFILE);
                 }
             }
         }).show();
     }
 
     @Override
-    public void showAddNewImageFromGallery() {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        intent.setType("image/*");
-        startActivityForResult(intent, REQUEST_IMAGE_PICK);
+    public void showImageTypePicker() {
+        new AlertDialog.Builder(getContext()).setItems(R.array.imagePickerOptions, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if (which == 0) {
+                    mPresenter.addNewImageFromCamera(REQUEST_IMAGE_CAPTURE);
+                } else {
+                    mPresenter.addNewImageFromGallery(REQUEST_IMAGE_PICK);
+                }
+            }
+        }).show();
     }
 
     @Override
-    public void showAddNewImageFromCamera() {
+    public void showAddNewImageFromGallery(int request) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("image/*");
+        startActivityForResult(intent, request);
+    }
+
+    @Override
+    public void showAddNewImageFromCamera(int request) {
         boolean hasPermissions = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
 
         if (!hasPermissions) {
@@ -595,10 +644,11 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
             } else {
 
                 // No explanation needed, we can request the permission.
+                int requestPermission = request == REQUEST_IMAGE_CAPTURE ? REQUEST_STORAGE_PERMISSION : REQUEST_STORAGE_PERMISSION_PROFILE;
 
                 ActivityCompat.requestPermissions(getActivity(),
                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        REQUEST_STORAGE_PERMISSION);
+                        requestPermission);
 
                 // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
                 // app-defined int constant. The callback method gets the
@@ -623,11 +673,10 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
                 if (photoFile != null) {
                     Uri photoURI = FileProvider.getUriForFile(getContext(), "com.lutzed.servoluntario.fileprovider", photoFile);
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                    startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                    startActivityForResult(takePictureIntent, request);
                 }
             }
         }
-
     }
 
     @Override
@@ -635,12 +684,14 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
         switch (requestCode) {
+            case REQUEST_STORAGE_PERMISSION_PROFILE:
             case REQUEST_STORAGE_PERMISSION: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
-                    mPresenter.addNewImageFromCamera();
+                    int requestCamera = requestCode == REQUEST_STORAGE_PERMISSION ? REQUEST_IMAGE_CAPTURE : REQUEST_IMAGE_CAPTURE_PROFILE;
+                    mPresenter.addNewImageFromCamera(requestCamera);
                 } else {
 
                     // permission denied, boo! Disable the
@@ -652,17 +703,107 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
 
     @Override
     public void setCnpj(String cnpj) {
-
+        mCnpjInputLayout.setVisibility(View.VISIBLE);
+        mCnpjView.setText(cnpj);
     }
 
     @Override
     public void setProfileImage(String url) {
+        Picasso.with(getContext()).load(url).transform(new CircleTransform(true)).placeholder(R.drawable.ic_user_placeholder).into(mProfileImage);
+    }
 
+    @Override
+    public void setProfileImage(Bitmap bitmap) {
+        LocalCircleTransform circleTransform = new LocalCircleTransform(true);
+        mProfileImage.setImageBitmap(circleTransform.transform(bitmap));
     }
 
     @Override
     public void setEstablishedAt(String format) {
+        mEstablishedAtInputLayout.setVisibility(View.VISIBLE);
+        mEstablishedAtView.setText(format);
+        mEstablishedAtView.setTextColor(mDefaultEditTextColor);
+    }
 
+    @Override
+    public void setBirthAt(String format) {
+        mBirthAtInputLayout.setVisibility(View.VISIBLE);
+        mBirthAtView.setText(format);
+        mBirthAtView.setTextColor(mDefaultEditTextColor);
+    }
+
+    @Override
+    public void showUsernameRequiredError() {
+        mUsernameInputLayout.setError(getString(R.string.error_field_required));
+    }
+
+    @Override
+    public void setFocusUsernameField() {
+        mUsernameView.requestFocus();
+    }
+
+    @Override
+    public void showInvalidUsernameError() {
+        mUsernameInputLayout.setError(getString(R.string.error_invalid_username));
+    }
+
+    @Override
+    public void showEmailRequiredError() {
+        mEmailInputLayout.setError(getString(R.string.error_field_required));
+    }
+
+    @Override
+    public void setFocusEmailField() {
+        mEmailView.requestFocus();
+    }
+
+    @Override
+    public void showInvalidEmailError() {
+        mEmailInputLayout.setError(getString(R.string.error_invalid_email));
+    }
+
+    @Override
+    public void setUsername(String username) {
+        mUsernameView.setText(username);
+    }
+
+    @Override
+    public void setEmail(String email) {
+        mEmailView.setText(email);
+    }
+
+    @Override
+    public void setSite(String site) {
+        mSiteInputLayout.setVisibility(View.VISIBLE);
+        mSiteView.setText(site);
+    }
+
+    @Override
+    public void setSize(Integer size) {
+        mSizeInputLayout.setVisibility(View.VISIBLE);
+        mSizeView.setText(String.valueOf(size));
+    }
+
+    @Override
+    public void setContact(String contact) {
+        mContactView.setText(contact);
+    }
+
+    @Override
+    public void setOccupation(String occupation) {
+        mOccupationInputLayout.setVisibility(View.VISIBLE);
+        mOccupationView.setText(occupation);
+    }
+
+    @Override
+    public void setShowPasswordField(boolean visible) {
+        mPasswordInputLayout.setVisibility(visible ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    public void setGender(Volunteer.GenderEnum genderEnum) {
+        mMaleRadioButton.setChecked(genderEnum == Volunteer.GenderEnum.MALE);
+        mFemaleRadioButton.setChecked(genderEnum == Volunteer.GenderEnum.FEMALE);
     }
 
     @Override
@@ -671,8 +812,30 @@ public class EditUserFragment extends Fragment implements EditUserContract.View,
     }
 
     @Override
-    public void start() {
-        mPresenter.start();
+    public void triggerSaveVolunteer() {
+        String email = mEmailView.getText().toString().trim();
+        String username = mUsernameView.getText().toString().trim();
+        String name = mNameView.getText().toString().trim();
+        String about = mAboutView.getText().toString().trim();
+
+        List<Long> skillIds = ((OpportunitiesItemsAdapter) mSkillsRecyclerView.getAdapter()).getItemsIds();
+        List<Long> causeIds = ((OpportunitiesItemsAdapter) mCausesRecyclerView.getAdapter()).getItemsIds();
+
+        String occupation = mOccupationView.getText().toString().trim();
+
+        Volunteer.GenderEnum genderEnum;
+        if (mGenderRadioGroup.getCheckedRadioButtonId() == R.id.male) {
+            genderEnum = Volunteer.GenderEnum.MALE;
+        } else {
+            genderEnum = Volunteer.GenderEnum.FEMALE;
+        }
+
+        mPresenter.attemptSaveVolunteer(email, username, name, about, skillIds, causeIds, genderEnum, occupation);
+    }
+
+    @Override
+    public void triggerSaveOrganization() {
+
     }
 }
 
