@@ -154,7 +154,7 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
 
     @Override
     public void setupVolunteerSignUpPrompts() {
-        mNameInputLayout.setHint(getString(R.string.prompt_name));
+        mNameInputLayout.setHint(getString(R.string.name));
         mToggleSignUpModeButton.setText(R.string.action_toggle_to_organization);
     }
 

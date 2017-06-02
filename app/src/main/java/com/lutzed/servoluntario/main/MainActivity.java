@@ -16,6 +16,8 @@ import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.opportunities.EditOpportunityActivity;
+import com.lutzed.servoluntario.user.EditUserFragment;
+import com.lutzed.servoluntario.user.EditUserPresenter;
 import com.lutzed.servoluntario.util.AuthHelper;
 
 import butterknife.BindView;
@@ -33,15 +35,16 @@ public class MainActivity extends AppCompatActivity {
     private Fragment mCurrentFragment;
 
     private Api.ApiClient mApiClient;
-    private FeedPresenter mHomePresenter;
 
     private FeedFragment mHomeFragment;
+    private FeedPresenter mHomePresenter;
+    private EditUserPresenter mProfilePresenter;
+    private EditUserFragment mProfileFragment;
+
     private PlaceHolderFragment mDoFragment;
-    private PlaceHolderFragment mProfileFragment;
-
     @BindView(R.id.mainFrame) FrameLayout mSectionContainerLayout;
-    @BindView(R.id.navigation) BottomNavigationView mNavigation;
 
+    @BindView(R.id.navigation) BottomNavigationView mNavigation;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -53,12 +56,6 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.navigation_do:
                     navigateToDo();
-
-                    AuthHelper.getInstance(MainActivity.this).signout();
-                    finish();
-                    break;
-                case R.id.navigation_profile:
-                    navigateToProfile();
 
                     Api.getClient(AuthHelper.getInstance(MainActivity.this).getUser()).getOpportunity(11l).enqueue(new Callback<Opportunity>() {
                         @Override
@@ -74,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
                         }
                     });
 
+                    break;
+                case R.id.navigation_profile:
+                    navigateToProfile();
                     break;
             }
             return true;
@@ -97,9 +97,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void navigateToProfile() {
         if (mProfileFragment == null) {
-            mProfileFragment = new PlaceHolderFragment();
+            mProfileFragment = EditUserFragment.newInstance();
             addFragment(mProfileFragment, PROFILE_TAG);
-
+            mProfilePresenter = new EditUserPresenter(mProfileFragment, mApiClient, AuthHelper.getInstance(MainActivity.this));
+            mProfileFragment.start();
         } else {
             showFragment(mProfileFragment);
         }
@@ -137,7 +138,11 @@ public class MainActivity extends AppCompatActivity {
                 mHomePresenter = new FeedPresenter(mHomeFragment, mApiClient);
             }
             mDoFragment = (PlaceHolderFragment) fragmentManager.findFragmentByTag(DO_TAG);
-            mProfileFragment = (PlaceHolderFragment) fragmentManager.findFragmentByTag(PROFILE_TAG);
+
+            mProfileFragment = (EditUserFragment) fragmentManager.findFragmentByTag(PROFILE_TAG);
+            if (mProfileFragment != null && mHomePresenter == null){
+                mProfilePresenter = new EditUserPresenter(mProfileFragment, mApiClient, AuthHelper.getInstance(MainActivity.this));
+            }
 
             // restore current section Fragment
             if (isCurrentFragment(mHomeFragment)) {
@@ -148,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
             } else if (isCurrentFragment(mProfileFragment)) {
                 mCurrentFragment = mProfileFragment;
-
+                mProfileFragment.start();
             } else {
                 throw new IllegalStateException("Unable to restore current section Fragment");
             }
