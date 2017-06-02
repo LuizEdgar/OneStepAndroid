@@ -15,9 +15,13 @@ import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.dummy.DummyContent.DummyItem;
 import com.lutzed.servoluntario.models.FeedItem;
 import com.lutzed.servoluntario.models.Opportunity;
+import com.lutzed.servoluntario.models.Organization;
+import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.opportunities.OpportunityActivity;
+import com.lutzed.servoluntario.organization.OrganizationActivity;
 import com.lutzed.servoluntario.util.EndlessRecyclerViewScrollListener;
 import com.lutzed.servoluntario.util.VerticalSpaceItemDecoration;
+import com.lutzed.servoluntario.volunteer.VolunteerActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,20 +83,28 @@ public class FeedFragment extends Fragment implements FeedContract.View, MainFra
 
         mRecyclerView.setAdapter(new FeedItemViewAdapter(new ArrayList<FeedItem>(), new FeedItemViewAdapter.OnFeedItemAdapterListener() {
             @Override
-            public void onEditClicked(FeedItem feedItem, int position) {
-
+            public void onOrganizationClicked(Organization organization) {
+                mPresenter.organizationClicked(organization);
             }
 
             @Override
-            public void onItemClicked(FeedItem feedItem, int position) {
-                if (feedItem instanceof Opportunity){
-                    mPresenter.opportunityClicked((Opportunity) feedItem);
-                }
+            public void onOrganizationClicked(Long organizationId) {
+                mPresenter.organizationClicked(organizationId);
             }
 
             @Override
-            public void onItemShare(FeedItem feedItem) {
+            public void onOpportunityClicked(Opportunity opportunity) {
+                mPresenter.opportunityClicked(opportunity);
+            }
 
+            @Override
+            public void onVolunteerClicked(Volunteer volunteer) {
+                mPresenter.volunteerClicked(volunteer);
+            }
+
+            @Override
+            public void onVolunteerClicked(Long volunteerId) {
+                mPresenter.volunteerClicked(volunteerId);
             }
         }));
 
@@ -182,19 +194,31 @@ public class FeedFragment extends Fragment implements FeedContract.View, MainFra
         startActivity(intent);
     }
 
+    @Override
+    public void showOrganization(Organization organization) {
+        Intent intent = new Intent(getContext(), OrganizationActivity.class);
+        intent.putExtra(OrganizationActivity.EXTRA_ORGANIZATION, organization);
+        startActivity(intent);
+    }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+    @Override
+    public void showVolunteer(Volunteer volunteer) {
+        Intent intent = new Intent(getContext(), VolunteerActivity.class);
+        intent.putExtra(VolunteerActivity.EXTRA_VOLUNTEER, volunteer);
+        startActivity(intent);
+    }
+
+    @Override
+    public void showOrganization(Long organizationId) {
+        Intent intent = new Intent(getContext(), OrganizationActivity.class);
+        intent.putExtra(OrganizationActivity.EXTRA_ORGANIZATION_ID, organizationId);
+        startActivity(intent);
+    }
+
+    @Override
+    public void showVolunteer(Long volunteerId) {
+        Intent intent = new Intent(getContext(), VolunteerActivity.class);
+        intent.putExtra(VolunteerActivity.EXTRA_VOLUNTEER_ID, volunteerId);
+        startActivity(intent);
     }
 }

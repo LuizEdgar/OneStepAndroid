@@ -1,15 +1,19 @@
 package com.lutzed.servoluntario.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by luizfreitas on 25/07/2016.
  */
 
-public class Organization implements FeedItem {
+public class Organization implements FeedItem, Parcelable {
 
     @Expose private Long id;
 
@@ -284,4 +288,81 @@ public class Organization implements FeedItem {
     public Type getFeedableTypeAsEnum(){
         return Type.fromString(this.feedableType);
     }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.name);
+        dest.writeString(this.cnpj);
+        dest.writeString(this.site);
+        dest.writeString(this.about);
+        dest.writeString(this.mission);
+        dest.writeValue(this.size);
+        dest.writeString(this.feedableType);
+        dest.writeTypedList(this.locations);
+        dest.writeTypedList(this.locationsAttributes);
+        dest.writeTypedList(this.contacts);
+        dest.writeTypedList(this.contactsAttributes);
+        dest.writeTypedList(this.causes);
+        dest.writeList(this.causeIds);
+        dest.writeTypedList(this.skills);
+        dest.writeList(this.skillIds);
+        dest.writeParcelable(this.profileImage, flags);
+        dest.writeTypedList(this.images);
+        dest.writeTypedList(this.imagesAttributes);
+        dest.writeStringList(this.imagesAttributes64);
+        dest.writeString(this.establishedAt);
+        dest.writeValue(this.userId);
+        dest.writeString(this.createdAt);
+        dest.writeString(this.updatedAt);
+    }
+
+    public Organization() {
+    }
+
+    protected Organization(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.name = in.readString();
+        this.cnpj = in.readString();
+        this.site = in.readString();
+        this.about = in.readString();
+        this.mission = in.readString();
+        this.size = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.feedableType = in.readString();
+        this.locations = in.createTypedArrayList(Location.CREATOR);
+        this.locationsAttributes = in.createTypedArrayList(Location.CREATOR);
+        this.contacts = in.createTypedArrayList(Contact.CREATOR);
+        this.contactsAttributes = in.createTypedArrayList(Contact.CREATOR);
+        this.causes = in.createTypedArrayList(Cause.CREATOR);
+        this.causeIds = new ArrayList<Long>();
+        in.readList(this.causeIds, Long.class.getClassLoader());
+        this.skills = in.createTypedArrayList(Skill.CREATOR);
+        this.skillIds = new ArrayList<Long>();
+        in.readList(this.skillIds, Long.class.getClassLoader());
+        this.profileImage = in.readParcelable(Image.class.getClassLoader());
+        this.images = in.createTypedArrayList(Image.CREATOR);
+        this.imagesAttributes = in.createTypedArrayList(Image.CREATOR);
+        this.imagesAttributes64 = in.createStringArrayList();
+        this.establishedAt = in.readString();
+        this.userId = (Long) in.readValue(Long.class.getClassLoader());
+        this.createdAt = in.readString();
+        this.updatedAt = in.readString();
+    }
+
+    public static final Parcelable.Creator<Organization> CREATOR = new Parcelable.Creator<Organization>() {
+        @Override
+        public Organization createFromParcel(Parcel source) {
+            return new Organization(source);
+        }
+
+        @Override
+        public Organization[] newArray(int size) {
+            return new Organization[size];
+        }
+    };
 }

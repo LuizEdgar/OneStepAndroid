@@ -52,7 +52,7 @@
                     android:id="@+id/mission"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_mission"
+                    android:hint="@string/mission"
                     android:inputType="textCapSentences"
                     android:maxLines="1"/>
 
@@ -66,7 +66,7 @@
                     android:id="@+id/site"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="@string/prompt_site"
+                    android:hint="@string/site"
                     android:imeActionId="@+id/save"
                     android:imeActionLabel="@string/action_save"
                     android:imeOptions="actionUnspecified"

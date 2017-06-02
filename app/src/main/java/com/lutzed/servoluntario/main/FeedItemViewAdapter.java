@@ -17,8 +17,10 @@ import com.lutzed.servoluntario.adapters.GalleryViewAdapter;
 import com.lutzed.servoluntario.models.FeedItem;
 import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.Location;
+import com.lutzed.servoluntario.models.Opportunitable;
 import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.Organization;
+import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.CircleTransform;
 import com.lutzed.servoluntario.util.DateHelper;
 import com.squareup.picasso.Picasso;
@@ -43,11 +45,11 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     public interface OnFeedItemAdapterListener {
-        void onEditClicked(FeedItem feedItem, int position);
-
-        void onItemClicked(FeedItem feedItem, int position);
-
-        void onItemShare(FeedItem feedItem);
+        void onOrganizationClicked(Organization organization);
+        void onOrganizationClicked(Long organizationId);
+        void onOpportunityClicked(Opportunity opportunity);
+        void onVolunteerClicked(Volunteer volunteer);
+        void onVolunteerClicked(Long volunteerId);
     }
 
     public void clearData() {
@@ -140,8 +142,9 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.mContentView.setVisibility(View.GONE);
         }
 
-        Location location = item.getLocations().get(0);
-        if (location != null) {
+        List<Location> locations = item.getLocations();
+        if (locations != null && !locations.isEmpty()) {
+            Location location = locations.get(0);
             String city = location.getCity();
             String country = location.getCountry();
             String infos = country;
@@ -149,7 +152,21 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 infos = city + ", " + infos;
             }
             holder.mInfosView.setText(infos);
+        }else{
+            holder.mInfosView.setText(null);
         }
+
+
+        View.OnClickListener itemListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null) {
+                    mListener.onOrganizationClicked(holder.mItem);
+                }
+            }
+        };
+
+        holder.mNameView.setOnClickListener(itemListener);
 
     }
 
@@ -218,13 +235,24 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             @Override
             public void onClick(View view) {
                 if (mListener != null) {
-                    mListener.onItemClicked(holder.mItem, position);
+                    mListener.onOpportunityClicked(holder.mItem);
                 }
             }
         };
 
         holder.mMoreButton.setOnClickListener(itemListener);
         holder.mTitleView.setOnClickListener(itemListener);
+
+        holder.mInfosView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (holder.mItem.getOpportunitableTypeAsEnum() == Opportunitable.Type.VOLUNTEER){
+                    mListener.onVolunteerClicked(holder.mItem.getOpportunitable().getId());
+                }else if (holder.mItem.getOpportunitableTypeAsEnum() == Opportunitable.Type.ORGANIZATION){
+                    mListener.onOrganizationClicked(holder.mItem.getOpportunitable().getId());
+                }
+            }
+        });
 
     }
 

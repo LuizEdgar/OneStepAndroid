@@ -1,15 +1,19 @@
 package com.lutzed.servoluntario.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by luizfreitas on 25/07/2016.
  */
 
-public class Volunteer {
+public class Volunteer implements Parcelable {
 
     @Expose private Long id;
 
@@ -256,4 +260,87 @@ public class Volunteer {
     public void setContactsAttributes(List<Contact> contactsAttributes) {
         this.contactsAttributes = contactsAttributes;
     }
+
+    public Image getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(Image profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.id);
+        dest.writeString(this.name);
+        dest.writeString(this.about);
+        dest.writeString(this.occupation);
+        dest.writeValue(this.periodAvailability);
+        dest.writeValue(this.volunteered);
+        dest.writeString(this.cpf);
+        dest.writeString(this.rg);
+        dest.writeString(this.gender);
+        dest.writeValue(this.verified);
+        dest.writeTypedList(this.locations);
+        dest.writeTypedList(this.locationsAttributes);
+        dest.writeTypedList(this.contacts);
+        dest.writeTypedList(this.contactsAttributes);
+        dest.writeTypedList(this.causes);
+        dest.writeList(this.causeIds);
+        dest.writeTypedList(this.skills);
+        dest.writeList(this.skillIds);
+        dest.writeString(this.birthAt);
+        dest.writeValue(this.userId);
+        dest.writeParcelable(this.profileImage, flags);
+        dest.writeString(this.createdAt);
+        dest.writeString(this.updatedAt);
+    }
+
+    public Volunteer() {
+    }
+
+    protected Volunteer(Parcel in) {
+        this.id = (Long) in.readValue(Long.class.getClassLoader());
+        this.name = in.readString();
+        this.about = in.readString();
+        this.occupation = in.readString();
+        this.periodAvailability = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.volunteered = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.cpf = in.readString();
+        this.rg = in.readString();
+        this.gender = in.readString();
+        this.verified = (Boolean) in.readValue(Boolean.class.getClassLoader());
+        this.locations = in.createTypedArrayList(Location.CREATOR);
+        this.locationsAttributes = in.createTypedArrayList(Location.CREATOR);
+        this.contacts = in.createTypedArrayList(Contact.CREATOR);
+        this.contactsAttributes = in.createTypedArrayList(Contact.CREATOR);
+        this.causes = in.createTypedArrayList(Cause.CREATOR);
+        this.causeIds = new ArrayList<Long>();
+        in.readList(this.causeIds, Long.class.getClassLoader());
+        this.skills = in.createTypedArrayList(Skill.CREATOR);
+        this.skillIds = new ArrayList<Long>();
+        in.readList(this.skillIds, Long.class.getClassLoader());
+        this.birthAt = in.readString();
+        this.userId = (Long) in.readValue(Long.class.getClassLoader());
+        this.profileImage = in.readParcelable(Image.class.getClassLoader());
+        this.createdAt = in.readString();
+        this.updatedAt = in.readString();
+    }
+
+    public static final Parcelable.Creator<Volunteer> CREATOR = new Parcelable.Creator<Volunteer>() {
+        @Override
+        public Volunteer createFromParcel(Parcel source) {
+            return new Volunteer(source);
+        }
+
+        @Override
+        public Volunteer[] newArray(int size) {
+            return new Volunteer[size];
+        }
+    };
 }

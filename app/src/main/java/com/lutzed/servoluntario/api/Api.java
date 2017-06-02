@@ -10,8 +10,10 @@ import com.lutzed.servoluntario.models.Contact;
 import com.lutzed.servoluntario.models.FeedItem;
 import com.lutzed.servoluntario.models.Location;
 import com.lutzed.servoluntario.models.Opportunity;
+import com.lutzed.servoluntario.models.Organization;
 import com.lutzed.servoluntario.models.Skill;
 import com.lutzed.servoluntario.models.User;
+import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.Constants;
 
 import java.io.IOException;
@@ -128,6 +130,12 @@ public class Api {
 
         @GET("me/feed.json")
         Call<List<FeedItem>> getMeFeed(@Query("page") int page);
+
+        @GET("organizations/{organizationId}.json")
+        Call<Organization> getOrganization(@Path("organizationId") Long organizationId);
+
+        @GET("volunteers/{volunteerId}.json")
+        Call<Volunteer> getVolunteer(@Path("volunteerId") Long volunteerId);
 
     }
 

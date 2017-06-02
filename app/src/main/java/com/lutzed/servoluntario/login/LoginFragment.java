@@ -180,7 +180,7 @@ public class LoginFragment extends Fragment implements LoginContract.View {
     public void navigateToMain() {
         getActivity().finish();
         Intent intent = new Intent(getContext(), MainActivity.class);
-//        Intent intent = new Intent(getContext(), OpportunityActivity.class);
+//        Intent intent = new Intent(getContext(), VolunteerActivity.class);
 //        intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_KIND, ItemsSelectionActivity.Kind.SKILL);
         startActivity(intent);
     }
