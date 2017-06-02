@@ -1,14 +1,17 @@
 package com.lutzed.servoluntario.completion;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 
 import com.facebook.AccessToken;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.lutzed.servoluntario.api.Api;
+import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.AuthHelper;
+import com.lutzed.servoluntario.util.Snippets;
 
 import org.json.JSONObject;
 
@@ -26,6 +29,7 @@ public class VolunteerCompletionPresenter implements VolunteerCompletionContract
     private final Api.ApiClient mApiClient;
     private final User mUser;
     private final AuthHelper mAuthHelper;
+    private Image mProfileImage;
 
     public VolunteerCompletionPresenter(VolunteerCompletionFragment volunteerCompletionFragment, Api.ApiClient apiClient, AuthHelper authHelper) {
         mView = volunteerCompletionFragment;
@@ -46,6 +50,9 @@ public class VolunteerCompletionPresenter implements VolunteerCompletionContract
         volunteerAttributes.setId(mUser.getVolunteer().getId());
         volunteerAttributes.setAbout(about);
         volunteerAttributes.setOccupation(occupation);
+        if (mProfileImage != null && mProfileImage.getBitmap() != null) {
+            volunteerAttributes.setProfileImage64(Snippets.encodeToBase64(mProfileImage.getBitmap(), true));
+        }
         user.setVolunteerAttributes(volunteerAttributes);
 
         mView.setLoadingIndicator(true);
@@ -80,8 +87,14 @@ public class VolunteerCompletionPresenter implements VolunteerCompletionContract
 
     private void populateUserData() {
         User user = mAuthHelper.getUser();
-        mView.setAboutField(user.getVolunteer().getAbout());
-        mView.setOccupationField(user.getVolunteer().getOccupation());
+        Volunteer volunteer = user.getVolunteer();
+        mView.setAboutField(volunteer.getAbout());
+        mView.setOccupationField(volunteer.getOccupation());
+
+        if (volunteer.getProfileImage() != null) {
+            mProfileImage = volunteer.getProfileImage();
+            mView.setProfileImage(mProfileImage.getUrl());
+        }
     }
 
     private void populateFacebookData() {
@@ -102,6 +115,27 @@ public class VolunteerCompletionPresenter implements VolunteerCompletionContract
         parameters.putString("fields", "id, name, email, gender");
         request.setParameters(parameters);
         request.executeAsync();
+    }
+
+    @Override
+    public void addNewProfileImage() {
+        mView.showProfileImageTypePicker();
+    }
+
+    @Override
+    public void addNewImageFromCamera(int request) {
+        mView.showAddNewImageFromCamera(request);
+    }
+
+    @Override
+    public void addNewImageFromGallery(int request) {
+        mView.showAddNewImageFromGallery(request);
+    }
+
+    @Override
+    public void onNewProfileImageAdded(Bitmap bitmap) {
+        mProfileImage = new Image(bitmap);
+        mView.setProfileImage(bitmap);
     }
 
 }
