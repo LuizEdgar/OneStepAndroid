@@ -142,8 +142,9 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
             holder.mContentView.setVisibility(View.GONE);
         }
 
-        Location location = item.getLocations().get(0);
-        if (location != null) {
+        List<Location> locations = item.getLocations();
+        if (locations != null && !locations.isEmpty()) {
+            Location location = locations.get(0);
             String city = location.getCity();
             String country = location.getCountry();
             String infos = country;
@@ -151,7 +152,10 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
                 infos = city + ", " + infos;
             }
             holder.mInfosView.setText(infos);
+        }else{
+            holder.mInfosView.setText(null);
         }
+
 
         View.OnClickListener itemListener = new View.OnClickListener() {
             @Override

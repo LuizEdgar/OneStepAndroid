@@ -44,14 +44,15 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="1"
-                    android:textSize="16sp"/>
+                    android:textSize="18sp"/>
 
                 <TextView
                     android:id="@+id/infos"
+                    android:padding="2dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/tertiaryText"
-                    android:textSize="12sp"/>
+                    android:textSize="13sp"/>
 
             </LinearLayout>
 
