@@ -243,6 +243,7 @@
                     android:id="@+id/mission"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="top"
                     android:hint="@string/mission"
                     android:inputType="textMultiLine"
                     android:lines="4"

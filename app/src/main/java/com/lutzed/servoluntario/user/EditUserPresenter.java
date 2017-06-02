@@ -149,18 +149,17 @@ public class EditUserPresenter implements EditUserContract.Presenter {
             cancel = true;
         }
 
-        if (mContact == null && mUser.getOrganization().getContacts() == null && mUser.getOrganization().getContacts().isEmpty()) {
+        if (mContact == null && (mUser.getOrganization().getContacts() == null || mUser.getOrganization().getContacts().isEmpty())) {
             mView.showContactRequiredError();
             if (!cancel) mView.setFocusContactField();
             cancel = true;
         }
 
-        if (mCurrentPlace == null && mUser.getOrganization().getLocations() == null && mUser.getOrganization().getLocations().isEmpty()) {
+        if (mCurrentPlace == null && (mUser.getOrganization().getLocations() == null || mUser.getOrganization().getLocations().isEmpty())) {
             mView.showLocationRequiredError();
             if (!cancel) mView.setFocusLocation();
             cancel = true;
         }
-
 
         int minCausesRequired = Constants.MIN_ORGANIZATIONS_CAUSES_REQUIRED;
         if (minCausesRequired > 0 && causeIds.isEmpty()) {
@@ -333,7 +332,7 @@ public class EditUserPresenter implements EditUserContract.Presenter {
             cancel = true;
         }
 
-        if (mContact == null && mUser.getVolunteer().getContacts() == null && mUser.getVolunteer().getContacts().isEmpty()) {
+        if (mContact == null && (mUser.getVolunteer().getContacts() == null || mUser.getVolunteer().getContacts().isEmpty())) {
             mView.showContactRequiredError();
             if (!cancel) mView.setFocusContactField();
             cancel = true;

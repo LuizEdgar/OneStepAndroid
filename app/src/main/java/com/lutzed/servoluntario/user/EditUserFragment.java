@@ -782,7 +782,7 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
     @Override
     public void setSize(Integer size) {
         mSizeInputLayout.setVisibility(View.VISIBLE);
-        mSizeView.setText(String.valueOf(size));
+        if (size != null) mSizeView.setText(String.valueOf(size));
     }
 
     @Override
