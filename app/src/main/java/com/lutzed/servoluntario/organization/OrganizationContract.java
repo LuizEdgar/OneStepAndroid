@@ -4,6 +4,7 @@ import com.lutzed.servoluntario.interfaces.BasePresenter;
 import com.lutzed.servoluntario.interfaces.BaseView;
 import com.lutzed.servoluntario.models.Contact;
 import com.lutzed.servoluntario.models.Image;
+import com.lutzed.servoluntario.models.Organization;
 import com.lutzed.servoluntario.models.SelectableItem;
 
 import java.util.List;
@@ -47,7 +48,9 @@ public interface OrganizationContract {
     }
 
     interface Presenter extends BasePresenter {
-        void loadOpportunity();
+        void updateOrganization(Organization organization);
+
+        void loadOrganization();
 
         void onEditOrganizationClicked();
 

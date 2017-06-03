@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.Organization;
-import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.util.ActivityUtils;
 import com.lutzed.servoluntario.util.AuthHelper;
 import com.squareup.picasso.Picasso;
@@ -57,7 +56,8 @@ public class OrganizationActivity extends AppCompatActivity implements Organizat
         AuthHelper authHelper = AuthHelper.getInstance(this);
         if (organizationFragment == null) {
             // Create the fragment
-            organizationFragment = OrganizationFragment.newInstance(authHelper.getUser().getKindEnum() == User.Kind.ORGANIZATION && authHelper.getUser().getOrganization().getId().equals(organizationId));
+            organizationFragment = OrganizationFragment.newInstance(false);
+//            organizationFragment = OrganizationFragment.newInstance(authHelper.getUser().getKindEnum() == User.Kind.ORGANIZATION && authHelper.getUser().getOrganization().getId().equals(organizationId));
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), organizationFragment, R.id.contentFrame);
         }

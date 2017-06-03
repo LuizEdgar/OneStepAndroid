@@ -9,7 +9,6 @@ import android.widget.ImageView;
 
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.api.Api;
-import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.ActivityUtils;
 import com.lutzed.servoluntario.util.AuthHelper;
@@ -56,7 +55,8 @@ public class VolunteerActivity extends AppCompatActivity implements VolunteerFra
         AuthHelper authHelper = AuthHelper.getInstance(this);
         if (volunteerFragment == null) {
             // Create the fragment
-            volunteerFragment = VolunteerFragment.newInstance(authHelper.getUser().getKindEnum() == User.Kind.VOLUNTEER && authHelper.getUser().getVolunteer().getId().equals(volunteerId));
+//            volunteerFragment = VolunteerFragment.newInstance(authHelper.getUser().getKindEnum() == User.Kind.VOLUNTEER && authHelper.getUser().getVolunteer().getId().equals(volunteerId));
+            volunteerFragment = VolunteerFragment.newInstance(false);
             ActivityUtils.addFragmentToActivity(
                     getSupportFragmentManager(), volunteerFragment, R.id.contentFrame);
         }

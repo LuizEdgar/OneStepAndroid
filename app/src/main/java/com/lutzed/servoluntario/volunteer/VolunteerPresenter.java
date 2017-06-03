@@ -22,14 +22,14 @@ public class VolunteerPresenter implements VolunteerContract.Presenter {
     private final Api.ApiClient mApiClient;
     private final AuthHelper mAuthHelper;
     private final Long mVolunteerId;
-    private Volunteer mOpportunity;
+    private Volunteer mVolunteer;
 
     public VolunteerPresenter(VolunteerFragment volunteerFragment, Api.ApiClient apiClient, AuthHelper authHelper, Volunteer volunteer) {
         mView = volunteerFragment;
         mApiClient = apiClient;
         mAuthHelper = authHelper;
         mView.setPresenter(this);
-        mOpportunity = volunteer;
+        mVolunteer = volunteer;
         mVolunteerId = volunteer.getId();
     }
 
@@ -42,16 +42,22 @@ public class VolunteerPresenter implements VolunteerContract.Presenter {
     }
 
     @Override
+    public void updateVolunteer(Volunteer volunteer){
+        mVolunteer = volunteer;
+        setVolunteerDateOnView(volunteer);
+    }
+
+    @Override
     public void start() {
-        if (mOpportunity != null) {
-            setVolunteerDateOnView(mOpportunity);
+        if (mVolunteer != null) {
+            setVolunteerDateOnView(mVolunteer);
         } else {
-            loadOpportunity();
+            loadVolunteer();
         }
     }
 
     @Override
-    public void loadOpportunity() {
+    public void loadVolunteer() {
         mApiClient.getVolunteer(mVolunteerId).enqueue(new Callback<Volunteer>() {
             @Override
             public void onResponse(Call<Volunteer> call, Response<Volunteer> response) {

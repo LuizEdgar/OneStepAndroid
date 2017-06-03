@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -34,12 +35,12 @@ import android.widget.Toast;
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.main.MainActivity;
 import com.lutzed.servoluntario.selection.ItemsSelectionActivity;
-import com.lutzed.servoluntario.util.CircleTransform;
 import com.lutzed.servoluntario.util.Constants;
 import com.lutzed.servoluntario.util.FileAndPathHolder;
 import com.lutzed.servoluntario.util.LocalCircleTransform;
 import com.lutzed.servoluntario.util.Snippets;
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -71,6 +72,7 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
 
     private VolunteerCompletionContract.Presenter mPresenter;
     private String mCurrentPath;
+    private Target mTarget;
 
     public static VolunteerCompletionFragment newInstance() {
         return new VolunteerCompletionFragment();
@@ -293,7 +295,24 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
 
     @Override
     public void setProfileImage(String url) {
-        Picasso.with(getContext()).load(url).transform(new CircleTransform(true)).placeholder(R.drawable.ic_user_placeholder).into(mProfileImage);
+        if (mTarget == null){
+            mTarget = new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    mPresenter.onNewProfileImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.PROFILE_IMAGE_SIZE));
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+                }
+            };
+        }
+
+        Picasso.with(getContext()).load(url).into(mTarget);
     }
 
     @Override
@@ -313,7 +332,7 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
                         //Get image
                         Bitmap bitmap = extras.getParcelable("data");
 
-                        mPresenter.onNewProfileImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.MAX_IMAGE_SIZE));
+                        mPresenter.onNewProfileImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.PROFILE_IMAGE_SIZE));
                     }
                 } else {
                     InputStream inputStream = null;
@@ -323,7 +342,7 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
                         e.printStackTrace();
                     }
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    mPresenter.onNewProfileImageAdded(bitmap);
+                    mPresenter.onNewProfileImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.PROFILE_IMAGE_SIZE));
 
                 }
             } else if (resultCode == RESULT_CANCELED) {
@@ -337,7 +356,7 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
                 } catch (IOException e) {
                     rotation = 0;
                 }
-                mPresenter.onNewProfileImageAdded(Snippets.bitmapFromPath(mCurrentPath, Constants.MAX_IMAGE_SIZE, true, rotation));
+                mPresenter.onNewProfileImageAdded(Snippets.bitmapFromPath(mCurrentPath, Constants.PROFILE_IMAGE_SIZE, true, rotation));
             } else if (resultCode == RESULT_CANCELED) {
                 mCurrentPath = null;
             }

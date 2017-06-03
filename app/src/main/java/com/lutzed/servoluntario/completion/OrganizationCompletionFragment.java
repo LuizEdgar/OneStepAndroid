@@ -319,7 +319,7 @@ public class OrganizationCompletionFragment extends Fragment implements Organiza
                         //Get image
                         Bitmap bitmap = extras.getParcelable("data");
 
-                        mPresenter.onNewProfileImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.MAX_IMAGE_SIZE));
+                        mPresenter.onNewProfileImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.PROFILE_IMAGE_SIZE));
                     }
                 } else {
                     InputStream inputStream = null;
@@ -329,7 +329,7 @@ public class OrganizationCompletionFragment extends Fragment implements Organiza
                         e.printStackTrace();
                     }
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    mPresenter.onNewProfileImageAdded(bitmap);
+                    mPresenter.onNewProfileImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.PROFILE_IMAGE_SIZE));
 
                 }
             } else if (resultCode == RESULT_CANCELED) {
@@ -343,7 +343,7 @@ public class OrganizationCompletionFragment extends Fragment implements Organiza
                 } catch (IOException e) {
                     rotation = 0;
                 }
-                mPresenter.onNewProfileImageAdded(Snippets.bitmapFromPath(mCurrentPath, Constants.MAX_IMAGE_SIZE, true, rotation));
+                mPresenter.onNewProfileImageAdded(Snippets.bitmapFromPath(mCurrentPath, Constants.PROFILE_IMAGE_SIZE, true, rotation));
             } else if (resultCode == RESULT_CANCELED) {
                 mCurrentPath = null;
             }

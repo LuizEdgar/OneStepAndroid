@@ -418,10 +418,11 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
                         if (requestCode == REQUEST_IMAGE_PICK) {
                             mPresenter.onNewImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.MAX_IMAGE_SIZE));
                         } else {
-                            mPresenter.onNewProfileImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.MAX_IMAGE_SIZE));
+                            mPresenter.onNewProfileImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.PROFILE_IMAGE_SIZE));
                         }
                     }
                 } else {
+
                     InputStream inputStream = null;
                     try {
                         inputStream = getContext().getContentResolver().openInputStream(data.getData());
@@ -430,9 +431,9 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
                     }
                     Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                     if (requestCode == REQUEST_IMAGE_PICK) {
-                        mPresenter.onNewImageAdded(bitmap);
+                        mPresenter.onNewImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.MAX_IMAGE_SIZE));
                     } else {
-                        mPresenter.onNewProfileImageAdded(bitmap);
+                        mPresenter.onNewProfileImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.PROFILE_IMAGE_SIZE));
                     }
 
                 }
@@ -450,7 +451,7 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
                 if (requestCode == REQUEST_IMAGE_CAPTURE) {
                     mPresenter.onNewImageAdded(Snippets.bitmapFromPath(mCurrentPath, Constants.MAX_IMAGE_SIZE, true, rotation));
                 } else {
-                    mPresenter.onNewProfileImageAdded(Snippets.bitmapFromPath(mCurrentPath, Constants.MAX_IMAGE_SIZE, true, rotation));
+                    mPresenter.onNewProfileImageAdded(Snippets.bitmapFromPath(mCurrentPath, Constants.PROFILE_IMAGE_SIZE, true, rotation));
                 }
             } else if (resultCode == RESULT_CANCELED) {
                 mCurrentPath = null;
@@ -481,6 +482,7 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
 
     @Override
     public void close() {
+        getActivity().setResult(RESULT_OK);
         getActivity().finish();
     }
 

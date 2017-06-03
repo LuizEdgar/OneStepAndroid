@@ -24,14 +24,14 @@ public class OrganizationPresenter implements OrganizationContract.Presenter {
     private final Api.ApiClient mApiClient;
     private final AuthHelper mAuthHelper;
     private final Long mOrganizationId;
-    private Organization mOpportunity;
+    private Organization mOrganization;
 
     public OrganizationPresenter(OrganizationFragment organizationFragment, Api.ApiClient apiClient, AuthHelper authHelper, Organization organization) {
         mView = organizationFragment;
         mApiClient = apiClient;
         mAuthHelper = authHelper;
         mView.setPresenter(this);
-        mOpportunity = organization;
+        mOrganization = organization;
         mOrganizationId = organization.getId();
     }
 
@@ -44,16 +44,22 @@ public class OrganizationPresenter implements OrganizationContract.Presenter {
     }
 
     @Override
+    public void updateOrganization(Organization organization){
+        mOrganization = organization;
+        setOrganizationDateOnView(organization);
+    }
+
+    @Override
     public void start() {
-        if (mOpportunity != null) {
-            setOrganizationDateOnView(mOpportunity);
+        if (mOrganization != null) {
+            setOrganizationDateOnView(mOrganization);
         } else {
-            loadOpportunity();
+            loadOrganization();
         }
     }
 
     @Override
-    public void loadOpportunity() {
+    public void loadOrganization() {
         mApiClient.getOrganization(mOrganizationId).enqueue(new Callback<Organization>() {
             @Override
             public void onResponse(Call<Organization> call, Response<Organization> response) {

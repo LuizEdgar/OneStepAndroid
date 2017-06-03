@@ -1,5 +1,6 @@
 package com.lutzed.servoluntario.organization;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -40,6 +41,7 @@ import butterknife.ButterKnife;
  */
 public class OrganizationFragment extends Fragment implements OrganizationContract.View {
     private static final String BUNDLE_CAN_EDIT = "bundle_can_edit";
+    private static final int REQUEST_EDIT = 290;
 
     @BindView(R.id.profileImage) ImageView mProfileImage;
     @BindView(R.id.title) TextView mNameView;
@@ -286,7 +288,16 @@ public class OrganizationFragment extends Fragment implements OrganizationContra
     @Override
     public void showEditOrganization() {
         Intent intent = new Intent(getContext(), EditUserActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_EDIT);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == Activity.RESULT_OK && requestCode == REQUEST_EDIT){
+            mPresenter.loadOrganization();
+        }
     }
 
     @Override

@@ -19,7 +19,6 @@ package com.lutzed.servoluntario.util;
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 
 /**
@@ -29,8 +28,8 @@ public class LocalCircleTransform {
 
     private boolean isBordered;
 
-    private final int DEFAULT_BORDER_COLOR = Color.LTGRAY;
-    private final int DEFAULT_BORDER_RADIUS = 6;
+    private final int DEFAULT_BORDER_COLOR = 0x2ab6b6b6;
+    private final int DEFAULT_BORDER_RADIUS = 3;
 
     public Bitmap transform(Bitmap source) {
         int size = Math.min(source.getWidth(), source.getHeight());
