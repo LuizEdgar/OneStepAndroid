@@ -12,6 +12,9 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.IntentCompat;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -22,6 +25,7 @@ import android.widget.Toast;
 
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.completion.CompletionActivity;
+import com.lutzed.servoluntario.util.TextInputLayoutTextWatcher;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,7 +38,6 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
 
     @BindView(R.id.email) AutoCompleteTextView mEmailView;
     @BindView(R.id.name) EditText mNameView;
-    @BindView(R.id.name_input_layout) TextInputLayout mNameInputLayout;
     @BindView(R.id.username) EditText mUsernameView;
     @BindView(R.id.password) EditText mPasswordView;
     @BindView(R.id.phone) EditText mPhoneView;
@@ -42,10 +45,23 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
     @BindView(R.id.sign_up_form) View mLoginFormView;
     @BindView(R.id.toggle_sign_up_mode_button) TextView mToggleSignUpModeButton;
 
+    @BindView(R.id.emailInputLayout) TextInputLayout mEmailInputLayout;
+    @BindView(R.id.nameInputLayout) TextInputLayout mNameInputLayout;
+    @BindView(R.id.usernameInputLayout) TextInputLayout mUsernameInputLayout;
+    @BindView(R.id.passwordInputLayout) TextInputLayout mPasswordInputLayout;
+    @BindView(R.id.phoneInputLayout) TextInputLayout mPhoneInputLayout;
+
     private SignUpContract.Presenter mPresenter;
 
     public static SignUpFragment newInstance() {
         return new SignUpFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -76,19 +92,39 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
             }
         });
 
+        mEmailView.addTextChangedListener(new TextInputLayoutTextWatcher(mEmailView, mEmailInputLayout));
+        mNameView.addTextChangedListener(new TextInputLayoutTextWatcher(mNameView, mNameInputLayout));
+        mUsernameView.addTextChangedListener(new TextInputLayoutTextWatcher(mUsernameView, mUsernameInputLayout));
+        mPasswordView.addTextChangedListener(new TextInputLayoutTextWatcher(mPasswordView, mPasswordInputLayout));
+        mPhoneView.addTextChangedListener(new TextInputLayoutTextWatcher(mPhoneView, mPhoneInputLayout));
+
         return root;
     }
 
-    @OnClick(R.id.sign_up_button)
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.sign_up, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_sign_up) {
+            onSignUpClicked();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     void onSignUpClicked() {
         mPresenter.attemptSignUp(mNameView.getText().toString().trim(), mUsernameView.getText().toString().trim().toLowerCase(), mEmailView.getText().toString().trim(), mPasswordView.getText().toString(), mPhoneView.getText().toString());
     }
 
     public void resetErrors() {
-        mNameView.setError(null);
-        mEmailView.setError(null);
-        mUsernameView.setError(null);
-        mPasswordView.setError(null);
+        mNameInputLayout.setError(null);
+        mEmailInputLayout.setError(null);
+        mUsernameInputLayout.setError(null);
+        mPasswordInputLayout.setError(null);
+        mPhoneInputLayout.setError(null);
     }
 
     @Override
@@ -131,6 +167,7 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
         mEmailView.setText("");
         mUsernameView.setText("");
         mPasswordView.setText("");
+        mPhoneView.setText("");
     }
 
     @Override
@@ -171,37 +208,37 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
 
     @Override
     public void showEmailRequiredError() {
-        mEmailView.setError(getString(R.string.error_field_required));
+        mEmailInputLayout.setError(getString(R.string.error_field_required));
     }
 
     @Override
     public void showNameRequiredError() {
-        mNameView.setError(getString(R.string.error_field_required));
+        mNameInputLayout.setError(getString(R.string.error_field_required));
     }
 
     @Override
     public void showUsernameRequiredError() {
-        mUsernameView.setError(getString(R.string.error_field_required));
+        mUsernameInputLayout.setError(getString(R.string.error_field_required));
     }
 
     @Override
     public void showInvalidUsernameError() {
-        mUsernameView.setError(getString(R.string.error_invalid_username));
+        mUsernameInputLayout.setError(getString(R.string.error_invalid_username));
     }
 
     @Override
     public void showPasswordRequiredError() {
-        mPasswordView.setError(getString(R.string.error_field_required));
+        mPasswordInputLayout.setError(getString(R.string.error_field_required));
     }
 
     @Override
     public void showInvalidEmailError() {
-        mEmailView.setError(getString(R.string.error_invalid_email));
+        mEmailInputLayout.setError(getString(R.string.error_invalid_email));
     }
 
     @Override
     public void showInvalidPasswordError() {
-        mPasswordView.setError(getString(R.string.error_invalid_password));
+        mPasswordInputLayout.setError(getString(R.string.error_invalid_password));
     }
 
     @Override
@@ -232,7 +269,7 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
 
     @Override
     public void showPhoneRequiredError() {
-        mPhoneView.setError(getString(R.string.error_field_required));
+        mPhoneInputLayout.setError(getString(R.string.error_field_required));
     }
 
     @Override
@@ -242,7 +279,7 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
 
     @Override
     public void showInvalidPhoneError() {
-        mPhoneView.setError(getString(R.string.error_invalid_phone));
+        mPhoneInputLayout.setError(getString(R.string.error_invalid_phone));
     }
 }
 

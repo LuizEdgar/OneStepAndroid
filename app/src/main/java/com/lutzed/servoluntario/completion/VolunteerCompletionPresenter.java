@@ -43,8 +43,6 @@ public class VolunteerCompletionPresenter implements VolunteerCompletionContract
 
     @Override
     public void saveProfile(String about, String occupation) {
-        mView.resetErrors();
-
         User user = new User();
         user.setId(mUser.getId());
 

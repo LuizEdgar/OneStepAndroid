@@ -23,6 +23,9 @@ import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -77,6 +80,13 @@ public class OrganizationCompletionFragment extends Fragment implements Organiza
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         mPresenter.start();
@@ -107,7 +117,20 @@ public class OrganizationCompletionFragment extends Fragment implements Organiza
         return root;
     }
 
-    @OnClick(R.id.save_button)
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.save, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_save) {
+            onSaveClicked();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     void onSaveClicked() {
         mPresenter.saveProfile(mAboutView.getText().toString(), mMissionView.getText().toString(), mSiteView.getText().toString());
     }
@@ -157,7 +180,7 @@ public class OrganizationCompletionFragment extends Fragment implements Organiza
         getActivity().finish();
         Intent intent = new Intent(getContext(), ItemsSelectionActivity.class);
         intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_KIND, ItemsSelectionActivity.Kind.SKILL);
-        intent.putExtra(ItemsSelectionActivity.EXTRA_SAVE_ACTION_NAME, getString(R.string.action_next));
+//        intent.putExtra(ItemsSelectionActivity.EXTRA_SAVE_ACTION_NAME, getString(R.string.action_next));
         intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_MODE, ItemsSelectionActivity.Mode.MULTIPLE_SAVE_TO_USER);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
@@ -168,7 +191,7 @@ public class OrganizationCompletionFragment extends Fragment implements Organiza
         getActivity().finish();
         Intent intent = new Intent(getContext(), ItemsSelectionActivity.class);
         intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_KIND, ItemsSelectionActivity.Kind.CAUSE);
-        intent.putExtra(ItemsSelectionActivity.EXTRA_SAVE_ACTION_NAME, getString(R.string.action_next));
+//        intent.putExtra(ItemsSelectionActivity.EXTRA_SAVE_ACTION_NAME, getString(R.string.action_next));
         intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_MODE, ItemsSelectionActivity.Mode.MULTIPLE_SAVE_TO_USER);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

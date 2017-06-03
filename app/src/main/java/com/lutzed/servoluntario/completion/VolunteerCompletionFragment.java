@@ -24,6 +24,9 @@ import android.support.v4.content.IntentCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -53,7 +56,6 @@ import butterknife.OnClick;
 
 import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
-import static com.lutzed.servoluntario.R.id.about;
 
 /**
  * A login screen that offers login via email/password.
@@ -65,7 +67,7 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
     private static final int REQUEST_STORAGE_PERMISSION_PROFILE = 213;
 
     @BindView(R.id.profileImage) ImageView mProfileImage;
-    @BindView(about) EditText mAboutView;
+    @BindView(R.id.about) EditText mAboutView;
     @BindView(R.id.occupation) EditText mOccupationView;
     @BindView(R.id.progress) View mProgressView;
     @BindView(R.id.volunteer_completion_form) View mLoginFormView;
@@ -76,6 +78,13 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
 
     public static VolunteerCompletionFragment newInstance() {
         return new VolunteerCompletionFragment();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -109,7 +118,20 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
         return root;
     }
 
-    @OnClick(R.id.save_button)
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.save, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_save) {
+            onSaveClicked();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     void onSaveClicked() {
         mPresenter.saveProfile(mAboutView.getText().toString(), mOccupationView.getText().toString());
     }
@@ -158,7 +180,7 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
         getActivity().finish();
         Intent intent = new Intent(getContext(), ItemsSelectionActivity.class);
         intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_KIND, ItemsSelectionActivity.Kind.SKILL);
-        intent.putExtra(ItemsSelectionActivity.EXTRA_SAVE_ACTION_NAME, getString(R.string.action_next));
+//        intent.putExtra(ItemsSelectionActivity.EXTRA_SAVE_ACTION_NAME, getString(R.string.action_next));
         intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_MODE, ItemsSelectionActivity.Mode.MULTIPLE_SAVE_TO_USER);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
@@ -169,7 +191,7 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
         getActivity().finish();
         Intent intent = new Intent(getContext(), ItemsSelectionActivity.class);
         intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_KIND, ItemsSelectionActivity.Kind.CAUSE);
-        intent.putExtra(ItemsSelectionActivity.EXTRA_SAVE_ACTION_NAME, getString(R.string.action_next));
+//        intent.putExtra(ItemsSelectionActivity.EXTRA_SAVE_ACTION_NAME, getString(R.string.action_next));
         intent.putExtra(ItemsSelectionActivity.EXTRA_ITEM_SELECTION_MODE, ItemsSelectionActivity.Mode.MULTIPLE_SAVE_TO_USER);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | IntentCompat.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);

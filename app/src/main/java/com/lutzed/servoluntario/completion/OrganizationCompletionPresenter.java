@@ -41,8 +41,6 @@ public class OrganizationCompletionPresenter implements OrganizationCompletionCo
 
     @Override
     public void saveProfile(String about, String mission, String site) {
-        mView.resetErrors();
-
         User user = new User();
         user.setId(mUser.getId());
 
