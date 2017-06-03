@@ -106,6 +106,7 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
     @BindView(R.id.skillsWrapper) View mSkillsWrapperView;
     @BindView(R.id.imagesWrapper) View mImagesWrapperView;
     @BindView(R.id.genderWrapper) View mGenderWrapperView;
+    @BindView(R.id.othersWrapper) View mOthersWrapperView;
     @BindView(R.id.genderTypeGroup) RadioGroup mGenderRadioGroup;
     @BindView(R.id.male) RadioButton mMaleRadioButton;
     @BindView(R.id.female) RadioButton mFemaleRadioButton;
@@ -194,7 +195,7 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
 
         ArrayList<SelectableItem> baseAddItem = new ArrayList<>();
         SelectableItem item = new Skill();
-        item.setName("Add");
+        item.setAddPlaceholder(true);
         baseAddItem.add(item);
         mCausesRecyclerView.setAdapter(new OpportunitiesItemsAdapter(baseAddItem, new OpportunitiesItemsAdapter.OnAdapterListener() {
             @Override
@@ -471,6 +472,7 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
 
     @Override
     public void setMission(String timeCommitment) {
+        mOthersWrapperView.setVisibility(View.VISIBLE);
         mMissionInputLayout.setVisibility(View.VISIBLE);
         mMissionView.setText(timeCommitment);
     }
@@ -706,6 +708,7 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
 
     @Override
     public void setCnpj(String cnpj) {
+        mOthersWrapperView.setVisibility(View.VISIBLE);
         mCnpjInputLayout.setVisibility(View.VISIBLE);
         mCnpjView.setText(cnpj);
     }
@@ -723,6 +726,7 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
 
     @Override
     public void setEstablishedAt(String format) {
+        mOthersWrapperView.setVisibility(View.VISIBLE);
         mEstablishedAtInputLayout.setVisibility(View.VISIBLE);
         mEstablishedAtView.setText(format);
         mEstablishedAtView.setTextColor(mDefaultEditTextColor);
@@ -730,6 +734,7 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
 
     @Override
     public void setBirthAt(String format) {
+        mOthersWrapperView.setVisibility(View.VISIBLE);
         mBirthAtInputLayout.setVisibility(View.VISIBLE);
         mBirthAtView.setText(format);
         mBirthAtView.setTextColor(mDefaultEditTextColor);
@@ -783,6 +788,7 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
 
     @Override
     public void setSize(Integer size) {
+        mOthersWrapperView.setVisibility(View.VISIBLE);
         mSizeInputLayout.setVisibility(View.VISIBLE);
         if (size != null) mSizeView.setText(String.valueOf(size));
     }
@@ -794,6 +800,7 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
 
     @Override
     public void setOccupation(String occupation) {
+        mOthersWrapperView.setVisibility(View.VISIBLE);
         mOccupationInputLayout.setVisibility(View.VISIBLE);
         mOccupationView.setText(occupation);
     }
@@ -805,6 +812,8 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
 
     @Override
     public void setGender(Volunteer.GenderEnum genderEnum) {
+        mOthersWrapperView.setVisibility(View.VISIBLE);
+        mGenderWrapperView.setVisibility(View.VISIBLE);
         mMaleRadioButton.setChecked(genderEnum == Volunteer.GenderEnum.MALE);
         mFemaleRadioButton.setChecked(genderEnum == Volunteer.GenderEnum.FEMALE);
     }
@@ -849,8 +858,9 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
         String size = mSizeView.getText().toString().trim();
         String cnpj = mCnpjView.getText().toString().trim();
         String mission = mMissionView.getText().toString().trim();
+        String site = mSiteView.getText().toString().trim();
 
-        mPresenter.attemptSaveOrganization(email, username, name, about, skillIds, causeIds, size, cnpj, mission);
+        mPresenter.attemptSaveOrganization(email, username, name, about, skillIds, causeIds, size, cnpj, mission, site);
     }
 }
 

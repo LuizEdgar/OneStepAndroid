@@ -90,8 +90,8 @@ public class VolunteerPresenter implements VolunteerContract.Presenter {
         String gender = volunteer.getGenderEnum().toString().toLowerCase();
         gender = Character.toUpperCase(gender.charAt(0)) + gender.substring(1);
         mView.setGender(gender);
-        mView.addCauses(volunteer.getCauses());
-        mView.addSkills(volunteer.getSkills());
+        mView.setCauses(volunteer.getCauses());
+        mView.setSkills(volunteer.getSkills());
         if (volunteer.getProfileImage() != null)
             mView.setCoverImage(volunteer.getProfileImage().getUrl());
         mView.setContacts(volunteer.getContacts());

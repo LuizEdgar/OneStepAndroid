@@ -166,35 +166,37 @@ public class VolunteerFragment extends Fragment implements VolunteerContract.Vie
     }
 
     @Override
-    public void addCauses(List<? extends SelectableItem> causes) {
+    public void setCauses(List<? extends SelectableItem> causes) {
         if (causes == null || causes.isEmpty()) {
             mCausesRecyclerView.setVisibility(View.GONE);
             mCausesWrapper.setVisibility(View.GONE);
         } else {
             OpportunitiesItemsAdapter adapter = (OpportunitiesItemsAdapter) mCausesRecyclerView.getAdapter();
+            adapter.clearData();
             adapter.addItems(causes);
         }
     }
 
     @Override
-    public void addSkills(List<? extends SelectableItem> skills) {
+    public void setSkills(List<? extends SelectableItem> skills) {
         if (skills == null || skills.isEmpty()) {
             mSkillsRecyclerView.setVisibility(View.GONE);
             mSkillsWrapper.setVisibility(View.GONE);
         } else {
             OpportunitiesItemsAdapter adapter = (OpportunitiesItemsAdapter) mSkillsRecyclerView.getAdapter();
+            adapter.clearData();
             adapter.addItems(skills);
         }
     }
 
     @Override
-    public void addImages(List<Image> images) {
+    public void setImages(List<Image> images) {
         if (images == null || images.isEmpty()) {
             mGalleryRecyclerView.setVisibility(View.GONE);
             mGalleryWrapper.setVisibility(View.GONE);
         } else {
             GalleryViewAdapter adapter = (GalleryViewAdapter) mGalleryRecyclerView.getAdapter();
-            adapter.addItems(images);
+            adapter.setItems(images);
         }
     }
 

@@ -13,12 +13,29 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="AppTheme.NoActionBar.Login">
+        <item name="colorAccent">@color/white</item>
+        <item name="colorControlNormal">#c5c5c5</item>
+        <item name="colorControlActivated">@color/white</item>
+        <item name="colorControlHighlight">@color/white</item>
+    </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
     <style name="ThemedButton" parent="Theme.AppCompat.Light">
         <item name="colorButtonNormal">@color/colorPrimary</item>
+    </style>
+
+    <style name="LoginButton" parent="Theme.AppCompat.Light">
+        <item name="colorButtonNormal">@color/white</item>
+        <item name="colorControlHighlight">@color/colorPrimary</item>
+    </style>
+
+    <style name="FacebookButton" parent="Theme.AppCompat.Light">
+        <item name="colorButtonNormal">@color/white</item>
+        <item name="colorControlHighlight">@color/com_facebook_blue</item>
     </style>
 
 </resources>

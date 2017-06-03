@@ -54,6 +54,7 @@ public class OrganizationFragment extends Fragment implements OrganizationContra
     @BindView(R.id.skillsRecyclerView) RecyclerView mSkillsRecyclerView;
     @BindView(R.id.establishedAt) DataView mEstablishedAtView;
     @BindView(R.id.mission) DataView mMissionView;
+    @BindView(R.id.size) DataView mSizeView;
     @BindView(R.id.cnpj) DataView mCnpjView;
     @BindView(R.id.othersWrapper) View mOthersWrapper;
     @BindView(R.id.causesWrapper) View mCausesWrapper;
@@ -168,35 +169,35 @@ public class OrganizationFragment extends Fragment implements OrganizationContra
     }
 
     @Override
-    public void addCauses(List<? extends SelectableItem> causes) {
+    public void setCauses(List<? extends SelectableItem> causes) {
         if (causes == null || causes.isEmpty()) {
             mCausesRecyclerView.setVisibility(View.GONE);
             mCausesWrapper.setVisibility(View.GONE);
         } else {
             OpportunitiesItemsAdapter adapter = (OpportunitiesItemsAdapter) mCausesRecyclerView.getAdapter();
+            adapter.clearData();
             adapter.addItems(causes);
         }
     }
 
     @Override
-    public void addSkills(List<? extends SelectableItem> skills) {
+    public void setSkills(List<? extends SelectableItem> skills) {
         if (skills == null || skills.isEmpty()) {
             mSkillsRecyclerView.setVisibility(View.GONE);
             mSkillsWrapper.setVisibility(View.GONE);
         } else {
             OpportunitiesItemsAdapter adapter = (OpportunitiesItemsAdapter) mSkillsRecyclerView.getAdapter();
+            adapter.clearData();
             adapter.addItems(skills);
         }
     }
 
     @Override
-    public void addImages(List<Image> images) {
-        if (images == null || images.isEmpty()) {
-            mGalleryRecyclerView.setVisibility(View.GONE);
-            mGalleryWrapper.setVisibility(View.GONE);
-        } else {
+    public void setImages(List<Image> images) {
+        if (images != null && !images.isEmpty()) {
+            mGalleryWrapper.setVisibility(View.VISIBLE);
             GalleryViewAdapter adapter = (GalleryViewAdapter) mGalleryRecyclerView.getAdapter();
-            adapter.addItems(images);
+            adapter.setItems(images);
         }
     }
 
@@ -258,6 +259,7 @@ public class OrganizationFragment extends Fragment implements OrganizationContra
         if (TextUtils.isEmpty(establishedAt)) {
             mEstablishedAtView.setVisibility(View.GONE);
         } else {
+            mOthersWrapper.setVisibility(View.VISIBLE);
             mEstablishedAtView.setData(establishedAt);
         }
     }
@@ -306,6 +308,17 @@ public class OrganizationFragment extends Fragment implements OrganizationContra
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         getActivity().finish();
         startActivity(intent);
+    }
+
+    @Override
+    public void setSize(Integer size) {
+        if (size == null) {
+            mSizeView.setVisibility(View.GONE);
+        } else {
+            mOthersWrapper.setVisibility(View.VISIBLE);
+            mSizeView.setData(String.valueOf(size));
+        }
+
     }
 
     @Override

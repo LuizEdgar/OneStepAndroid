@@ -87,9 +87,11 @@ public class OrganizationPresenter implements OrganizationContract.Presenter {
     private void setOrganizationDateOnView(Organization organization) {
         mView.setName(organization.getName());
         mView.setAbout(organization.getAbout());
-        mView.addCauses(organization.getCauses());
-        mView.addSkills(organization.getSkills());
-        mView.addImages(organization.getImages());
+        mView.setCauses(organization.getCauses());
+        mView.setSkills(organization.getSkills());
+        mView.setImages(organization.getImages());
+        mView.setSize(organization.getSize());
+        mView.setSite(organization.getSite());
         if (organization.getProfileImage() != null)
             mView.setCoverImage(organization.getProfileImage().getUrl());
         mView.setMission(organization.getMission());

@@ -136,7 +136,7 @@ public interface EditUserContract {
 
         void onNewItemsSelection(ArrayList<SelectableItem> parcelableArrayListExtra, ArrayList<SelectableItem> parcelableArrayListExtra1);
 
-        void attemptSaveOrganization(String email, String username, String name, String about, List<Long> skillIds, List<Long> causeIds, String size, String cnpj, String mission);
+        void attemptSaveOrganization(String email, String username, String name, String about, List<Long> skillIds, List<Long> causeIds, String size, String cnpj, String mission, String site);
 
         void attemptSaveVolunteer(String email, String username, String name, String about, List<Long> skillIds, List<Long> causeIds, Volunteer.GenderEnum genderEnum, String occupation);
 

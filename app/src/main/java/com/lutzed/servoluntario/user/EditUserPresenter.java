@@ -89,7 +89,7 @@ public class EditUserPresenter implements EditUserContract.Presenter {
 
         mView.setMission(organization.getMission());
         mView.setCnpj(organization.getCnpj());
-        mView.setCnpj(organization.getCnpj());
+        mView.setSite(organization.getSite());
         mView.setSize(organization.getSize());
 
         List<Contact> contacts = organization.getContacts();
@@ -117,7 +117,7 @@ public class EditUserPresenter implements EditUserContract.Presenter {
     }
 
     @Override
-    public void attemptSaveOrganization(String email, String username, String name, String about, List<Long> skillIds, List<Long> causeIds, String size, String cnpj, String mission) {
+    public void attemptSaveOrganization(String email, String username, String name, String about, List<Long> skillIds, List<Long> causeIds, String size, String cnpj, String mission, String site) {
         boolean cancel = false;
 
         // Check for a valid password, if the user entered one.
@@ -198,6 +198,7 @@ public class EditUserPresenter implements EditUserContract.Presenter {
             }
             organization.setSize(sizeInt);
             organization.setCnpj(cnpj);
+            organization.setSite(site);
             organization.setMission(mission);
 
             List<Contact> contacts = mUser.getOrganization().getContacts();

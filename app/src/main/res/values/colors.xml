@@ -4,14 +4,24 @@
     <color name="colorPrimaryDark">#0097A7</color>
     <color name="colorPrimaryLight">#B2EBF2</color>
     <color name="colorAccent">#FFC107</color>
+
+    <!--<color name="colorPrimary">#3498DB</color>-->
+    <!--<color name="colorPrimaryLight">#78b6df</color>-->
+    <!--<color name="colorPrimaryDark">#2980B9</color>-->
+    <!--<color name="colorPrimaryDarker">#2C3E50</color>-->
+    <!--<color name="colorAccent">#E74C3C</color>-->
+    <!--<color name="colorWhite">#ECF0F1</color>-->
+
     <color name="primaryText">#212121</color>
     <color name="secondaryText">#757575</color>
     <color name="tertiaryText">#9e9e9e</color>
     <color name="icons">#FFFFFF</color>
+    <color name="iconsLight">#bdbdbd</color>
     <color name="iconsDark">#757575</color>
     <color name="divider">#2ab6b6b6</color>
     <color name="placeHolder">#85ff40f2</color>
 
     <color name="red">#ff0000</color>
     <color name="white">#FFFFFF</color>
+    <color name="facebook_blue">#3b5998</color>
 </resources>

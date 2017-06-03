@@ -200,7 +200,7 @@ public class EditOpportunityFragment extends Fragment implements EditOpportunity
 
         ArrayList<SelectableItem> baseAddItem = new ArrayList<>();
         SelectableItem item = new Skill();
-        item.setName("Add");
+        item.setAddPlaceholder(true);
         baseAddItem.add(item);
         mCausesRecyclerView.setAdapter(new OpportunitiesItemsAdapter(baseAddItem, new OpportunitiesItemsAdapter.OnAdapterListener() {
             @Override

@@ -20,9 +20,9 @@ public interface VolunteerContract {
 
         void setContacts(List<Contact> contacts);
 
-        void addCauses(List<? extends SelectableItem> causes);
+        void setCauses(List<? extends SelectableItem> causes);
 
-        void addSkills(List<? extends SelectableItem> skills);
+        void setSkills(List<? extends SelectableItem> skills);
 
         void setName(String title);
 
@@ -30,7 +30,7 @@ public interface VolunteerContract {
 
         void setLocation(String location);
 
-        void addImages(List<Image> images);
+        void setImages(List<Image> images);
 
         void setCoverImage(String url);
 

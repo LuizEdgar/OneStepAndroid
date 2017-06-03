@@ -72,6 +72,14 @@ public class OpportunitiesItemsAdapter extends RecyclerView.Adapter<Opportunitie
         notifyDataSetChanged();
     }
 
+    public void clearData() {
+        int size = getItemCount();
+        if (size > 0) {
+            mValues.clear();
+            this.notifyItemRangeRemoved(0, size);
+        }
+    }
+
     public void addItems(List<? extends SelectableItem> items) {
         if (items == null || items.isEmpty()) {
             return;
@@ -119,11 +127,15 @@ public class OpportunitiesItemsAdapter extends RecyclerView.Adapter<Opportunitie
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
 
-        Image image = holder.mItem.getImage();
-        if (image != null) {
-            Picasso.with(holder.mView.getContext()).load(image.getUrl()).placeholder(R.drawable.ic_group_work_black_24dp).into(holder.mImageView);
+        if (!holder.mItem.isAddPlaceholder()) {
+            Image image = holder.mItem.getImage();
+            if (image != null) {
+                Picasso.with(holder.mView.getContext()).load(image.getUrl()).placeholder(R.drawable.ic_group_work_black_24dp).into(holder.mImageView);
+            } else {
+                holder.mImageView.setImageResource(R.drawable.ic_group_work_black_24dp);
+            }
         } else {
-            holder.mImageView.setImageResource(R.drawable.ic_group_work_black_24dp);
+            holder.mImageView.setImageResource(R.drawable.ic_add_circle_black_24dp);
         }
 
         holder.mNameView.setText(mValues.get(position).getName());

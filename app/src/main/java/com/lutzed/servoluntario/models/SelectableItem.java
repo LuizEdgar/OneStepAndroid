@@ -35,6 +35,8 @@ public abstract class SelectableItem implements Parcelable {
     @SerializedName("updated_at")
     protected String updatedAt;
 
+    protected boolean isAddPlaceholder;
+
     protected boolean isSelected;
 
     public Long getId() {
@@ -75,6 +77,14 @@ public abstract class SelectableItem implements Parcelable {
 
     public void setUpdatedAt(String updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public boolean isAddPlaceholder() {
+        return isAddPlaceholder;
+    }
+
+    public void setAddPlaceholder(boolean addPlaceholder) {
+        isAddPlaceholder = addPlaceholder;
     }
 
     public boolean isSelected() {

@@ -7,6 +7,13 @@
     android:orientation="vertical">
 
     <ImageView
+        android:layout_gravity="center"
+        android:visibility="gone"
+        android:id="@+id/icon"
+        android:layout_width="42dp"
+        android:layout_height="42dp"/>
+
+    <ImageView
         android:id="@+id/thumbnail"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

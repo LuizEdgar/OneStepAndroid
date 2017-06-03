@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -29,6 +30,7 @@ import com.lutzed.servoluntario.main.MainActivity;
 import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.signup.SignUpActivity;
 import com.lutzed.servoluntario.util.Constants;
+import com.lutzed.servoluntario.util.TextInputLayoutTextWatcher;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -45,7 +47,9 @@ public class LoginFragment extends Fragment implements LoginContract.View {
     @BindView(R.id.password) EditText mPasswordView;
     @BindView(R.id.progress) View mProgressView;
     @BindView(R.id.email_login_form) View mLoginFormView;
-//    @BindView(R.id.login_button) LoginButton mLoginButton;
+
+    @BindView(R.id.emailInputLayout) TextInputLayout mEmailInputLayout;
+    @BindView(R.id.passwordInputLayout) TextInputLayout mPasswordInputLayout;
 
     private LoginContract.Presenter mPresenter;
 
@@ -100,6 +104,9 @@ public class LoginFragment extends Fragment implements LoginContract.View {
             }
         });
 
+        mEmailView.addTextChangedListener(new TextInputLayoutTextWatcher(mEmailView, mEmailInputLayout));
+        mPasswordView.addTextChangedListener(new TextInputLayoutTextWatcher(mPasswordView, mPasswordInputLayout));
+
         mCallbackManager = CallbackManager.Factory.create();
         return root;
     }
@@ -127,8 +134,8 @@ public class LoginFragment extends Fragment implements LoginContract.View {
 
     @Override
     public void resetErrors() {
-        mEmailView.setError(null);
-        mPasswordView.setError(null);
+        mEmailInputLayout.setError(null);
+        mPasswordInputLayout.setError(null);
     }
 
     @Override
@@ -212,27 +219,27 @@ public class LoginFragment extends Fragment implements LoginContract.View {
 
     @Override
     public void showEmailRequiredError() {
-        mEmailView.setError(getString(R.string.error_field_required));
+        mEmailInputLayout.setError(getString(R.string.error_field_required));
     }
 
     @Override
     public void showPasswordRequiredError() {
-        mPasswordView.setError(getString(R.string.error_field_required));
+        mPasswordInputLayout.setError(getString(R.string.error_field_required));
     }
 
     @Override
     public void showInvalidEmailError() {
-        mEmailView.setError(getString(R.string.error_invalid_email));
+        mEmailInputLayout.setError(getString(R.string.error_invalid_email));
     }
 
     @Override
     public void showInvalidPasswordError() {
-        mPasswordView.setError(getString(R.string.error_invalid_password));
+        mPasswordInputLayout.setError(getString(R.string.error_invalid_password));
     }
 
     @Override
     public void showLoginDefaultError() {
-        mPasswordView.setError(getString(R.string.error_try_later));
+        mPasswordInputLayout.setError(getString(R.string.error_try_later));
     }
 
     @Override

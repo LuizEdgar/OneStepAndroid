@@ -83,12 +83,19 @@ public class GalleryViewAdapter extends RecyclerView.Adapter<GalleryViewAdapter.
         boolean isAddPlaceholder = holder.mItem.isAddPlaceholder();
 
         if (isAddPlaceholder) {
-            Picasso.with(holder.mView.getContext()).load(R.drawable.ic_arrow_drop_down_black_24dp).into(holder.mThumbnailImageView);
-        } else if (holder.mItem.getBitmap() != null) {
-            holder.mThumbnailImageView.setImageBitmap(holder.mItem.getBitmap());
-        } else {
-            Picasso.with(holder.mView.getContext()).load(holder.mItem.getUrl()).into(holder.mThumbnailImageView);
+            holder.mIconImageView.setVisibility(View.VISIBLE);
+            holder.mThumbnailImageView.setVisibility(View.GONE);
+            holder.mIconImageView.setImageResource(R.drawable.ic_add_circle_black_24dp);
+        } else{
+            holder.mIconImageView.setVisibility(View.GONE);
+            holder.mThumbnailImageView.setVisibility(View.VISIBLE);
+            if (holder.mItem.getBitmap() != null) {
+                holder.mThumbnailImageView.setImageBitmap(holder.mItem.getBitmap());
+            } else {
+                Picasso.with(holder.mView.getContext()).load(holder.mItem.getUrl()).into(holder.mThumbnailImageView);
+            }
         }
+
 
         holder.mView.setOnClickListener(new View.OnClickListener()
 
@@ -143,6 +150,7 @@ public class GalleryViewAdapter extends RecyclerView.Adapter<GalleryViewAdapter.
 
     class ViewHolder extends RecyclerView.ViewHolder {
         final View mView;
+        @BindView(R.id.icon) ImageView mIconImageView;
         @BindView(R.id.thumbnail) ImageView mThumbnailImageView;
         @BindView(R.id.remove_button) ImageButton mRemoveButton;
         Image mItem;
