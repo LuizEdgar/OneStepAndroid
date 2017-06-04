@@ -17,28 +17,22 @@ import android.widget.ImageView;
 
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.api.Api;
-import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.opportunities.EditOpportunityActivity;
 import com.lutzed.servoluntario.organization.OrganizationFragment;
 import com.lutzed.servoluntario.organization.OrganizationPresenter;
-import com.lutzed.servoluntario.user.EditUserFragment;
-import com.lutzed.servoluntario.user.EditUserPresenter;
 import com.lutzed.servoluntario.util.AuthHelper;
 import com.lutzed.servoluntario.volunteer.VolunteerFragment;
 import com.lutzed.servoluntario.volunteer.VolunteerPresenter;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String HOME_TAG = "home_tag";
-    private static final String DO_TAG = "do_tag";
-    private static final String EDIT_PROFILE_TAG = "edit_profile_tag";
+    private static final String EXPLORE_TAG = "explore_tag";
+    private static final String OPPORTUNITIES_TAG = "opportunities_tag";
     private static final String VOLUNTEER_TAG = "volunteer_tag";
     private static final String ORGANIZATION_TAG = "organization_tag";
 
@@ -48,14 +42,14 @@ public class MainActivity extends AppCompatActivity {
 
     private FeedFragment mHomeFragment;
     private FeedPresenter mHomePresenter;
-    private EditUserPresenter mEditProfilePresenter;
-    private EditUserFragment mEditProfileFragment;
+    private FeedFragment mOpportunitiesFragment;
+    private FeedPresenter mOpportunitiesPresenter;
     private VolunteerPresenter mVolunteerPresenter;
     private VolunteerFragment mVolunteerFragment;
     private OrganizationPresenter mOrganizationPresenter;
     private OrganizationFragment mOrganizationFragment;
 
-    private PlaceHolderFragment mDoFragment;
+    private PlaceHolderFragment mExploreFragment;
     @BindView(R.id.mainFrame) FrameLayout mSectionContainerLayout;
     @BindView(R.id.navigation) BottomNavigationView mNavigation;
     @BindView(R.id.logo) ImageView mLogoView;
@@ -69,23 +63,15 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.navigation_home:
                     navigateToHome();
                     break;
-                case R.id.navigation_do:
-                    navigateToDo();
-
-                    Api.getClient(AuthHelper.getInstance(MainActivity.this).getUser()).getOpportunity(11l).enqueue(new Callback<Opportunity>() {
-                        @Override
-                        public void onResponse(Call<Opportunity> call, Response<Opportunity> response) {
-                            Intent intent = new Intent(MainActivity.this, EditOpportunityActivity.class);
-                            intent.putExtra(EditOpportunityActivity.EXTRA_OPPORTUNITY, response.body());
-                            startActivity(intent);
-                        }
-
-                        @Override
-                        public void onFailure(Call<Opportunity> call, Throwable t) {
-                            t.printStackTrace();
-                        }
-                    });
-
+                case R.id.navigation_explore:
+                    navigateToExplore();
+                    break;
+                case R.id.navigation_create:
+                    Intent intent = new Intent(MainActivity.this, EditOpportunityActivity.class);
+                    startActivity(intent);
+                    return false;
+                case R.id.navigation_opportunities:
+                    navigateToOpportunities();
                     break;
                 case R.id.navigation_profile:
                     if (AuthHelper.getInstance(MainActivity.this).getUser().getKindEnum() == User.Kind.VOLUNTEER) {
@@ -93,7 +79,6 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         navigateToOrganizationProfile();
                     }
-//                    navigateToEditProfile();
                     break;
             }
             return true;
@@ -103,7 +88,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        if (AuthHelper.getInstance(MainActivity.this).getUser().getKindEnum() == User.Kind.VOLUNTEER) {
+            setContentView(R.layout.activity_main_volunteer);
+        } else {
+            setContentView(R.layout.activity_main_organization);
+        }
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -116,14 +105,47 @@ public class MainActivity extends AppCompatActivity {
         mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
-    private void navigateToEditProfile() {
-        if (mEditProfileFragment == null) {
-            mEditProfileFragment = EditUserFragment.newInstance();
-            mEditProfilePresenter = new EditUserPresenter(mEditProfileFragment, mApiClient, AuthHelper.getInstance(MainActivity.this));
-            addFragment(mEditProfileFragment, EDIT_PROFILE_TAG);
+    private void navigateToHome() {
+        if (mHomeFragment == null) {
+            mHomeFragment = FeedFragment.newInstance();
+            addFragment(mHomeFragment, HOME_TAG);
+            mHomePresenter = new FeedPresenter(mHomeFragment, mApiClient, FeedPresenter.Type.FEED);
+            mHomeFragment.start();
         } else {
-            showFragment(mEditProfileFragment);
+            showFragment(mHomeFragment);
+            if (!mHomePresenter.hasStarted()) mHomeFragment.start();
         }
+        setTitle(R.string.title_home);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        mLogoView.setVisibility(View.VISIBLE);
+    }
+
+    private void navigateToExplore() {
+        if (mExploreFragment == null) {
+            mExploreFragment = new PlaceHolderFragment();
+            addFragment(mExploreFragment, EXPLORE_TAG);
+        } else {
+            showFragment(mExploreFragment);
+        }
+
+        setTitle(R.string.title_explore);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        mLogoView.setVisibility(View.GONE);
+    }
+
+    private void navigateToOpportunities() {
+        if (mOpportunitiesFragment == null) {
+            mOpportunitiesFragment = FeedFragment.newInstance();
+            addFragment(mOpportunitiesFragment, OPPORTUNITIES_TAG);
+            mOpportunitiesPresenter = new FeedPresenter(mOpportunitiesFragment, mApiClient, FeedPresenter.Type.OPPORTUNITIES);
+            mOpportunitiesFragment.start();
+        } else {
+            showFragment(mOpportunitiesFragment);
+            if (!mOpportunitiesPresenter.hasStarted()) mOpportunitiesFragment.start();
+        }
+        setTitle(R.string.title_my_opportunties);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        mLogoView.setVisibility(View.GONE);
     }
 
     private void navigateToVolunteerProfile() {
@@ -132,7 +154,6 @@ public class MainActivity extends AppCompatActivity {
             AuthHelper authHelper = AuthHelper.getInstance(MainActivity.this);
             mVolunteerPresenter = new VolunteerPresenter(mVolunteerFragment, mApiClient, authHelper, authHelper.getUser().getVolunteer());
             addFragment(mVolunteerFragment, VOLUNTEER_TAG);
-//            mVolunteerFragment.start();
         } else {
             showFragment(mVolunteerFragment);
         }
@@ -148,7 +169,6 @@ public class MainActivity extends AppCompatActivity {
             AuthHelper authHelper = AuthHelper.getInstance(MainActivity.this);
             mOrganizationPresenter = new OrganizationPresenter(mOrganizationFragment, mApiClient, authHelper, authHelper.getUser().getOrganization());
             addFragment(mOrganizationFragment, ORGANIZATION_TAG);
-//            mOrganizationFragment.start();
         } else {
             showFragment(mOrganizationFragment);
         }
@@ -156,34 +176,6 @@ public class MainActivity extends AppCompatActivity {
         setTitle(R.string.my_profile);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         mLogoView.setVisibility(View.GONE);
-    }
-
-    private void navigateToDo() {
-        if (mDoFragment == null) {
-            mDoFragment = new PlaceHolderFragment();
-            addFragment(mDoFragment, DO_TAG);
-        } else {
-            showFragment(mDoFragment);
-        }
-
-        setTitle(R.string.title_do);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-        mLogoView.setVisibility(View.GONE);
-    }
-
-    private void navigateToHome() {
-        if (mHomeFragment == null) {
-            mHomeFragment = FeedFragment.newInstance();
-            addFragment(mHomeFragment, HOME_TAG);
-            mHomePresenter = new FeedPresenter(mHomeFragment, mApiClient);
-            mHomeFragment.start();
-        } else {
-            showFragment(mHomeFragment);
-            if (!mHomePresenter.hasStarted()) mHomeFragment.start();
-        }
-        setTitle(R.string.title_home);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        mLogoView.setVisibility(View.VISIBLE);
     }
 
     private void initializeAndRestoreFragments(Bundle savedInstanceState) {
@@ -197,14 +189,14 @@ public class MainActivity extends AppCompatActivity {
             // restore all section fragments
             mHomeFragment = (FeedFragment) fragmentManager.findFragmentByTag(HOME_TAG);
             if (mHomeFragment != null && mHomePresenter == null) {
-                mHomePresenter = new FeedPresenter(mHomeFragment, mApiClient);
+                mHomePresenter = new FeedPresenter(mHomeFragment, mApiClient, FeedPresenter.Type.FEED);
             }
 
-            mDoFragment = (PlaceHolderFragment) fragmentManager.findFragmentByTag(DO_TAG);
+            mExploreFragment = (PlaceHolderFragment) fragmentManager.findFragmentByTag(EXPLORE_TAG);
 
-            mEditProfileFragment = (EditUserFragment) fragmentManager.findFragmentByTag(EDIT_PROFILE_TAG);
-            if (mEditProfileFragment != null && mHomePresenter == null) {
-                mEditProfilePresenter = new EditUserPresenter(mEditProfileFragment, mApiClient, authHelper);
+            mOpportunitiesFragment = (FeedFragment) fragmentManager.findFragmentByTag(OPPORTUNITIES_TAG);
+            if (mOpportunitiesFragment != null && mOpportunitiesPresenter == null) {
+                mOpportunitiesPresenter = new FeedPresenter(mOpportunitiesFragment, mApiClient, FeedPresenter.Type.OPPORTUNITIES);
             }
 
             mVolunteerFragment = (VolunteerFragment) fragmentManager.findFragmentByTag(VOLUNTEER_TAG);
@@ -221,10 +213,11 @@ public class MainActivity extends AppCompatActivity {
             if (isCurrentFragment(mHomeFragment)) {
                 mCurrentFragment = mHomeFragment;
                 mHomeFragment.start();
-            } else if (isCurrentFragment(mDoFragment)) {
-                mCurrentFragment = mDoFragment;
-            } else if (isCurrentFragment(mEditProfileFragment)) {
-                mCurrentFragment = mEditProfileFragment;
+            } else if (isCurrentFragment(mExploreFragment)) {
+                mCurrentFragment = mExploreFragment;
+            } else if (isCurrentFragment(mOpportunitiesFragment)) {
+                mCurrentFragment = mOpportunitiesFragment;
+                mOpportunitiesFragment.start();
             } else if (isCurrentFragment(mVolunteerFragment)) {
                 mCurrentFragment = mVolunteerFragment;
             } else if (isCurrentFragment(mOrganizationFragment)) {
@@ -237,7 +230,6 @@ public class MainActivity extends AppCompatActivity {
         // if no Fragments were restored, then display the home section
         if (fragmentManager.findFragmentById(R.id.mainFrame) == null) {
             navigateToHome();
-//            navigateToEditProfile();
         }
     }
 
@@ -251,8 +243,8 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         hideSectionIfNotCurrent(mHomeFragment, mCurrentFragment, transaction);
-        hideSectionIfNotCurrent(mDoFragment, mCurrentFragment, transaction);
-        hideSectionIfNotCurrent(mEditProfileFragment, mCurrentFragment, transaction);
+        hideSectionIfNotCurrent(mExploreFragment, mCurrentFragment, transaction);
+        hideSectionIfNotCurrent(mOpportunitiesFragment, mCurrentFragment, transaction);
         hideSectionIfNotCurrent(mVolunteerFragment, mCurrentFragment, transaction);
         hideSectionIfNotCurrent(mOrganizationFragment, mCurrentFragment, transaction);
 
@@ -266,8 +258,8 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
 
         hideSectionIfNotCurrent(mHomeFragment, mCurrentFragment, transaction);
-        hideSectionIfNotCurrent(mDoFragment, mCurrentFragment, transaction);
-        hideSectionIfNotCurrent(mEditProfileFragment, mCurrentFragment, transaction);
+        hideSectionIfNotCurrent(mExploreFragment, mCurrentFragment, transaction);
+        hideSectionIfNotCurrent(mOpportunitiesFragment, mCurrentFragment, transaction);
         hideSectionIfNotCurrent(mVolunteerFragment, mCurrentFragment, transaction);
         hideSectionIfNotCurrent(mOrganizationFragment, mCurrentFragment, transaction);
 

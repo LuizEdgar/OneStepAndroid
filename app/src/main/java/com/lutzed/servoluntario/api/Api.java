@@ -131,6 +131,9 @@ public class Api {
         @GET("me/feed.json")
         Call<List<FeedItem>> getMeFeed(@Query("page") int page);
 
+        @GET("me/opportunities.json")
+        Call<List<FeedItem>> getMeOpportunities(@Query("page") int page);
+
         @GET("organizations/{organizationId}.json")
         Call<Organization> getOrganization(@Path("organizationId") Long organizationId);
 

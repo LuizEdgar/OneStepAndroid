@@ -18,14 +18,20 @@ import retrofit2.Response;
 
 public class FeedPresenter implements FeedContract.Presenter {
 
+    enum Type {
+        FEED, OPPORTUNITIES;
+    }
+
     private final FeedContract.View mView;
     private final Api.ApiClient mApiClient;
+    private final Type mType;
     private int mPageToGet;
     private boolean mHasStarted;
 
-    public FeedPresenter(FeedFragment opportunityFragment, Api.ApiClient apiClient) {
+    public FeedPresenter(FeedFragment opportunityFragment, Api.ApiClient apiClient, Type type) {
         mView = opportunityFragment;
         mApiClient = apiClient;
+        mType = type;
         mView.setPresenter(this);
         mPageToGet = 1;
     }
@@ -70,7 +76,18 @@ public class FeedPresenter implements FeedContract.Presenter {
     public void loadItems(final boolean isRefresh) {
         if (isRefresh) mPageToGet = 1;
 
-        mApiClient.getMeFeed(mPageToGet).enqueue(new Callback<List<FeedItem>>() {
+        Call<List<FeedItem>> listCall = null;
+
+        switch (mType) {
+            case FEED:
+                listCall = mApiClient.getMeFeed(mPageToGet);
+                break;
+            case OPPORTUNITIES:
+                listCall = mApiClient.getMeOpportunities(mPageToGet);
+                break;
+        }
+
+        listCall.enqueue(new Callback<List<FeedItem>>() {
             @Override
             public void onResponse(Call<List<FeedItem>> call, Response<List<FeedItem>> response) {
                 if (isRefresh) {

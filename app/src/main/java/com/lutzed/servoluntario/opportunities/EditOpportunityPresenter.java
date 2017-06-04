@@ -165,7 +165,7 @@ public class EditOpportunityPresenter implements EditOpportunityContract.Present
             cancel = true;
         }
 
-        if (!mIsVirtual && mCurrentPlace == null && isUpdate && mOpportunity.getLocation() == null) {
+        if (!mIsVirtual && (!isUpdate && mCurrentPlace == null) || (isUpdate && mCurrentPlace == null && mOpportunity.getLocation() == null)) {
             mView.showLocationRequiredError();
             if (!cancel) mView.setFocusLocation();
             cancel = true;
