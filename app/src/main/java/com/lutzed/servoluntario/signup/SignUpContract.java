@@ -11,7 +11,7 @@ import com.lutzed.servoluntario.models.User;
 public interface SignUpContract {
 
     interface View extends BaseView<Presenter> {
-        void setLoadingIndicator(boolean active);
+        void setSavingIndicator(boolean active);
 
         void navigateToCompletion();
 
@@ -56,6 +56,8 @@ public interface SignUpContract {
         void setFocusPhoneField();
 
         void showInvalidPhoneError();
+
+        void setLoadingIndicator(boolean active);
     }
 
     interface Presenter extends BasePresenter {

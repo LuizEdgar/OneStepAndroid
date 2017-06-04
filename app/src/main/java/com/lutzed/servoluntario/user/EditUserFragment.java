@@ -803,7 +803,7 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
     @Override
     public void triggerSaveVolunteer() {
         String email = mEmailView.getText().toString().trim();
-        String username = mUsernameView.getText().toString().trim();
+        String username = mUsernameView.getText().toString().trim().toLowerCase();
         String name = mNameView.getText().toString().trim();
         String about = mAboutView.getText().toString().trim();
 
@@ -825,7 +825,7 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
     @Override
     public void triggerSaveOrganization() {
         String email = mEmailView.getText().toString().trim();
-        String username = mUsernameView.getText().toString().trim();
+        String username = mUsernameView.getText().toString().trim().toLowerCase();
         String name = mNameView.getText().toString().trim();
         String about = mAboutView.getText().toString().trim();
 

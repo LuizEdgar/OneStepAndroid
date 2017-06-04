@@ -1,5 +1,6 @@
 package com.lutzed.servoluntario.signup;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
 
@@ -8,12 +9,16 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.Contact;
+import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.Organization;
 import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.AuthHelper;
+import com.lutzed.servoluntario.util.Constants;
+import com.lutzed.servoluntario.util.DownloadBitmapTask;
 import com.lutzed.servoluntario.util.Snippets;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -38,6 +43,7 @@ public class SignUpPresenter implements SignUpContract.Presenter {
     private User.Kind mCurrentSignUpUserKind;
     private boolean mIsFacebookSignUp;
     private String mGender;
+    private Image mProfileImage;
 
     public SignUpPresenter(SignUpFragment signUpFragment, Api.ApiClient apiClient, AuthHelper authHelper, User.Kind kind, boolean isFacebookSignUp) {
         mView = signUpFragment;
@@ -108,7 +114,7 @@ public class SignUpPresenter implements SignUpContract.Presenter {
         }
 
         if (!cancel) {
-            mView.setLoadingIndicator(true);
+            mView.setSavingIndicator(true);
 
             User user = new User();
             user.setKind(mCurrentSignUpUserKind.toString());
@@ -127,6 +133,10 @@ public class SignUpPresenter implements SignUpContract.Presenter {
                     volunteer.setName(name);
                     volunteer.setGender(mGender);
                     volunteer.setContactsAttributes(contacts);
+
+                    if (mProfileImage != null && mProfileImage.getBitmap() != null) {
+                        volunteer.setProfileImage64(Snippets.encodeToBase64(mProfileImage.getBitmap(), true));
+                    }
 
                     user.setVolunteerAttributes(volunteer);
 
@@ -151,7 +161,7 @@ public class SignUpPresenter implements SignUpContract.Presenter {
             mApiClient.createUser(user).enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
-                    mView.setLoadingIndicator(false);
+                    mView.setSavingIndicator(false);
                     switch (response.code()) {
                         case 201:
                             mAuthHelper.setUser(response.body());
@@ -166,7 +176,7 @@ public class SignUpPresenter implements SignUpContract.Presenter {
 
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
-                    mView.setLoadingIndicator(false);
+                    mView.setSavingIndicator(false);
                     mView.showSignUpDefaultError();
                     t.printStackTrace();
                 }
@@ -237,13 +247,42 @@ public class SignUpPresenter implements SignUpContract.Presenter {
                     public void onCompleted(
                             JSONObject me,
                             GraphResponse response) {
-                        mView.setLoadingIndicator(false);
                         mView.populateFacebookFields(me.optString("name"), me.optString("email"));
                         mGender = me.optString("gender");
+                        if (me.has("picture")) {
+                            String profilePicUrl = null;
+                            try {
+                                profilePicUrl = me.getJSONObject("picture").getJSONObject("data").getString("url");
+                                DownloadBitmapTask downloadBitmapTask = new DownloadBitmapTask() {
+                                    @Override
+                                    protected void onPostExecute(Bitmap bitmap) {
+                                        mView.setLoadingIndicator(false);
+                                        if (bitmap != null) {
+                                            if (mProfileImage != null && mProfileImage.getBitmap() != null){
+                                                mProfileImage.getBitmap().recycle();
+                                                mProfileImage = null;
+                                            }
+                                            mProfileImage = new Image(Snippets.getProportionalResizedBitmap(bitmap, Constants.PROFILE_IMAGE_SIZE));
+                                        }
+                                    }
+
+                                    @Override
+                                    protected void onCancelled() {
+                                        mView.setLoadingIndicator(false);
+                                    }
+                                };
+                                downloadBitmapTask.execute(profilePicUrl);
+
+                            } catch (JSONException e) {
+                                mView.setLoadingIndicator(false);
+                                e.printStackTrace();
+                            }
+                        }
+
                     }
                 });
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "id, name, email, gender");
+        parameters.putString("fields", "id, name, email, gender, picture.type(large)");
         request.setParameters(parameters);
         request.executeAsync();
     }

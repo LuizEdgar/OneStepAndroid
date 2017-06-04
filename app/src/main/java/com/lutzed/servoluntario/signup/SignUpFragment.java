@@ -3,6 +3,7 @@ package com.lutzed.servoluntario.signup;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.completion.CompletionActivity;
+import com.lutzed.servoluntario.util.Snippets;
 import com.lutzed.servoluntario.util.TextInputLayoutTextWatcher;
 
 import butterknife.BindView;
@@ -52,6 +54,7 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
     @BindView(R.id.phoneInputLayout) TextInputLayout mPhoneInputLayout;
 
     private SignUpContract.Presenter mPresenter;
+    private ProgressDialog mLoadingProgress;
 
     public static SignUpFragment newInstance() {
         return new SignUpFragment();
@@ -129,7 +132,7 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
 
     @Override
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    public void setLoadingIndicator(final boolean active) {
+    public void setSavingIndicator(final boolean active) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
         // the progress spinner.
@@ -159,6 +162,25 @@ public class SignUpFragment extends Fragment implements SignUpContract.View {
             mProgressView.setVisibility(active ? View.VISIBLE : View.GONE);
             mLoginFormView.setVisibility(active ? View.GONE : View.VISIBLE);
         }
+    }
+
+    @Override
+    public void setLoadingIndicator(boolean active) {
+        if (active) {
+            if (mLoadingProgress == null) {
+                mLoadingProgress = Snippets.createProgressDialog(getContext(), R.string.loading_progress);
+                mLoadingProgress.setCancelable(false);
+            }
+            if (!mLoadingProgress.isShowing()) {
+                mLoadingProgress.show();
+            }
+        } else {
+            if (mLoadingProgress != null && mLoadingProgress.isShowing()) {
+                mLoadingProgress.dismiss();
+                mLoadingProgress = null;
+            }
+        }
+
     }
 
     @Override

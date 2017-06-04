@@ -171,7 +171,7 @@ public class OrganizationFragment extends Fragment implements OrganizationContra
     public void setLoadingIndicator(final boolean active) {
         if (active) {
             if (mLoadingProgress == null) {
-                mLoadingProgress = Snippets.createProgressDialog(getContext(), R.string.saving_progress);
+                mLoadingProgress = Snippets.createProgressDialog(getContext(), R.string.loading_progress);
                 mLoadingProgress.setCancelable(false);
             }
             if (!mLoadingProgress.isShowing()) {

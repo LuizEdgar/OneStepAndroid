@@ -1,20 +1,13 @@
 package com.lutzed.servoluntario.completion;
 
 import android.graphics.Bitmap;
-import android.os.Bundle;
 
-import com.facebook.AccessToken;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.models.Volunteer;
 import com.lutzed.servoluntario.util.AuthHelper;
 import com.lutzed.servoluntario.util.Snippets;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -31,7 +24,6 @@ public class VolunteerCompletionPresenter implements VolunteerCompletionContract
     private final User mUser;
     private final AuthHelper mAuthHelper;
     private Image mProfileImage;
-    private String mGender;
 
     public VolunteerCompletionPresenter(VolunteerCompletionFragment volunteerCompletionFragment, Api.ApiClient apiClient, AuthHelper authHelper) {
         mView = volunteerCompletionFragment;
@@ -96,39 +88,6 @@ public class VolunteerCompletionPresenter implements VolunteerCompletionContract
             mView.setProfileImage(mProfileImage.getUrl());
         }
 
-        if (user.getFacebookId() != null) {
-            populateFacebookData();
-        }
-    }
-
-    private void populateFacebookData() {
-        mView.setLoadingIndicator(true);
-        GraphRequest request = GraphRequest.newMeRequest(
-                AccessToken.getCurrentAccessToken(),
-                new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(
-                            JSONObject me,
-                            GraphResponse response) {
-                        mView.setLoadingIndicator(false);
-
-                        if (me.has("picture")) {
-                            String profilePicUrl = null;
-                            try {
-                                profilePicUrl = me.getJSONObject("picture").getJSONObject("data").getString("url");
-                                mView.setProfileImage(profilePicUrl);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-
-                        mGender = me.optString("gender");
-                    }
-                });
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "id, name, email, gender, picture.type(large)");
-        request.setParameters(parameters);
-        request.executeAsync();
     }
 
     @Override

@@ -17,6 +17,9 @@ import android.util.Patterns;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -136,11 +139,26 @@ public class Snippets {
         return decodeBitmap;
     }
 
+    public static Bitmap getBitmapFromURL(String src) {
+        try {
+            URL url = new URL(src);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            // Log exception
+            return null;
+        }
+    }
+
     public static Bitmap getProportionalResizedBitmap(Bitmap bm, int maxSize) {
         int width = bm.getWidth();
         int height = bm.getHeight();
 
-        if (width < maxSize && height < maxSize) {
+        if (width <= maxSize && height <= maxSize) {
             return bm;
         }
 
@@ -157,7 +175,9 @@ public class Snippets {
 
         Bitmap resizedBitmap = Bitmap.createScaledBitmap(bm, scaleWidth, scaleHeight, false);
 
-        bm.recycle();
+        if (bm != resizedBitmap) {
+            bm.recycle();
+        }
 
         return resizedBitmap;
     }
@@ -199,4 +219,5 @@ public class Snippets {
     public static AlertDialog createSimpleMessageDialog(Context context, int titleRes, int messageRes) {
         return new AlertDialog.Builder(context).setTitle(titleRes).setMessage(messageRes).setPositiveButton(android.R.string.ok, null).create();
     }
+
 }

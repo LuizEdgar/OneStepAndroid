@@ -59,12 +59,12 @@ public class LoginPresenter implements LoginContract.Presenter {
         }
 
         if (!cancel) {
-            mView.setLoadingIndicator(true);
+            mView.setSavingProgress(true);
             mApiClient.signIn(new SignInRequest(email, password)).enqueue(
                     new Callback<User>() {
                         @Override
                         public void onResponse(Call<User> call, Response<User> response) {
-                            mView.setLoadingIndicator(false);
+                            mView.setSavingProgress(false);
                             switch (response.code()) {
                                 case 200:
                                     mAuthHelper.setUser(response.body());
@@ -82,7 +82,7 @@ public class LoginPresenter implements LoginContract.Presenter {
 
                         @Override
                         public void onFailure(Call<User> call, Throwable t) {
-                            mView.setLoadingIndicator(false);
+                            mView.setSavingProgress(false);
                             mView.showLoginDefaultError();
                             mView.setFocusPasswordField();
                         }
@@ -114,12 +114,12 @@ public class LoginPresenter implements LoginContract.Presenter {
 
     @Override
     public void attemptFacebookLogin(String token) {
-        mView.setLoadingIndicator(true);
+        mView.setSavingProgress(true);
         mApiClient.signIn(new FacebookSignInRequest(token)).enqueue(
                 new Callback<User>() {
                     @Override
                     public void onResponse(Call<User> call, Response<User> response) {
-                        mView.setLoadingIndicator(false);
+                        mView.setSavingProgress(false);
                         switch (response.code()) {
                             case 200:
                                 mAuthHelper.setUser(response.body());
@@ -138,7 +138,7 @@ public class LoginPresenter implements LoginContract.Presenter {
 
                     @Override
                     public void onFailure(Call<User> call, Throwable t) {
-                        mView.setLoadingIndicator(false);
+                        mView.setSavingProgress(false);
                         mView.showFacebookLoginError();
                         mView.setFocusPasswordField();
                     }
@@ -149,7 +149,7 @@ public class LoginPresenter implements LoginContract.Presenter {
     @Override
     public void start() {
         if (mAuthHelper.hasUser()) {
-            mView.setLoadingIndicator(true);
+            mView.setSavingProgress(true);
             mView.navigateToMain();
             mAuthHelper.updateUserData();
         }

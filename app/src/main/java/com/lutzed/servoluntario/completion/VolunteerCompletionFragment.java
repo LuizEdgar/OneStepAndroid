@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -35,6 +34,7 @@ import android.widget.Toast;
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.main.MainActivity;
 import com.lutzed.servoluntario.selection.ItemsSelectionActivity;
+import com.lutzed.servoluntario.util.CircleTransform;
 import com.lutzed.servoluntario.util.Constants;
 import com.lutzed.servoluntario.util.FileAndPathHolder;
 import com.lutzed.servoluntario.util.LocalCircleTransform;
@@ -319,24 +319,7 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
 
     @Override
     public void setProfileImage(String url) {
-        if (mTarget == null){
-            mTarget = new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-//                    mPresenter.onNewProfileImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.PROFILE_IMAGE_SIZE));
-                }
-
-                @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-                }
-            };
-        }
-
-        Picasso.with(getContext()).load(url).into(mTarget);
+        Picasso.with(getContext()).load(url).transform(new CircleTransform(true)).placeholder(R.drawable.ic_user_placeholder).into(mProfileImage);
     }
 
     @Override

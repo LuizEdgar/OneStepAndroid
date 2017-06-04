@@ -10,7 +10,7 @@ import com.lutzed.servoluntario.interfaces.BaseView;
 public interface LoginContract {
 
     interface View extends BaseView<Presenter> {
-        void setLoadingIndicator(boolean active);
+        void setSavingProgress(boolean active);
 
         void navigateToMain();
 
