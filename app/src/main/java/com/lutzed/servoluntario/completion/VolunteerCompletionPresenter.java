@@ -55,11 +55,11 @@ public class VolunteerCompletionPresenter implements VolunteerCompletionContract
         }
         user.setVolunteerAttributes(volunteerAttributes);
 
-        mView.setLoadingIndicator(true);
+        mView.setSavingIndicator(true);
         mApiClient.updateUser(user.getId(), user).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                mView.setLoadingIndicator(false);
+                mView.setSavingIndicator(false);
                 switch (response.code()) {
                     case 200:
                         mAuthHelper.setUser(response.body());
@@ -74,7 +74,7 @@ public class VolunteerCompletionPresenter implements VolunteerCompletionContract
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                mView.setLoadingIndicator(false);
+                mView.setSavingIndicator(false);
                 mView.showDefaultSaveError();
             }
         });

@@ -1,16 +1,13 @@
 package com.lutzed.servoluntario.completion;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -74,6 +71,8 @@ public class OrganizationCompletionFragment extends Fragment implements Organiza
     //
     private OrganizationCompletionContract.Presenter mPresenter;
     private String mCurrentPath;
+
+    private ProgressDialog mSavingProgress;
 
     public static OrganizationCompletionFragment newInstance() {
         return new OrganizationCompletionFragment();
@@ -142,36 +141,20 @@ public class OrganizationCompletionFragment extends Fragment implements Organiza
     }
 
     @Override
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    public void setLoadingIndicator(final boolean active) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mFormView.setVisibility(active ? View.GONE : View.VISIBLE);
-            mFormView.animate().setDuration(shortAnimTime).alpha(
-                    active ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mFormView.setVisibility(active ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(active ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    active ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(active ? View.VISIBLE : View.GONE);
-                }
-            });
+    public void setSavingIndicator(boolean active) {
+        if (active) {
+            if (mSavingProgress == null) {
+                mSavingProgress = Snippets.createProgressDialog(getContext(), R.string.saving_progress);
+                mSavingProgress.setCancelable(false);
+            }
+            if (!mSavingProgress.isShowing()) {
+                mSavingProgress.show();
+            }
         } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(active ? View.VISIBLE : View.GONE);
-            mFormView.setVisibility(active ? View.GONE : View.VISIBLE);
+            if (mSavingProgress != null && mSavingProgress.isShowing()) {
+                mSavingProgress.dismiss();
+                mSavingProgress = null;
+            }
         }
     }
 

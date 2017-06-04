@@ -47,6 +47,7 @@ public class EditUserPresenter implements EditUserContract.Presenter {
     private List<Image> mImagesToDestroy;
     private Contact mContact;
     private Image mProfileImage;
+    private boolean mIsSaving;
 
     public EditUserPresenter(EditUserFragment editUserFragment, Api.ApiClient apiClient, AuthHelper authHelper) {
         mView = editUserFragment;
@@ -60,7 +61,6 @@ public class EditUserPresenter implements EditUserContract.Presenter {
 
     @Override
     public void start() {
-
         mEstablishedAt = Calendar.getInstance();
         mBirthAt = Calendar.getInstance();
 
@@ -118,6 +118,9 @@ public class EditUserPresenter implements EditUserContract.Presenter {
 
     @Override
     public void attemptSaveOrganization(String email, String username, String name, String about, List<Long> skillIds, List<Long> causeIds, String size, String cnpj, String mission, String site) {
+        if (mIsSaving) return;
+
+        mIsSaving = true;
         boolean cancel = false;
 
         // Check for a valid password, if the user entered one.
@@ -256,12 +259,15 @@ public class EditUserPresenter implements EditUserContract.Presenter {
 
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
+                    mIsSaving = false;
                     mView.setSavingIndicator(false);
                     t.printStackTrace();
                 }
             };
 
             mApiClient.updateUser(mUser.getId(), user).enqueue(updateCallback);
+        } else {
+            mIsSaving = false;
         }
     }
 
@@ -302,6 +308,9 @@ public class EditUserPresenter implements EditUserContract.Presenter {
 
     @Override
     public void attemptSaveVolunteer(String email, String username, String name, String about, List<Long> skillIds, List<Long> causeIds, Volunteer.GenderEnum genderEnum, String occupation) {
+        if (mIsSaving) return;
+
+        mIsSaving = true;
         boolean cancel = false;
 
         // Check for a valid password, if the user entered one.
@@ -416,12 +425,15 @@ public class EditUserPresenter implements EditUserContract.Presenter {
 
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
+                    mIsSaving = false;
                     mView.setSavingIndicator(false);
                     t.printStackTrace();
                 }
             };
 
             mApiClient.updateUser(mUser.getId(), user).enqueue(updateCallback);
+        }else{
+            mIsSaving = false;
         }
     }
 

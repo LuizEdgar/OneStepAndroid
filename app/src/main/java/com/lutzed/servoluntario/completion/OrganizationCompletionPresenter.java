@@ -1,19 +1,13 @@
 package com.lutzed.servoluntario.completion;
 
 import android.graphics.Bitmap;
-import android.os.Bundle;
 
-import com.facebook.AccessToken;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.lutzed.servoluntario.api.Api;
 import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.Organization;
 import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.util.AuthHelper;
 import com.lutzed.servoluntario.util.Snippets;
-
-import org.json.JSONObject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -54,11 +48,11 @@ public class OrganizationCompletionPresenter implements OrganizationCompletionCo
         }
         user.setOrganizationAttributes(organizationAttributes);
 
-        mView.setLoadingIndicator(true);
+        mView.setSavingIndicator(true);
         mApiClient.updateUser(user.getId(), user).enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                mView.setLoadingIndicator(false);
+                mView.setSavingIndicator(false);
                 switch (response.code()) {
                     case 200:
                         mAuthHelper.setUser(response.body());
@@ -73,7 +67,7 @@ public class OrganizationCompletionPresenter implements OrganizationCompletionCo
 
             @Override
             public void onFailure(Call<User> call, Throwable t) {
-                mView.setLoadingIndicator(false);
+                mView.setSavingIndicator(false);
                 mView.showDefaultSaveError();
             }
         });
@@ -95,26 +89,6 @@ public class OrganizationCompletionPresenter implements OrganizationCompletionCo
             mProfileImage = organization.getProfileImage();
             mView.setProfileImage(mProfileImage.getUrl());
         }
-    }
-
-    private void populateFacebookData() {
-        mView.setLoadingIndicator(true);
-        GraphRequest request = GraphRequest.newMeRequest(
-                AccessToken.getCurrentAccessToken(),
-                new GraphRequest.GraphJSONObjectCallback() {
-                    @Override
-                    public void onCompleted(
-                            JSONObject me,
-                            GraphResponse response) {
-                        mView.setLoadingIndicator(false);
-//                        mView.populateFacebookFields(me.optString("name"), me.optString("email"));
-//                        mGender = me.optString("gender");
-                    }
-                });
-        Bundle parameters = new Bundle();
-        parameters.putString("fields", "id, name, email, gender");
-        request.setParameters(parameters);
-        request.executeAsync();
     }
 
     @Override

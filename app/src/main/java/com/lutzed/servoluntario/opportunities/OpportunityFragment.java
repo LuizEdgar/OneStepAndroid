@@ -1,5 +1,6 @@
 package com.lutzed.servoluntario.opportunities;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,6 +19,7 @@ import com.lutzed.servoluntario.models.Contact;
 import com.lutzed.servoluntario.models.Image;
 import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.util.DataView;
+import com.lutzed.servoluntario.util.Snippets;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +51,8 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @BindView(R.id.galleryWrapper) View mGalleryWrapper;
 
     private OpportunityContract.Presenter mPresenter;
+
+    private ProgressDialog mLoadingProgress;
 
     public static OpportunityFragment newInstance() {
         return new OpportunityFragment();
@@ -106,7 +110,20 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
 
     @Override
     public void setLoadingIndicator(final boolean active) {
-
+        if (active) {
+            if (mLoadingProgress == null) {
+                mLoadingProgress = Snippets.createProgressDialog(getContext(), R.string.saving_progress);
+                mLoadingProgress.setCancelable(false);
+            }
+            if (!mLoadingProgress.isShowing()) {
+                mLoadingProgress.show();
+            }
+        } else {
+            if (mLoadingProgress != null && mLoadingProgress.isShowing()) {
+                mLoadingProgress.dismiss();
+                mLoadingProgress = null;
+            }
+        }
     }
 
     @Override

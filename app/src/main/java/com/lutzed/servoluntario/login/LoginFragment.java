@@ -2,7 +2,6 @@ package com.lutzed.servoluntario.login;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -150,7 +149,6 @@ public class LoginFragment extends Fragment implements LoginContract.View {
     }
 
     @Override
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     public void setLoadingIndicator(final boolean active) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
         // for very easy animations. If available, use these APIs to fade-in
@@ -234,7 +232,7 @@ public class LoginFragment extends Fragment implements LoginContract.View {
 
     @Override
     public void showInvalidPasswordError() {
-        mPasswordInputLayout.setError(getString(R.string.error_invalid_password));
+        mPasswordInputLayout.setError(getString(R.string.error_incorrect_password));
     }
 
     @Override

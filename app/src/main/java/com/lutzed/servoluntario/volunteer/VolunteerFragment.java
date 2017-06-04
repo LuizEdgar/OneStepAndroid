@@ -1,6 +1,7 @@
 package com.lutzed.servoluntario.volunteer;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -28,6 +29,7 @@ import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.user.EditUserActivity;
 import com.lutzed.servoluntario.util.CircleTransform;
 import com.lutzed.servoluntario.util.DataView;
+import com.lutzed.servoluntario.util.Snippets;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -63,6 +65,8 @@ public class VolunteerFragment extends Fragment implements VolunteerContract.Vie
 
     private Listener mListener;
     private boolean mCanEdit;
+
+    private ProgressDialog mLoadingProgress;
 
     public static VolunteerFragment newInstance(boolean canEdit) {
         VolunteerFragment fragment = new VolunteerFragment();
@@ -162,7 +166,20 @@ public class VolunteerFragment extends Fragment implements VolunteerContract.Vie
 
     @Override
     public void setLoadingIndicator(final boolean active) {
-
+        if (active) {
+            if (mLoadingProgress == null) {
+                mLoadingProgress = Snippets.createProgressDialog(getContext(), R.string.saving_progress);
+                mLoadingProgress.setCancelable(false);
+            }
+            if (!mLoadingProgress.isShowing()) {
+                mLoadingProgress.show();
+            }
+        } else {
+            if (mLoadingProgress != null && mLoadingProgress.isShowing()) {
+                mLoadingProgress.dismiss();
+                mLoadingProgress = null;
+            }
+        }
     }
 
     @Override

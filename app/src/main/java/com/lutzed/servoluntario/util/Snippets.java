@@ -1,5 +1,7 @@
 package com.lutzed.servoluntario.util;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -183,4 +185,18 @@ public class Snippets {
         }
     }
 
+    public static ProgressDialog createProgressDialog(Context context, String message) {
+        ProgressDialog progressDialog = new ProgressDialog(context);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage(message);
+        return progressDialog;
+    }
+
+    public static ProgressDialog createProgressDialog(Context context, int messageRes) {
+        return createProgressDialog(context, context.getString(messageRes));
+    }
+
+    public static AlertDialog createSimpleMessageDialog(Context context, int titleRes, int messageRes) {
+        return new AlertDialog.Builder(context).setTitle(titleRes).setMessage(messageRes).setPositiveButton(android.R.string.ok, null).create();
+    }
 }

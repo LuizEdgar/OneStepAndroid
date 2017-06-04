@@ -20,8 +20,6 @@ import java.util.List;
 public interface EditUserContract {
 
     interface View extends BaseView<Presenter> {
-        void setLoadingIndicator(boolean active);
-
         void addUniqueCauses(List<? extends SelectableItem> causes, List<? extends SelectableItem> toRemove);
 
         void addUniqueSkills(List<? extends SelectableItem> skills, List<? extends SelectableItem> toRemove);

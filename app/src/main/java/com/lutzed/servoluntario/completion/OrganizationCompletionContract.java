@@ -12,8 +12,6 @@ import com.lutzed.servoluntario.interfaces.BaseView;
 public interface OrganizationCompletionContract {
 
     interface View extends BaseView<Presenter> {
-        void setLoadingIndicator(boolean active);
-
         void navigateToChooseSkills();
 
         void resetErrors();
@@ -41,6 +39,8 @@ public interface OrganizationCompletionContract {
         void setProfileImage(Bitmap bitmap);
 
         void setProfileImage(String url);
+
+        void setSavingIndicator(boolean active);
     }
 
     interface Presenter extends BasePresenter {

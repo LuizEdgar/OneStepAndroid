@@ -60,15 +60,17 @@ public class OrganizationPresenter implements OrganizationContract.Presenter {
 
     @Override
     public void loadOrganization() {
+        mView.setLoadingIndicator(true);
         mApiClient.getOrganization(mOrganizationId).enqueue(new Callback<Organization>() {
             @Override
             public void onResponse(Call<Organization> call, Response<Organization> response) {
+                mView.setLoadingIndicator(false);
                 setOrganizationDateOnView(response.body());
             }
 
             @Override
             public void onFailure(Call<Organization> call, Throwable t) {
-
+                mView.setLoadingIndicator(false);
             }
         });
     }

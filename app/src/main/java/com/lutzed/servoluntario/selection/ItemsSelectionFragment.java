@@ -1,5 +1,6 @@
 package com.lutzed.servoluntario.selection;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,12 +15,12 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.main.MainActivity;
 import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.util.EndlessRecyclerViewScrollListener;
+import com.lutzed.servoluntario.util.Snippets;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +44,8 @@ public class ItemsSelectionFragment extends Fragment implements ItemsSelectionCo
 
     private ItemsSelectionActivity.Mode mMode;
     private String mSaveActionName;
+
+    private ProgressDialog mSavingProgress;
 
     public ItemsSelectionFragment() {
     }
@@ -183,7 +186,20 @@ public class ItemsSelectionFragment extends Fragment implements ItemsSelectionCo
 
     @Override
     public void setSavingIndicator(boolean active) {
-        Toast.makeText(getContext(), "Saving...", Toast.LENGTH_SHORT).show();
+        if (active) {
+            if (mSavingProgress == null) {
+                mSavingProgress = Snippets.createProgressDialog(getContext(), R.string.saving_progress);
+                mSavingProgress.setCancelable(false);
+            }
+            if (!mSavingProgress.isShowing()) {
+                mSavingProgress.show();
+            }
+        } else {
+            if (mSavingProgress != null && mSavingProgress.isShowing()) {
+                mSavingProgress.dismiss();
+                mSavingProgress = null;
+            }
+        }
     }
 
     @Override

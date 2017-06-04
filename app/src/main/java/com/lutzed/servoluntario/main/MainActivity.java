@@ -9,8 +9,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.api.Api;
@@ -54,8 +57,9 @@ public class MainActivity extends AppCompatActivity {
 
     private PlaceHolderFragment mDoFragment;
     @BindView(R.id.mainFrame) FrameLayout mSectionContainerLayout;
-
     @BindView(R.id.navigation) BottomNavigationView mNavigation;
+    @BindView(R.id.logo) ImageView mLogoView;
+
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
 
@@ -100,6 +104,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         ButterKnife.bind(this);
 
@@ -130,6 +136,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             showFragment(mVolunteerFragment);
         }
+
+        setTitle(R.string.my_profile);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        mLogoView.setVisibility(View.GONE);
     }
 
     private void navigateToOrganizationProfile() {
@@ -142,6 +152,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             showFragment(mOrganizationFragment);
         }
+
+        setTitle(R.string.my_profile);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        mLogoView.setVisibility(View.GONE);
     }
 
     private void navigateToDo() {
@@ -151,6 +165,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             showFragment(mDoFragment);
         }
+
+        setTitle(R.string.title_do);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        mLogoView.setVisibility(View.GONE);
     }
 
     private void navigateToHome() {
@@ -163,6 +181,9 @@ public class MainActivity extends AppCompatActivity {
             showFragment(mHomeFragment);
             if (!mHomePresenter.hasStarted()) mHomeFragment.start();
         }
+        setTitle(R.string.title_home);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        mLogoView.setVisibility(View.VISIBLE);
     }
 
     private void initializeAndRestoreFragments(Bundle savedInstanceState) {

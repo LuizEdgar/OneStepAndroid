@@ -1,10 +1,8 @@
 package com.lutzed.servoluntario.opportunities;
 
 import android.Manifest;
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -13,7 +11,6 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.IdRes;
@@ -44,7 +41,6 @@ import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
 import com.google.android.gms.common.GooglePlayServicesRepairableException;
@@ -136,6 +132,9 @@ public class EditOpportunityFragment extends Fragment implements EditOpportunity
     private int mCurrentContactSpinnerSelectedPosition;
     private ColorStateList mDefaultEditTextColor;
     private String mCurrentPath;
+
+    private ProgressDialog mSavingProgress;
+    private ProgressDialog mLoadingProgress;
 
     public static EditOpportunityFragment newInstance() {
         return new EditOpportunityFragment();
@@ -351,36 +350,20 @@ public class EditOpportunityFragment extends Fragment implements EditOpportunity
     }
 
     @Override
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     public void setLoadingIndicator(final boolean active) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-            mLoginFormView.setVisibility(active ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    active ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(active ? View.GONE : View.VISIBLE);
-                }
-            });
-
-            mProgressView.setVisibility(active ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    active ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(active ? View.VISIBLE : View.GONE);
-                }
-            });
+        if (active) {
+            if (mLoadingProgress == null) {
+                mLoadingProgress = Snippets.createProgressDialog(getContext(), R.string.saving_progress);
+                mLoadingProgress.setCancelable(false);
+            }
+            if (!mLoadingProgress.isShowing()) {
+                mLoadingProgress.show();
+            }
         } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(active ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(active ? View.GONE : View.VISIBLE);
+            if (mLoadingProgress != null && mLoadingProgress.isShowing()) {
+                mLoadingProgress.dismiss();
+                mLoadingProgress = null;
+            }
         }
     }
 
@@ -558,7 +541,20 @@ public class EditOpportunityFragment extends Fragment implements EditOpportunity
 
     @Override
     public void setSavingIndicator(boolean active) {
-        if (active) Toast.makeText(getContext(), "Saving...", Toast.LENGTH_SHORT).show();
+        if (active) {
+            if (mSavingProgress == null) {
+                mSavingProgress = Snippets.createProgressDialog(getContext(), R.string.saving_progress);
+                mSavingProgress.setCancelable(false);
+            }
+            if (!mSavingProgress.isShowing()) {
+                mSavingProgress.show();
+            }
+        } else {
+            if (mSavingProgress != null && mSavingProgress.isShowing()) {
+                mSavingProgress.dismiss();
+                mSavingProgress = null;
+            }
+        }
     }
 
     @Override

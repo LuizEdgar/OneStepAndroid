@@ -58,15 +58,17 @@ public class VolunteerPresenter implements VolunteerContract.Presenter {
 
     @Override
     public void loadVolunteer() {
+        mView.setLoadingIndicator(true);
         mApiClient.getVolunteer(mVolunteerId).enqueue(new Callback<Volunteer>() {
             @Override
             public void onResponse(Call<Volunteer> call, Response<Volunteer> response) {
+                mView.setLoadingIndicator(false);
                 setVolunteerDateOnView(response.body());
             }
 
             @Override
             public void onFailure(Call<Volunteer> call, Throwable t) {
-
+                mView.setLoadingIndicator(false);
             }
         });
     }
