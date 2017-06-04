@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -62,9 +61,7 @@ import com.lutzed.servoluntario.util.TextInputLayoutTextWatcher;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -388,17 +385,10 @@ public class EditUserFragment extends Fragment implements EditUserContract.View 
                     }
                 } else {
 
-                    InputStream inputStream = null;
-                    try {
-                        inputStream = getContext().getContentResolver().openInputStream(data.getData());
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
                     if (requestCode == REQUEST_IMAGE_PICK) {
-                        mPresenter.onNewImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.MAX_IMAGE_SIZE));
+                        mPresenter.onNewImageAdded(Snippets.decodeStreamOptimized(getContext(), data.getData(), Constants.MAX_IMAGE_SIZE, true));
                     } else {
-                        mPresenter.onNewProfileImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.PROFILE_IMAGE_SIZE));
+                        mPresenter.onNewProfileImageAdded(Snippets.decodeStreamOptimized(getContext(), data.getData(), Constants.PROFILE_IMAGE_SIZE, true));
                     }
 
                 }

@@ -18,6 +18,7 @@ import com.lutzed.servoluntario.util.Constants;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
@@ -49,20 +50,24 @@ public class Api {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request();
-                Request newRequest;
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(10000, TimeUnit.SECONDS)
+                .readTimeout(10000, TimeUnit.SECONDS)
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request request = chain.request();
+                        Request newRequest;
 
-                Request.Builder builder = request.newBuilder();
-                if (user != null)
-                    builder.addHeader("Authorization", "Token token=\"" + user.getAuth() + "\"");
+                        Request.Builder builder = request.newBuilder();
+                        if (user != null)
+                            builder.addHeader("Authorization", "Token token=\"" + user.getAuth() + "\"");
 
-                newRequest = builder.build();
-                return chain.proceed(newRequest);
-            }
-        }).addNetworkInterceptor(new StethoInterceptor()).addInterceptor(logging).build();
+                        newRequest = builder.build();
+                        return chain.proceed(newRequest);
+                    }
+                })
+                .addNetworkInterceptor(new StethoInterceptor()).addInterceptor(logging).build();
 
         Gson gson = new GsonBuilder().registerTypeAdapter(FeedItem.class, new FeedItemTypeAdapter()).create();
 

@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -63,9 +62,7 @@ import com.lutzed.servoluntario.util.TextInputLayoutTextWatcher;
 import com.satsuware.usefulviews.LabelledSpinner;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -482,14 +479,7 @@ public class EditOpportunityFragment extends Fragment implements EditOpportunity
                         mPresenter.onNewImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.MAX_IMAGE_SIZE));
                     }
                 } else {
-                    InputStream inputStream = null;
-                    try {
-                        inputStream = getContext().getContentResolver().openInputStream(data.getData());
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    mPresenter.onNewImageAdded(bitmap);
+                    mPresenter.onNewImageAdded(Snippets.decodeStreamOptimized(getContext(), data.getData(), Constants.MAX_IMAGE_SIZE, true));
                 }
             } else if (resultCode == RESULT_CANCELED) {
 

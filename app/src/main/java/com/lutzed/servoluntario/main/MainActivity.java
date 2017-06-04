@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
             showFragment(mHomeFragment);
             if (!mHomePresenter.hasStarted()) mHomeFragment.start();
         }
+
         setTitle(R.string.title_home);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
         mLogoView.setVisibility(View.VISIBLE);
@@ -143,6 +144,7 @@ public class MainActivity extends AppCompatActivity {
             showFragment(mOpportunitiesFragment);
             if (!mOpportunitiesPresenter.hasStarted()) mOpportunitiesFragment.start();
         }
+
         setTitle(R.string.title_my_opportunties);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         mLogoView.setVisibility(View.GONE);

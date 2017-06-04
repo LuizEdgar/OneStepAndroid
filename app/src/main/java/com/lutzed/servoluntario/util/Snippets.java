@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -16,6 +17,7 @@ import android.util.Patterns;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -136,6 +138,48 @@ public class Snippets {
             return getProportionalResizedBitmap(decodeBitmap, maxSize);
         }
 
+        return decodeBitmap;
+    }
+
+    public static Bitmap decodeStreamOptimized(Context context, Uri uri, int maxSize, boolean shouldScale) {
+
+        InputStream boundsInputStream = null;
+        try {
+            boundsInputStream = context.getContentResolver().openInputStream(uri);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        // Get the dimensions of the bitmap
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        bmOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeStream(boundsInputStream, null, bmOptions);
+        int photoW = bmOptions.outWidth;
+        int photoH = bmOptions.outHeight;
+
+        int scaleFactor;
+        if (photoW >= photoH) {
+            scaleFactor = photoW / maxSize;
+        } else {
+            scaleFactor = photoH / maxSize;
+        }
+
+        // Decode the image file into a Bitmap sized to fill the View
+        bmOptions.inJustDecodeBounds = false;
+        bmOptions.inSampleSize = scaleFactor;
+        bmOptions.inPurgeable = true;
+        Log.d("SnippetsBMFP", "scaleFactor:" + scaleFactor);
+
+        InputStream fileInputStream = null;
+        try {
+            fileInputStream = context.getContentResolver().openInputStream(uri);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        Bitmap decodeBitmap = BitmapFactory.decodeStream(fileInputStream, null, bmOptions);
+
+        if (shouldScale) {
+            return getProportionalResizedBitmap(decodeBitmap, maxSize);
+        }
         return decodeBitmap;
     }
 

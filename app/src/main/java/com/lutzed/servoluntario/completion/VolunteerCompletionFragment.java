@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -43,9 +42,7 @@ import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -342,14 +339,7 @@ public class VolunteerCompletionFragment extends Fragment implements VolunteerCo
                         mPresenter.onNewProfileImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.PROFILE_IMAGE_SIZE));
                     }
                 } else {
-                    InputStream inputStream = null;
-                    try {
-                        inputStream = getContext().getContentResolver().openInputStream(data.getData());
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-                    mPresenter.onNewProfileImageAdded(Snippets.getProportionalResizedBitmap(bitmap, Constants.PROFILE_IMAGE_SIZE));
+                    mPresenter.onNewProfileImageAdded(Snippets.decodeStreamOptimized(getContext(), data.getData(), Constants.PROFILE_IMAGE_SIZE, true));
 
                 }
             } else if (resultCode == RESULT_CANCELED) {
