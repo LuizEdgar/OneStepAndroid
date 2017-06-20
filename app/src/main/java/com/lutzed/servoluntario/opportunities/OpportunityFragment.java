@@ -1,6 +1,7 @@
 package com.lutzed.servoluntario.opportunities;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,9 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -17,6 +21,7 @@ import com.lutzed.servoluntario.adapters.GalleryViewAdapter;
 import com.lutzed.servoluntario.adapters.OpportunitiesItemsAdapter;
 import com.lutzed.servoluntario.models.Contact;
 import com.lutzed.servoluntario.models.Image;
+import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.SelectableItem;
 import com.lutzed.servoluntario.util.DataView;
 import com.lutzed.servoluntario.util.Snippets;
@@ -31,6 +36,8 @@ import butterknife.ButterKnife;
  * A login screen that offers login via email/password.
  */
 public class OpportunityFragment extends Fragment implements OpportunityContract.View {
+    private static final String BUNDLE_CAN_EDIT = "bundle_can_edit";
+    private static final int REQUEST_EDIT = 290;
 
     @BindView(R.id.title) TextView mTitleView;
     @BindView(R.id.description) TextView mDescriptionView;
@@ -54,8 +61,25 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
 
     private ProgressDialog mLoadingProgress;
 
-    public static OpportunityFragment newInstance() {
-        return new OpportunityFragment();
+    private boolean mCanEdit;
+
+    public static OpportunityFragment newInstance(boolean canEdit) {
+        OpportunityFragment fragment = new OpportunityFragment();
+        Bundle args = new Bundle();
+        args.putBoolean(BUNDLE_CAN_EDIT, canEdit);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        if (getArguments() != null) {
+            mCanEdit = getArguments().getBoolean(BUNDLE_CAN_EDIT);
+        }
+
+        setHasOptionsMenu(true);
     }
 
     @Override
@@ -109,6 +133,32 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     }
 
     @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.opportunity_options, menu);
+
+        if (mCanEdit) {
+            menu.findItem(R.id.action_edit).setVisible(true);
+            menu.findItem(R.id.action_delete).setVisible(true);
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_edit) {
+            mPresenter.onEditOpportunityClicked();
+            return true;
+        } else if (item.getItemId() == R.id.action_delete) {
+            mPresenter.onDeleteOpportunityClicked();
+            return true;
+        } else if (item.getItemId() == R.id.action_share) {
+            mPresenter.onShareOpportunityClicked();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void setLoadingIndicator(final boolean active) {
         if (active) {
             if (mLoadingProgress == null) {
@@ -134,6 +184,8 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         } else {
             OpportunitiesItemsAdapter adapter = (OpportunitiesItemsAdapter) mCausesRecyclerView.getAdapter();
             adapter.addItems(causes);
+            mCausesRecyclerView.setVisibility(View.VISIBLE);
+            mCausesWrapper.setVisibility(View.VISIBLE);
         }
     }
 
@@ -145,6 +197,8 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         } else {
             OpportunitiesItemsAdapter adapter = (OpportunitiesItemsAdapter) mSkillsRecyclerView.getAdapter();
             adapter.addItems(skills);
+            mSkillsRecyclerView.setVisibility(View.VISIBLE);
+            mSkillsWrapper.setVisibility(View.VISIBLE);
         }
     }
 
@@ -156,6 +210,8 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
         } else {
             GalleryViewAdapter adapter = (GalleryViewAdapter) mGalleryRecyclerView.getAdapter();
             adapter.addItems(images);
+            mGalleryRecyclerView.setVisibility(View.VISIBLE);
+            mGalleryWrapper.setVisibility(View.VISIBLE);
         }
     }
 
@@ -254,6 +310,23 @@ public class OpportunityFragment extends Fragment implements OpportunityContract
     @Override
     public void setTimeToOngoing() {
         mTimeView.setData(getString(R.string.ongoing));
+    }
+
+    @Override
+    public void showEditOpportunity(Opportunity opportunity) {
+        Intent intent = new Intent(getContext(), EditOpportunityActivity.class);
+        intent.putExtra(EditOpportunityActivity.EXTRA_OPPORTUNITY, opportunity);
+        startActivity(intent);
+    }
+
+    @Override
+    public void showShareOpportunity(Opportunity opportunity) {
+
+    }
+
+    @Override
+    public void showDeleteOpportunity(Opportunity opportunity) {
+
     }
 }
 

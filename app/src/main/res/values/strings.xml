@@ -197,5 +197,6 @@
     <string name="title_create_opportunity">Create Opportunity</string>
     <string name="title_explore">Explore</string>
     <string name="title_my_opportunties">My Opportunities</string>
+    <string name="delete">Delete</string>
 
 </resources>

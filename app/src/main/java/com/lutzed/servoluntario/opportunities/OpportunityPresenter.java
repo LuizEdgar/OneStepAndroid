@@ -105,4 +105,19 @@ public class OpportunityPresenter implements OpportunityContract.Presenter {
             mView.setTimeToOngoing();
         }
     }
+
+    @Override
+    public void onEditOpportunityClicked() {
+        mView.showEditOpportunity(mOpportunity);
+    }
+
+    @Override
+    public void onDeleteOpportunityClicked() {
+        mView.showDeleteOpportunity(mOpportunity);
+    }
+
+    @Override
+    public void onShareOpportunityClicked() {
+        mView.showShareOpportunity(mOpportunity);
+    }
 }

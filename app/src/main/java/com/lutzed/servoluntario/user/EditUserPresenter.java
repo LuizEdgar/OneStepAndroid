@@ -109,6 +109,7 @@ public class EditUserPresenter implements EditUserContract.Presenter {
             mView.setEstablishedAt(DateHelper.format(DateHelper.yearFormat, establishedAt));
         } else {
             mEstablishedAt = Calendar.getInstance();
+            mView.setEstablishedAt("");
         }
 
         mView.addUniqueCauses(organization.getCauses(), null);
@@ -300,6 +301,7 @@ public class EditUserPresenter implements EditUserContract.Presenter {
             mView.setBirthAt(DateHelper.format(DateHelper.yearFormat, birthAt));
         } else {
             mBirthAt = Calendar.getInstance();
+            mView.setBirthAt("");
         }
 
         mView.addUniqueCauses(volunteer.getCauses(), null);
@@ -544,16 +546,16 @@ public class EditUserPresenter implements EditUserContract.Presenter {
 
     @Override
     public void birthAtClicked() {
-        mView.showEstablishedAtPicker(mBirthAt.get(Calendar.YEAR), mBirthAt.get(Calendar.MONTH), mBirthAt.get(Calendar.DAY_OF_MONTH));
+        mView.showBirthAtPicker(mBirthAt.get(Calendar.YEAR), mBirthAt.get(Calendar.MONTH), mBirthAt.get(Calendar.DAY_OF_MONTH));
     }
 
     @Override
     public void onBirthDateSelected(int year, int month, int dayOfMonth) {
         mBirthAtSet = true;
-        mEstablishedAt.set(Calendar.YEAR, year);
-        mEstablishedAt.set(Calendar.MONTH, month);
-        mEstablishedAt.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-        mView.setEstablishedAt(DateHelper.format(DateHelper.yearFormat, year, month, dayOfMonth));
+        mBirthAt.set(Calendar.YEAR, year);
+        mBirthAt.set(Calendar.MONTH, month);
+        mBirthAt.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        mView.setBirthAt(DateHelper.format(DateHelper.yearFormat, year, month, dayOfMonth));
     }
 
     @Override

@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="top"
                 android:tint="@color/iconsDark"
-                app:srcCompat="@drawable/ic_more_vert_black_24dp"/>
+                app:srcCompat="@drawable/ic_share_black_24dp"/>
 
         </LinearLayout>
 
@@ -89,7 +89,7 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/imagesRecyclerView"
             android:layout_width="match_parent"
-            android:layout_height="220dp"
+            android:layout_height="160dp"
             android:orientation="horizontal"/>
 
     </LinearLayout>

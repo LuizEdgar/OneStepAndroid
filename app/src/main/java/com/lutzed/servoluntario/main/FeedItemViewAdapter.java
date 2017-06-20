@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,8 +32,6 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
-import static com.lutzed.servoluntario.R.id.infos;
 
 public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -167,6 +166,7 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         };
 
         holder.mNameView.setOnClickListener(itemListener);
+        holder.mProfilePictureView.setOnClickListener(itemListener);
 
     }
 
@@ -243,16 +243,18 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         holder.mMoreButton.setOnClickListener(itemListener);
         holder.mTitleView.setOnClickListener(itemListener);
 
-        holder.mInfosView.setOnClickListener(new View.OnClickListener() {
+        View.OnClickListener infosListener = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (holder.mItem.getOpportunitableTypeAsEnum() == Opportunitable.Type.VOLUNTEER){
+                if (holder.mItem.getOpportunitableTypeAsEnum() == Opportunitable.Type.VOLUNTEER) {
                     mListener.onVolunteerClicked(holder.mItem.getOpportunitable().getId());
-                }else if (holder.mItem.getOpportunitableTypeAsEnum() == Opportunitable.Type.ORGANIZATION){
+                } else if (holder.mItem.getOpportunitableTypeAsEnum() == Opportunitable.Type.ORGANIZATION) {
                     mListener.onOrganizationClicked(holder.mItem.getOpportunitable().getId());
                 }
             }
-        });
+        };
+        holder.mInfosView.setOnClickListener(infosListener);
+        holder.mProfilePictureView.setOnClickListener(infosListener);
 
     }
 
@@ -271,9 +273,10 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         public final View mView;
         @BindView(R.id.profile_picture) ImageView mProfilePictureView;
         @BindView(R.id.name) TextView mNameView;
-        @BindView(infos) TextView mInfosView;
+        @BindView(R.id.infos) TextView mInfosView;
         @BindView(R.id.content) TextView mContentView;
         @BindView(R.id.imagesRecyclerView) RecyclerView mRecyclerView;
+        @BindView(R.id.optionsButton) ImageButton mOptionsButton;
         public Organization mItem;
 
         public OrganizationHolder(View view) {
@@ -299,10 +302,11 @@ public class FeedItemViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         @BindView(R.id.time) TextView mTimeTextView;
         @BindView(R.id.profile_picture) ImageView mProfilePictureView;
         @BindView(R.id.title) TextView mTitleView;
-        @BindView(infos) TextView mInfosView;
+        @BindView(R.id.infos) TextView mInfosView;
         @BindView(R.id.content) TextView mContentView;
         @BindView(R.id.imagesRecyclerView) RecyclerView mRecyclerView;
-        @BindView(R.id.more_button) Button mMoreButton;
+        @BindView(R.id.moreButton) Button mMoreButton;
+        @BindView(R.id.optionsButton) ImageButton mOptionsButton;
         public Opportunity mItem;
 
         public OpportunityViewHolder(View view) {

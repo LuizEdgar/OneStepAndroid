@@ -8,7 +8,9 @@ import android.view.MenuItem;
 
 import com.lutzed.servoluntario.R;
 import com.lutzed.servoluntario.api.Api;
+import com.lutzed.servoluntario.models.Opportunitable;
 import com.lutzed.servoluntario.models.Opportunity;
+import com.lutzed.servoluntario.models.User;
 import com.lutzed.servoluntario.util.ActivityUtils;
 import com.lutzed.servoluntario.util.AuthHelper;
 
@@ -33,18 +35,21 @@ public class OpportunityActivity extends AppCompatActivity {
         OpportunityFragment opportunityFragment =
                 (OpportunityFragment) getSupportFragmentManager().findFragmentById(R.id.contentFrame);
 
-
-        if (opportunityFragment == null) {
-            // Create the fragment
-            opportunityFragment = OpportunityFragment.newInstance();
-            ActivityUtils.addFragmentToActivity(
-                    getSupportFragmentManager(), opportunityFragment, R.id.contentFrame);
-        }
-
         AuthHelper authHelper = AuthHelper.getInstance(this);
         // Create the presenter
 
         Opportunity opportunity = getIntent().getParcelableExtra(EXTRA_OPPORTUNITY);
+
+        if (opportunityFragment == null) {
+            // Create the fragment
+            boolean canEdit =
+                    (authHelper.getUser().getKindEnum() == User.Kind.VOLUNTEER && opportunity.getOpportunitableTypeAsEnum() == Opportunitable.Type.VOLUNTEER && authHelper.getUser().getVolunteer().getId().equals(opportunity.getOpportunitable().getId())) ||
+                    (authHelper.getUser().getKindEnum() == User.Kind.ORGANIZATION && opportunity.getOpportunitableTypeAsEnum() == Opportunitable.Type.ORGANIZATION && authHelper.getUser().getOrganization().getId().equals(opportunity.getOpportunitable().getId()));
+            opportunityFragment = OpportunityFragment.newInstance(canEdit);
+            ActivityUtils.addFragmentToActivity(
+                    getSupportFragmentManager(), opportunityFragment, R.id.contentFrame);
+        }
+
         mOpportunityPresenter = new OpportunityPresenter(opportunityFragment, Api.getClient(authHelper.getUser()), authHelper, opportunity);
 
         // Load previously saved state, if available.

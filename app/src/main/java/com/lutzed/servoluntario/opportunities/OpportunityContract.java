@@ -4,6 +4,7 @@ import com.lutzed.servoluntario.interfaces.BasePresenter;
 import com.lutzed.servoluntario.interfaces.BaseView;
 import com.lutzed.servoluntario.models.Contact;
 import com.lutzed.servoluntario.models.Image;
+import com.lutzed.servoluntario.models.Opportunity;
 import com.lutzed.servoluntario.models.SelectableItem;
 
 import java.util.List;
@@ -46,9 +47,21 @@ public interface OpportunityContract {
         void setLocationToVirtual();
 
         void setTimeToOngoing();
+
+        void showEditOpportunity(Opportunity opportunity);
+
+        void showShareOpportunity(Opportunity opportunity);
+
+        void showDeleteOpportunity(Opportunity opportunity);
     }
 
     interface Presenter extends BasePresenter {
         void loadOpportunity();
+
+        void onEditOpportunityClicked();
+
+        void onDeleteOpportunityClicked();
+
+        void onShareOpportunityClicked();
     }
 }
